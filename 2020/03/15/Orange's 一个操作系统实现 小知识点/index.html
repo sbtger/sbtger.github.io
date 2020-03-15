@@ -79,20 +79,20 @@
 
 
 
-<meta name="description" content="一些小知识点 CPU发展 8086 16位 CPU &#x3D;&gt; 80386 32位 CPU  实模式&amp;保护模式    模式 进制数 地址总线宽度 寄存器及数据总线宽度 寻址空间    实模式 16 20 16 1MB   保护模式 32 32 32 4GB    段寄存器 32位段寄存器实际上由16位的段选择器和描述符高速缓存器组成。但描述符高速缓存器是不能直接访问的。  代码段和数据段的">
+<meta name="description" content="一些小知识点 CPU发展 8086 16位 CPU &#x3D;&gt; 80386 32位 CPU  实模式&amp;保护模式    模式 进制数 地址总线宽度 寄存器及数据总线宽度 寻址空间    实模式 16 20 16 1MB   保护模式 32 32 32 4GB">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Orange&#39;s">
+<meta property="og:title" content="Orange&#39;s 一个操作系统实现 小知识点">
 <meta property="og:url" content="http://yoursite.com/2020/03/15/Orange's%20%E4%B8%80%E4%B8%AA%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0%20%E5%B0%8F%E7%9F%A5%E8%AF%86%E7%82%B9/index.html">
 <meta property="og:site_name" content="Anred&#39;s Blog">
-<meta property="og:description" content="一些小知识点 CPU发展 8086 16位 CPU &#x3D;&gt; 80386 32位 CPU  实模式&amp;保护模式    模式 进制数 地址总线宽度 寄存器及数据总线宽度 寻址空间    实模式 16 20 16 1MB   保护模式 32 32 32 4GB    段寄存器 32位段寄存器实际上由16位的段选择器和描述符高速缓存器组成。但描述符高速缓存器是不能直接访问的。  代码段和数据段的">
-<meta property="og:image" content="d:/STUDY/mybook/FLAG寄存器.png">
+<meta property="og:description" content="一些小知识点 CPU发展 8086 16位 CPU &#x3D;&gt; 80386 32位 CPU  实模式&amp;保护模式    模式 进制数 地址总线宽度 寄存器及数据总线宽度 寻址空间    实模式 16 20 16 1MB   保护模式 32 32 32 4GB">
+<meta property="og:image" content="http://yoursite.com/2020/03/15/Orange%27s%20%E4%B8%80%E4%B8%AA%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0%20%E5%B0%8F%E7%9F%A5%E8%AF%86%E7%82%B9/FLAG%E5%AF%84%E5%AD%98%E5%99%A8.PNG">
 <meta property="og:image" content="http://yoursite.com/2020/03/15/Orange%27s%20%E4%B8%80%E4%B8%AA%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0%20%E5%B0%8F%E7%9F%A5%E8%AF%86%E7%82%B9/1.PNG">
 <meta property="article:published_time" content="2020-03-15T14:34:15.000Z">
-<meta property="article:modified_time" content="2020-03-15T15:07:58.345Z">
+<meta property="article:modified_time" content="2020-03-15T15:17:17.899Z">
 <meta property="article:author" content="Peng Zhang">
 <meta property="article:tag" content="操作系统">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="d:/STUDY/mybook/FLAG寄存器.png">
+<meta name="twitter:image" content="http://yoursite.com/2020/03/15/Orange%27s%20%E4%B8%80%E4%B8%AA%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0%20%E5%B0%8F%E7%9F%A5%E8%AF%86%E7%82%B9/FLAG%E5%AF%84%E5%AD%98%E5%99%A8.PNG">
 
 
 
@@ -128,7 +128,7 @@
 
 
 
-  <title>Orange's | Anred's Blog</title>
+  <title>Orange's 一个操作系统实现 小知识点 | Anred's Blog</title>
   
 
 
@@ -316,7 +316,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Orange's</h1>
+          <h1 class="post-title" itemprop="name headline">Orange's 一个操作系统实现 小知识点</h1>
         
 
         <div class="post-meta">
@@ -419,6 +419,10 @@
 </tr>
 </tbody></table>
 </li>
+</ul>
+<a id="more"></a>
+
+<ul>
 <li><p>段寄存器</p>
 <p>32位段寄存器实际上由16位的段选择器和描述符高速缓存器组成。但描述符高速缓存器是不能直接访问的。</p>
 </li>
@@ -452,10 +456,6 @@
 </tr>
 </tbody></table>
 </li>
-</ul>
-<a id="more"></a>
-
-<ul>
 <li><p><strong>汇编语言</strong>里的一些<strong>寄存器</strong>的功能：</p>
 <p><strong>EAX</strong> 是”累加器”(accumulator), 它是很多加法乘法指令的缺省寄存器。</p>
 <p><strong>EBX</strong> 是”基地址”(base)寄存器, 在内存寻址时存放基地址。</p>
@@ -477,7 +477,7 @@
 <p>汇编指令，当进位标志CF=1，即有进位时，跳转。</p>
 </li>
 <li><p><strong>标志位寄存器：</strong></p>
-<img src="D:\STUDY\mybook\FLAG寄存器.png" alt="FLAG寄存器" style="zoom:75%;" />
+<p><img src="FLAG%E5%AF%84%E5%AD%98%E5%99%A8.PNG" alt="FLAG寄存器"></p>
 </li>
 <li><p><strong>汇编指令cmp：</strong></p>
 <p>cmp指令格式:  cmp  操作对象1, 操作对象2</p>
@@ -572,12 +572,7 @@
 </li>
 <li><p><strong>bochs调试反汇编指令：</strong></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ndisasm -o 0x7c00 boot.bin &gt;&gt; disboot.asm</span><br></pre></td></tr></table></figure>
-
-
-
 </li>
-</ul>
-<ul>
 <li><p><strong>在bochs的dos下调试：</strong></p>
 <p>先在文件开始位置添加指令jmp $，然后在反汇编的文件中找到自己想要跳转的位置eip。然后在bochs的dos中运行，陷入死循环。在bochs中，利用ctrl+c中断调试，利用r看寄存器的值，利用set $eip=0x…值，利用s进行单步调试。</p>
 </li>
@@ -587,27 +582,26 @@
 </li>
 <li><p><strong>Bochs命令：</strong></p>
 <p>挂载：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo mount -o loop a.img /mnt/floppy/</span><br><span class="line">  </span><br><span class="line">sudo cp kernel.bin /mnt/floppy/</span><br><span class="line">  </span><br><span class="line">sudo umount /mnt/floppy/</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mount -o loop a.img /mnt/floppy/</span><br></pre></td></tr></table></figure>
 
-<p>copy：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp /home/username/桌面/boot.asm ./</span><br></pre></td></tr></table></figure>
-
-<p>更新引导程序：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dd <span class="keyword">if</span>=boot.bin of=a.img bs=512 count=1 conv=notrunc</span><br></pre></td></tr></table></figure>
-
-<p>运行Bochs：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bochs -f bochsrc</span><br></pre></td></tr></table></figure>
-
-<p>nasm编译：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nasm loader.asm -o loader.bin</span><br><span class="line">  </span><br><span class="line">  nasm -f elf kliba.asm -o kliba.o</span><br></pre></td></tr></table></figure>
-
-<p>gcc编译：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -c start.c -o start.o</span><br></pre></td></tr></table></figure>
-
-<p>ld链接：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ld -s -Ttext 0x30400 -o kernel.bin kernel.o string.o start.o</span><br></pre></td></tr></table></figure></li>
+</li>
 </ul>
+<p>sudo cp kernel.bin /mnt/floppy/</p>
+<p>sudo umount /mnt/floppy/<br>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">  copy：</span><br><span class="line"></span><br><span class="line">  &#96;&#96;&#96; bash</span><br><span class="line">cp &#x2F;home&#x2F;username&#x2F;桌面&#x2F;boot.asm .&#x2F;</span><br></pre></td></tr></table></figure></p>
+<p>  更新引导程序：</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dd <span class="keyword">if</span>=boot.bin of=a.img bs=512 count=1 conv=notrunc</span><br></pre></td></tr></table></figure>
 
+<p>  运行Bochs：</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bochs -f bochsrc</span><br></pre></td></tr></table></figure>
+
+<p>  nasm编译：</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nasm loader.asm -o loader.bin</span><br><span class="line">  </span><br><span class="line">  nasm -f elf kliba.asm -o kliba.o</span><br></pre></td></tr></table></figure>
+
+<p>  gcc编译：</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -c start.c -o start.o</span><br></pre></td></tr></table></figure>
+
+<p>  ld链接：</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ld -s -Ttext 0x30400 -o kernel.bin kernel.o string.o start.o</span><br></pre></td></tr></table></figure>
       
     </div>
     

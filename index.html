@@ -311,7 +311,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2020/03/15/Orange's%20%E4%B8%80%E4%B8%AA%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0%20%E5%B0%8F%E7%9F%A5%E8%AF%86%E7%82%B9/" itemprop="url">Orange's</a></h1>
+                <a class="post-title-link" href="/2020/03/15/Orange's%20%E4%B8%80%E4%B8%AA%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0%20%E5%B0%8F%E7%9F%A5%E8%AF%86%E7%82%B9/" itemprop="url">Orange's 一个操作系统实现 小知识点</a></h1>
         
 
         <div class="post-meta">
@@ -412,39 +412,6 @@
 <td align="center">32</td>
 <td align="center">32</td>
 <td align="center">4GB</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>段寄存器</p>
-<p>32位段寄存器实际上由16位的段选择器和描述符高速缓存器组成。但描述符高速缓存器是不能直接访问的。</p>
-</li>
-<li><p>代码段和数据段的权限访问规则</p>
-<table>
-<thead>
-<tr>
-<th align="center">类型</th>
-<th align="center">特权级 低-&gt;高</th>
-<th align="center">特权级 高-&gt;低</th>
-<th align="center">相同特权级之间</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">一致代码段</td>
-<td align="center">可</td>
-<td align="center">不可</td>
-<td align="center">可</td>
-</tr>
-<tr>
-<td align="center">非一致代码段</td>
-<td align="center">不可</td>
-<td align="center">不可</td>
-<td align="center">可</td>
-</tr>
-<tr>
-<td align="center">数据段（非一致）</td>
-<td align="center">不可</td>
-<td align="center">可</td>
-<td align="center">可</td>
 </tr>
 </tbody></table>
 </li>
@@ -595,7 +562,6 @@
       
         
           <p><strong>主要目的：</strong>跑一些深度学习的代码，但是自己笔记本显卡内存比较小，运行速度也比较慢。</p>
-<p>PS：使用<strong>专业版</strong>Pycharm，可以远程调用GPU云服务器来运行程序，但<strong>家庭版</strong>Pycharm则不具备该功能。</p>
 <p>下面介绍一下对几个使用过的云GPU服务器的看法：</p>
           <!--noindex-->
           <div class="post-button text-center">
@@ -743,12 +709,7 @@
       
         
           <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2020/03/15/hello-world/#more" rel="contents">
