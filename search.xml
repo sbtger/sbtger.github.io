@@ -209,6 +209,8 @@
 <p>gcc -c start.c -o start.o</p>
 <p>ld链接：</p>
 <p>ld -s -Ttext 0x30400 -o kernel.bin kernel.o string.o start.o</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--more--&gt;</span></span><br></pre></td></tr></table></figure>
+
 </li>
 </ul>
 ]]></content>
@@ -237,7 +239,7 @@
 </li>
 </ul>
 <p>用到现在，感觉最佳组合是腾讯云对象存储（最近搞活动，1RMB=6个月50G的空间，感觉超值，也有免费的空间）+ MistGPU。价格可以接受，配置也比较不错。另外，淘宝上也有相关的GPU包天的服务，感觉蛮麻烦的就没有试。</p>
-]]></content>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--more--&gt;</span></span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>机器学习</category>
       </categories>
@@ -261,6 +263,8 @@
 <h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
 
 <p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--more--&gt;</span></span><br></pre></td></tr></table></figure>
+
 ]]></content>
       <categories>
         <category>Hexo</category>
