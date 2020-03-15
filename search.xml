@@ -92,7 +92,7 @@
 <p>汇编指令，当进位标志CF=1，即有进位时，跳转。</p>
 </li>
 <li><p><strong>标志位寄存器：</strong></p>
-<p><img src="FLAG%E5%AF%84%E5%AD%98%E5%99%A8.PNG" alt="FLAG寄存器"></p>
+<p>![FLAG寄存器](Orange’s 一个操作系统实现 小知识点/FLAG寄存器.PNG)</p>
 </li>
 <li><p><strong>汇编指令cmp：</strong></p>
 <p>cmp指令格式:  cmp  操作对象1, 操作对象2</p>
@@ -183,7 +183,7 @@
 <li><p>IDT建立保护模式下的中断（GDT保护模式下段机制）</p>
 </li>
 <li><p>中断和异常分配表</p>
-<p><img src="1.PNG" alt="1"></p>
+<p>![1](Orange’s 一个操作系统实现 小知识点/1.PNG)</p>
 </li>
 <li><p><strong>bochs调试反汇编指令：</strong></p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ndisasm -o 0x7c00 boot.bin &gt;&gt; disboot.asm</span><br></pre></td></tr></table></figure>
