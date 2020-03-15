@@ -92,7 +92,7 @@
 <p>汇编指令，当进位标志CF=1，即有进位时，跳转。</p>
 </li>
 <li><p><strong>标志位寄存器：</strong></p>
-<p><img src="/2020/03/15/Orange's%20%E4%B8%80%E4%B8%AA%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0%20%E5%B0%8F%E7%9F%A5%E8%AF%86%E7%82%B9/FLAG%E5%AF%84%E5%AD%98%E5%99%A8.PNG" alt="FLAG寄存器"></p>
+<p><img src="/2020/03/15/Orange's%20%E4%B8%80%E4%B8%AA%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0%20%E5%B0%8F%E7%9F%A5%E8%AF%86%E7%82%B9/2.png" alt="2"></p>
 </li>
 <li><p><strong>汇编指令cmp：</strong></p>
 <p>cmp指令格式:  cmp  操作对象1, 操作对象2</p>
