@@ -1,9 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>hello,hexo</title>
-    <url>/2020/03/15/hello-hexo/</url>
-    <content><![CDATA[]]></content>
+    <title>关于GPU服务器的一点小经验</title>
+    <url>/2020/03/15/%E5%85%B3%E4%BA%8EGPU%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%B8%80%E7%82%B9%E5%B0%8F%E7%BB%8F%E9%AA%8C/</url>
+    <content><![CDATA[<p><strong>目的：</strong>跑一些深度学习的代码。笔记本显卡内存较小，运行速度也较慢。</p>
+<p>使用<strong>专业版</strong>Pycharm，可以远程调用GPU云服务器来运行程序，但<strong>家庭版</strong>Pycharm则不具备该功能。</p>
+<p>下面介绍一下对几个使用过的云GPU服务器的看法：</p>
+<ul>
+<li><p><strong>腾讯云：</strong>最一开始使用的是腾讯云。因为感觉大厂有保障，的确还不错但就是价格较高，服务器价格比其他网站贵了很多。有云端对象存储COS，1RMB=6个月50G的空间（利用代码可以实现云端上传/下载，速度较快，比家里的垃圾网速强好多）。感觉还不错。</p>
+<p>网址：<a href="https://cloud.tencent.com/" target="_blank" rel="noopener"><strong>腾讯云</strong></a></p>
+</li>
+<li><p><strong>MistGPU：</strong>新用户有8RMB的代金券。价格较低。1080ti=3RMB/小时。2080ti=4RMB/小时。但上传速度慢（可以使用腾讯云对象存储的数据集，写一个python脚本，实现云端下载，速度飞快，比家里的垃圾网速强好多）。PS：IP地址显示为阿里云。</p>
+<p>网址：<a href="https://mistgpu.cn/" target="_blank" rel="noopener"><strong>MistGPU</strong></a></p>
+</li>
+<li><p><strong>Colab：</strong>Google旗下的一个Jupyter笔记本的运行环境。不需要任何设置就可以直接使用，完全在云端运行。薅资本主义的羊毛。GPU也由之前的K80更换为了T4（其实感觉免费的没有达到T4）。但需要科学上网来使用Google Drive。另外，Google Drive的大文件的上传速度惊人的慢（大于1G的文件），也许是因为需要科学上网的缘故。运行一些小型的训练模型没问题，但大型的训练模型则需要最好使用Colab Pro，$9.99/月。订阅后可以获得T4和P100 GPU计算资源，还可能优先分配到TPU。但需要美国的信用卡美元订阅支付。</p>
+<p>网址：<a href="https://colab.research.google.com/notebooks/intro.ipynb" target="_blank" rel="noopener"><strong>Colab</strong></a></p>
+</li>
+</ul>
+<p>用到现在，感觉最佳组合是腾讯云对象存储（最近搞活动，1RMB=6个月50G的空间，感觉超值，也有免费的空间）+ MistGPU。价格可以接受，配置也比较不错。另外，淘宝上也有相关的GPU包天的服务，感觉蛮麻烦的就没有试。</p>
+]]></content>
+      <categories>
+        <category>机器学习</category>
+      </categories>
+      <tags>
+        <tag>云服务器</tag>
+      </tags>
   </entry>
   <entry>
     <title>Hello World</title>
@@ -22,5 +43,11 @@
 
 <p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
 ]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
   </entry>
 </search>
