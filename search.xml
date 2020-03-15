@@ -67,6 +67,10 @@
 </tr>
 </tbody></table>
 </li>
+</ul>
+<a id="more"></a>
+
+<ul>
 <li><p><strong>汇编语言</strong>里的一些<strong>寄存器</strong>的功能：</p>
 <p><strong>EAX</strong> 是”累加器”(accumulator), 它是很多加法乘法指令的缺省寄存器。</p>
 <p><strong>EBX</strong> 是”基地址”(base)寄存器, 在内存寻址时存放基地址。</p>
@@ -179,11 +183,16 @@
 <li><p>IDT建立保护模式下的中断（GDT保护模式下段机制）</p>
 </li>
 <li><p>中断和异常分配表</p>
-<p><img src="C:%5CUsers%5CLenovo%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20191108194642624.png" alt="image-20191108194642624"></p>
+<p><img src="1.PNG" alt="1"></p>
 </li>
 <li><p><strong>bochs调试反汇编指令：</strong></p>
-<p>ndisasm -o 0x7c00 boot.bin &gt;&gt; disboot.asm</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ndisasm -o 0x7c00 boot.bin &gt;&gt; disboot.asm</span><br></pre></td></tr></table></figure>
+
+
+
 </li>
+</ul>
+<ul>
 <li><p><strong>在bochs的dos下调试：</strong></p>
 <p>先在文件开始位置添加指令jmp $，然后在反汇编的文件中找到自己想要跳转的位置eip。然后在bochs的dos中运行，陷入死循环。在bochs中，利用ctrl+c中断调试，利用r看寄存器的值，利用set $eip=0x…值，利用s进行单步调试。</p>
 </li>
@@ -193,25 +202,25 @@
 </li>
 <li><p><strong>Bochs命令：</strong></p>
 <p>挂载：</p>
-<p>sudo mount -o loop a.img /mnt/floppy/</p>
-<p>sudo cp kernel.bin /mnt/floppy/</p>
-<p>sudo umount /mnt/floppy/</p>
-<p>copy：</p>
-<p>cp /home/anred/桌面/1/5/boot.asm ./</p>
-<p>更新引导程序：</p>
-<p>dd if=boot.bin of=a.img bs=512 count=1 conv=notrunc</p>
-<p>运行Bochs：</p>
-<p>bochs -f bochsrc</p>
-<p>nasm编译：</p>
-<p>nasm loader.asm -o loader.bin</p>
-<p>nasm -f elf kliba.asm -o kliba.o</p>
-<p>gcc编译：</p>
-<p>gcc -c start.c -o start.o</p>
-<p>ld链接：</p>
-<p>ld -s -Ttext 0x30400 -o kernel.bin kernel.o string.o start.o</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--more--&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mount -o loop a.img /mnt/floppy/</span><br><span class="line">  </span><br><span class="line">sudo cp kernel.bin /mnt/floppy/</span><br><span class="line">  </span><br><span class="line">sudo umount /mnt/floppy/</span><br></pre></td></tr></table></figure>
 
-</li>
+<p>copy：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cp /home/username/桌面/boot.asm ./</span><br></pre></td></tr></table></figure>
+
+<p>更新引导程序：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dd <span class="keyword">if</span>=boot.bin of=a.img bs=512 count=1 conv=notrunc</span><br></pre></td></tr></table></figure>
+
+<p>运行Bochs：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">bochs -f bochsrc</span><br></pre></td></tr></table></figure>
+
+<p>nasm编译：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nasm loader.asm -o loader.bin</span><br><span class="line">  </span><br><span class="line">  nasm -f elf kliba.asm -o kliba.o</span><br></pre></td></tr></table></figure>
+
+<p>gcc编译：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">gcc -c start.c -o start.o</span><br></pre></td></tr></table></figure>
+
+<p>ld链接：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ld -s -Ttext 0x30400 -o kernel.bin kernel.o string.o start.o</span><br></pre></td></tr></table></figure></li>
 </ul>
 ]]></content>
       <categories>
@@ -224,9 +233,11 @@
   <entry>
     <title>关于GPU服务器的一点小经验</title>
     <url>/2020/03/15/%E5%85%B3%E4%BA%8EGPU%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%B8%80%E7%82%B9%E5%B0%8F%E7%BB%8F%E9%AA%8C/</url>
-    <content><![CDATA[<p><strong>目的：</strong>跑一些深度学习的代码。笔记本显卡内存较小，运行速度也较慢。</p>
-<p>使用<strong>专业版</strong>Pycharm，可以远程调用GPU云服务器来运行程序，但<strong>家庭版</strong>Pycharm则不具备该功能。</p>
+    <content><![CDATA[<p><strong>主要目的：</strong>跑一些深度学习的代码，但是自己笔记本显卡内存比较小，运行速度也比较慢。</p>
+<p>PS：使用<strong>专业版</strong>Pycharm，可以远程调用GPU云服务器来运行程序，但<strong>家庭版</strong>Pycharm则不具备该功能。</p>
 <p>下面介绍一下对几个使用过的云GPU服务器的看法：</p>
+<a id="more"></a>
+
 <ul>
 <li><p><strong>腾讯云：</strong>最一开始使用的是腾讯云。因为感觉大厂有保障，的确还不错但就是价格较高，服务器价格比其他网站贵了很多。有云端对象存储COS，1RMB=6个月50G的空间（利用代码可以实现云端上传/下载，速度较快，比家里的垃圾网速强好多）。感觉还不错。</p>
 <p>网址：<a href="https://cloud.tencent.com/" target="_blank" rel="noopener"><strong>腾讯云</strong></a></p>
@@ -239,7 +250,7 @@
 </li>
 </ul>
 <p>用到现在，感觉最佳组合是腾讯云对象存储（最近搞活动，1RMB=6个月50G的空间，感觉超值，也有免费的空间）+ MistGPU。价格可以接受，配置也比较不错。另外，淘宝上也有相关的GPU包天的服务，感觉蛮麻烦的就没有试。</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--more--&gt;</span></span><br></pre></td></tr></table></figure>]]></content>
+]]></content>
       <categories>
         <category>机器学习</category>
       </categories>
@@ -257,14 +268,14 @@
 <h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
 
 <p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
+<a id="more"></a>
+
 <h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
 
 <p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
 <h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
 
 <p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--more--&gt;</span></span><br></pre></td></tr></table></figure>
-
 ]]></content>
       <categories>
         <category>Hexo</category>
