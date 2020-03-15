@@ -1,6 +1,225 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Orange&#39;s</title>
+    <url>/2020/03/15/Orange&#39;s%20%E4%B8%80%E4%B8%AA%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0%20%E5%B0%8F%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
+    <content><![CDATA[<h3 id="一些小知识点"><a href="#一些小知识点" class="headerlink" title="一些小知识点"></a>一些小知识点</h3><ul>
+<li><p>CPU发展</p>
+<p><strong>8086</strong> 16位 CPU =&gt; <strong>80386</strong> 32位 CPU</p>
+</li>
+<li><p>实模式&amp;保护模式</p>
+<table>
+<thead>
+<tr>
+<th align="center">模式</th>
+<th align="center">进制数</th>
+<th align="center">地址总线宽度</th>
+<th align="center">寄存器及数据总线宽度</th>
+<th align="center">寻址空间</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">实模式</td>
+<td align="center">16</td>
+<td align="center">20</td>
+<td align="center">16</td>
+<td align="center">1MB</td>
+</tr>
+<tr>
+<td align="center">保护模式</td>
+<td align="center">32</td>
+<td align="center">32</td>
+<td align="center">32</td>
+<td align="center">4GB</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>段寄存器</p>
+<p>32位段寄存器实际上由16位的段选择器和描述符高速缓存器组成。但描述符高速缓存器是不能直接访问的。</p>
+</li>
+<li><p>代码段和数据段的权限访问规则</p>
+<table>
+<thead>
+<tr>
+<th align="center">类型</th>
+<th align="center">特权级 低-&gt;高</th>
+<th align="center">特权级 高-&gt;低</th>
+<th align="center">相同特权级之间</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">一致代码段</td>
+<td align="center">可</td>
+<td align="center">不可</td>
+<td align="center">可</td>
+</tr>
+<tr>
+<td align="center">非一致代码段</td>
+<td align="center">不可</td>
+<td align="center">不可</td>
+<td align="center">可</td>
+</tr>
+<tr>
+<td align="center">数据段（非一致）</td>
+<td align="center">不可</td>
+<td align="center">可</td>
+<td align="center">可</td>
+</tr>
+</tbody></table>
+</li>
+<li><p><strong>汇编语言</strong>里的一些<strong>寄存器</strong>的功能：</p>
+<p><strong>EAX</strong> 是”累加器”(accumulator), 它是很多加法乘法指令的缺省寄存器。</p>
+<p><strong>EBX</strong> 是”基地址”(base)寄存器, 在内存寻址时存放基地址。</p>
+<p><strong>ECX</strong> 是计数器(counter), 是重复(REP)前缀指令和LOOP指令的内定计数器。</p>
+<p><strong>EDX</strong> 则总是被用来放整数除法产生的余数。</p>
+<p><strong>ESI/EDI</strong>分别叫做”源/目标索引寄存器”(source/destination index),因为在很多字符串操作指令中, DS:ESI指向源串,而ES:EDI指向目标串。</p>
+<p><strong>EBP</strong>是”基址指针”(BASE POINTER), 它最经常被用作高级语言函数调用的”框架指针”(frame pointer)。</p>
+<p><strong>ESP</strong> 专门用作堆栈指针，被形象地称为栈顶指针，堆栈的顶部是地址小的区域，压入堆栈的数据越多，ESP也就越来越小。在32位平台上，ESP每次减少4字节。</p>
+</li>
+<li><p><strong>寄存器EAX、AX、AH和AL之间的关系：</strong></p>
+<p>EAX 为32位。</p>
+<p>AX为EAX低16位。</p>
+<p>AH为AX高8位，AL为AX低8位。</p>
+</li>
+<li><p><strong>dd、dw和db：</strong></p>
+<p>汇编语言中dd、dw和db分别代表4个字节、2个字节和1个字节。</p>
+</li>
+<li><p><strong>汇编指令JC：</strong></p>
+<p>汇编指令，当进位标志CF=1，即有进位时，跳转。</p>
+</li>
+<li><p><strong>标志位寄存器：</strong></p>
+<img src="D:\STUDY\mybook\FLAG寄存器.png" alt="FLAG寄存器" style="zoom:75%;" />
+</li>
+<li><p><strong>汇编指令cmp：</strong></p>
+<p>cmp指令格式:  cmp  操作对象1, 操作对象2</p>
+<p>计算（操作对象1 - 操作对象2），但不保存结果，只是根据结果修改相应的标志位。 </p>
+</li>
+<li><p><strong>汇编指令jne：</strong></p>
+<p>jne是汇编指令中的一个条件转移指令。当ZF=0，转至标号处执行。当ZF=1，顺序执行。</p>
+</li>
+<li><p><strong>地址描述符结构ARDS：</strong></p>
+<table>
+<thead>
+<tr>
+<th><strong>Offset</strong></th>
+<th><strong>Name</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>BaseAddrLow</td>
+<td>基地址的低32位</td>
+</tr>
+<tr>
+<td>4</td>
+<td>BaseAddrHigh</td>
+<td>基地址的高32位</td>
+</tr>
+<tr>
+<td>8</td>
+<td>LengthLow</td>
+<td>长度(字节)的低32位</td>
+</tr>
+<tr>
+<td>12</td>
+<td>LengthHigh</td>
+<td>长度(字节)的高32位</td>
+</tr>
+<tr>
+<td>16</td>
+<td>Type</td>
+<td>这个地址范围的地址类型</td>
+</tr>
+</tbody></table>
+<p><strong>Type取值及其意义：</strong></p>
+<table>
+<thead>
+<tr>
+<th><strong>Value</strong></th>
+<th><strong>Name</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>AddressRangeMemory</td>
+<td>这个内存段是一段可以被OS使用的RAM</td>
+</tr>
+<tr>
+<td>2</td>
+<td>AddressRangeReserved</td>
+<td>这个地址段正在被使用,或者被系统保留,所以一定不要被OS使用</td>
+</tr>
+<tr>
+<td>Other</td>
+<td>Undefined</td>
+<td>保留为未来使用,任何其它值都必需被OS认为是AddressRangeReserved</td>
+</tr>
+</tbody></table>
+</li>
+<li><p><strong>汇编指令inc&amp;dec：</strong></p>
+<p>自加1和自减1指令。</p>
+</li>
+<li><p><strong>汇编指令ja&amp;jb：</strong></p>
+<p>指令JA表示 CF=0 且ZF=0 即A&gt;B转移。</p>
+<p>指令JB表示 CF=1 且ZF=0 即A &lt;B转移。</p>
+</li>
+<li><p><strong>汇编指令跳转部分：</strong></p>
+<p>JAE/JNB 大于或等于转移.<br>JB/JNAE 小于转移.<br>JBE/JNA 小于或等于转移.<br>以上四条,测试<strong>无符号整数运算</strong>的结果(<strong>标志C和Z</strong>).<br>JE/JZ　等于转移.<br>JNE/JNZ 不等于时转移.<br>JC　　　有进位（CF）时转移.<br>JNC　　无进位（CF）时转移.<br>JNO　　不溢出时转移.<br>JNP/JPO 奇偶性为奇数时转移.<br>JNS　　符号位为 “0” 时转移.<br>JO　　　溢出转移.<br>JP/JPE　奇偶性为偶数时转移.<br>JS　　　符号位为 “1” 时转移.</p>
+</li>
+<li><p>保护模式不能直接调用实模式下的中断</p>
+</li>
+<li><p>硬件中断与软件中断</p>
+</li>
+<li><p>同步中断（与CPU相关）与异步中断（外部不可抗因素）</p>
+</li>
+<li><p>Fault（如缺页） Trap（） Abort（严重错误）</p>
+</li>
+<li><p>IDT建立保护模式下的中断（GDT保护模式下段机制）</p>
+</li>
+<li><p>中断和异常分配表</p>
+<p><img src="C:%5CUsers%5CLenovo%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20191108194642624.png" alt="image-20191108194642624"></p>
+</li>
+<li><p><strong>bochs调试反汇编指令：</strong></p>
+<p>ndisasm -o 0x7c00 boot.bin &gt;&gt; disboot.asm</p>
+</li>
+<li><p><strong>在bochs的dos下调试：</strong></p>
+<p>先在文件开始位置添加指令jmp $，然后在反汇编的文件中找到自己想要跳转的位置eip。然后在bochs的dos中运行，陷入死循环。在bochs中，利用ctrl+c中断调试，利用r看寄存器的值，利用set $eip=0x…值，利用s进行单步调试。</p>
+</li>
+<li><p><strong>lodsb指令：</strong></p>
+<p>LODSB/LODSW/LODSD</p>
+<p>功能：将DS：SI/ESI所指的源串元素装入累加器(AL，AX，EAX)中，每装入一次都按照DF值以及串元素类型自动修改地址指针SI/ESI，该指令一般不须加重复前缀，并且不影响标志位。</p>
+</li>
+<li><p><strong>Bochs命令：</strong></p>
+<p>挂载：</p>
+<p>sudo mount -o loop a.img /mnt/floppy/</p>
+<p>sudo cp kernel.bin /mnt/floppy/</p>
+<p>sudo umount /mnt/floppy/</p>
+<p>copy：</p>
+<p>cp /home/anred/桌面/1/5/boot.asm ./</p>
+<p>更新引导程序：</p>
+<p>dd if=boot.bin of=a.img bs=512 count=1 conv=notrunc</p>
+<p>运行Bochs：</p>
+<p>bochs -f bochsrc</p>
+<p>nasm编译：</p>
+<p>nasm loader.asm -o loader.bin</p>
+<p>nasm -f elf kliba.asm -o kliba.o</p>
+<p>gcc编译：</p>
+<p>gcc -c start.c -o start.o</p>
+<p>ld链接：</p>
+<p>ld -s -Ttext 0x30400 -o kernel.bin kernel.o string.o start.o</p>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>操作系统</category>
+      </categories>
+      <tags>
+        <tag>操作系统</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>关于GPU服务器的一点小经验</title>
     <url>/2020/03/15/%E5%85%B3%E4%BA%8EGPU%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%B8%80%E7%82%B9%E5%B0%8F%E7%BB%8F%E9%AA%8C/</url>
     <content><![CDATA[<p><strong>目的：</strong>跑一些深度学习的代码。笔记本显卡内存较小，运行速度也较慢。</p>
