@@ -79,14 +79,14 @@
 
 
 
-<meta name="description" content="网络侦察交换式网络环境的监听：（1）ARP欺骗（ARP spoofing）：网关的MAC和IP地址与自己的地址绑定。 （2）在交换机上做端口镜像，把交换机上的数据拷贝到其他端口上。 口令猜测：（1）字典攻击。（2）基于概率的口令猜测。概率大小决定测试先后次序。 拒绝服务攻击DoS（Denial of Service）定义：阻止或拒绝合法使用者存取网络服务器。 特点：往往是针对TCP&#x2F;IP协议中的某">
+<meta name="description" content="网络侦察交换式网络环境的监听：（1）ARP欺骗（ARP spoofing）：网关的MAC和IP地址与自己的地址绑定。 （2）在交换机上做端口镜像，把交换机上的数据拷贝到其他端口上。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="网络安全笔记1">
 <meta property="og:url" content="http://yoursite.com/2020/03/16/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B01/index.html">
 <meta property="og:site_name" content="Anred&#39;s Blog">
-<meta property="og:description" content="网络侦察交换式网络环境的监听：（1）ARP欺骗（ARP spoofing）：网关的MAC和IP地址与自己的地址绑定。 （2）在交换机上做端口镜像，把交换机上的数据拷贝到其他端口上。 口令猜测：（1）字典攻击。（2）基于概率的口令猜测。概率大小决定测试先后次序。 拒绝服务攻击DoS（Denial of Service）定义：阻止或拒绝合法使用者存取网络服务器。 特点：往往是针对TCP&#x2F;IP协议中的某">
+<meta property="og:description" content="网络侦察交换式网络环境的监听：（1）ARP欺骗（ARP spoofing）：网关的MAC和IP地址与自己的地址绑定。 （2）在交换机上做端口镜像，把交换机上的数据拷贝到其他端口上。">
 <meta property="article:published_time" content="2020-03-16T07:23:37.000Z">
-<meta property="article:modified_time" content="2020-03-16T13:20:21.921Z">
+<meta property="article:modified_time" content="2020-03-16T13:44:33.334Z">
 <meta property="article:author" content="Peng Zhang">
 <meta property="article:tag" content="网络安全">
 <meta property="article:tag" content="DoS">
@@ -389,6 +389,8 @@
       
         <h2 id="网络侦察"><a href="#网络侦察" class="headerlink" title="网络侦察"></a>网络侦察</h2><h3 id="交换式网络环境的监听："><a href="#交换式网络环境的监听：" class="headerlink" title="交换式网络环境的监听："></a>交换式网络环境的监听：</h3><p>（1）ARP欺骗（<strong>ARP spoofing</strong>）：网关的MAC和IP地址与自己的地址绑定。</p>
 <p>（2）在交换机上做端口镜像，把交换机上的数据拷贝到其他端口上。</p>
+<a id="more"></a>
+
 <h3 id="口令猜测："><a href="#口令猜测：" class="headerlink" title="口令猜测："></a>口令猜测：</h3><p>（1）字典攻击。（2）基于概率的口令猜测。概率大小决定测试先后次序。</p>
 <h2 id="拒绝服务攻击DoS（Denial-of-Service）"><a href="#拒绝服务攻击DoS（Denial-of-Service）" class="headerlink" title="拒绝服务攻击DoS（Denial of Service）"></a>拒绝服务攻击DoS（Denial of Service）</h2><h3 id="定义："><a href="#定义：" class="headerlink" title="定义："></a>定义：</h3><p>阻止或拒绝合法使用者存取网络服务器。</p>
 <h3 id="特点："><a href="#特点：" class="headerlink" title="特点："></a>特点：</h3><p>往往是针对TCP/IP协议中的某个弱点。从某种程度上，DoS攻击永远不会消失。（资源有限，但访问存取是无限的，跟承载能力有关）从技术上，没有根本的解决办法。一个解决思路：网络基础设施上溯源。</p>
@@ -437,7 +439,7 @@
 <li>进行蠕虫攻击 Morris</li>
 </ul>
 <h3 id="缓冲区溢出的根本原因："><a href="#缓冲区溢出的根本原因：" class="headerlink" title="缓冲区溢出的根本原因："></a>缓冲区溢出的根本原因：</h3><p>代码操作缓冲区时，没有对缓冲区边界检查，导致溢出数据改写缓冲区相邻单元的数据。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>((*d++=*s++)!=<span class="string">'\0'</span>);      <span class="comment">//strcmp函数实现</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>((*d++=*s++)!=<span class="string">'\0'</span>);      <span class="comment">//strcpy函数实现</span></span><br></pre></td></tr></table></figure>
       
     </div>
     
@@ -471,8 +473,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/03/15/Orange's%20%E4%B8%80%E4%B8%AA%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0%20%E5%B0%8F%E7%9F%A5%E8%AF%86%E7%82%B9/" rel="next" title="Orange's 一个操作系统实现 小知识点">
-                <i class="fa fa-chevron-left"></i> Orange's 一个操作系统实现 小知识点
+              <a href="/2020/03/16/%E7%BD%91%E7%BB%9C%E4%BE%A6%E5%AF%9F%E5%AE%9E%E9%AA%8C/" rel="next" title="网络侦察实验">
+                <i class="fa fa-chevron-left"></i> 网络侦察实验
               </a>
             
           </div>
@@ -480,10 +482,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2020/03/16/%E7%BD%91%E7%BB%9C%E4%BE%A6%E5%AF%9F%E5%AE%9E%E9%AA%8C/" rel="prev" title="网络侦察实验">
-                网络侦察实验 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -586,7 +584,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

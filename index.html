@@ -292,163 +292,6 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/16/%E7%BD%91%E7%BB%9C%E4%BE%A6%E5%AF%9F%E5%AE%9E%E9%AA%8C/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Peng Zhang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Anred's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/03/16/%E7%BD%91%E7%BB%9C%E4%BE%A6%E5%AF%9F%E5%AE%9E%E9%AA%8C/" itemprop="url">网络侦察实验</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-16T15:23:37+08:00">
-                2020-03-16
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" itemprop="url" rel="index">
-                    <span itemprop="name">网络安全</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="任务四-获取目标网站的webshell权限，控制目标机，获得敏感信息"><a href="#任务四-获取目标网站的webshell权限，控制目标机，获得敏感信息" class="headerlink" title="任务四 获取目标网站的webshell权限，控制目标机，获得敏感信息"></a>任务四 获取目标网站的webshell权限，控制目标机，获得敏感信息</h2><h3 id="1-准备工作"><a href="#1-准备工作" class="headerlink" title="1. 准备工作"></a>1. 准备工作</h3><p>Linux指令：从命令行界面进入图形界面（下面两个指令都可）</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ startx </span><br><span class="line">$ init 5</span><br></pre></td></tr></table></figure>
-<p>Linux指令：从图形界面进入命令行界面</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ init 3</span><br></pre></td></tr></table></figure>
-
-<p>PS：实际操作中，在远程的网络安全实验平台上，使用startx一切正常，但是使用另外2条指令会出现问题。先留个坑~。</p>
-<h3 id="2-创建HTML文件上传表单"><a href="#2-创建HTML文件上传表单" class="headerlink" title="2. 创建HTML文件上传表单"></a>2. 创建HTML文件上传表单</h3><p>基本知识：</p>
-<p>（1） 必需的 action 属性规定当提交表单时，向何处发送表单数据。 </p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">"value"</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>（2） enctype 属性规定在发送到服务器之前应该如何对表单数据进行编码。  在使用包含文件上传控件的表单时，必须使用 multipart/form-data 。</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">enctype</span>=<span class="string">"value"</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>创建一个上传表单的简单HTML文件。</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">"对应提交网址处"</span> <span class="attr">method</span>=<span class="string">"post"</span> <span class="attr">enctype</span>=<span class="string">"multipart/form-data"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">"file"</span>&gt;</span>filename: <span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"file"</span> <span class="attr">name</span>=<span class="string">"attach"</span> <span class="attr">id</span>=<span class="string">"file"</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">br</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">name</span>=<span class="string">"submit"</span> <span class="attr">value</span>=<span class="string">"submit"</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/16/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B01/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -541,59 +384,162 @@
 
       
         
-          
-            <h2 id="网络侦察"><a href="#网络侦察" class="headerlink" title="网络侦察"></a>网络侦察</h2><h3 id="交换式网络环境的监听："><a href="#交换式网络环境的监听：" class="headerlink" title="交换式网络环境的监听："></a>交换式网络环境的监听：</h3><p>（1）ARP欺骗（<strong>ARP spoofing</strong>）：网关的MAC和IP地址与自己的地址绑定。</p>
+          <h2 id="网络侦察"><a href="#网络侦察" class="headerlink" title="网络侦察"></a>网络侦察</h2><h3 id="交换式网络环境的监听："><a href="#交换式网络环境的监听：" class="headerlink" title="交换式网络环境的监听："></a>交换式网络环境的监听：</h3><p>（1）ARP欺骗（<strong>ARP spoofing</strong>）：网关的MAC和IP地址与自己的地址绑定。</p>
 <p>（2）在交换机上做端口镜像，把交换机上的数据拷贝到其他端口上。</p>
-<h3 id="口令猜测："><a href="#口令猜测：" class="headerlink" title="口令猜测："></a>口令猜测：</h3><p>（1）字典攻击。（2）基于概率的口令猜测。概率大小决定测试先后次序。</p>
-<h2 id="拒绝服务攻击DoS（Denial-of-Service）"><a href="#拒绝服务攻击DoS（Denial-of-Service）" class="headerlink" title="拒绝服务攻击DoS（Denial of Service）"></a>拒绝服务攻击DoS（Denial of Service）</h2><h3 id="定义："><a href="#定义：" class="headerlink" title="定义："></a>定义：</h3><p>阻止或拒绝合法使用者存取网络服务器。</p>
-<h3 id="特点："><a href="#特点：" class="headerlink" title="特点："></a>特点：</h3><p>往往是针对TCP/IP协议中的某个弱点。从某种程度上，DoS攻击永远不会消失。（资源有限，但访问存取是无限的，跟承载能力有关）从技术上，没有根本的解决办法。一个解决思路：网络基础设施上溯源。</p>
-<h3 id="攻击模式："><a href="#攻击模式：" class="headerlink" title="攻击模式："></a>攻击模式：</h3><p>（1）消耗资源：针对流量的攻击、消耗磁盘空间、消耗CPU（CPU 多核 开多线程 跑死循环）和内存资源（申请内存 malloc new 递归）。未及时free易造成内存泄露的问题。</p>
-<p>PS：<strong>内存泄漏（Memory Leak）：</strong>指程序中己动态分配的堆内存由于某种原因程序未释放或无法释放，造成系统内存的浪费，导致程序运行速度减慢甚至系统崩溃等严重后果。</p>
-<p>（2）破坏或更改配置信息。</p>
-<p>（3）物理破坏或改变网络部件。防御：加强管理。</p>
-<h3 id="常见DoS攻击："><a href="#常见DoS攻击：" class="headerlink" title="常见DoS攻击："></a>常见DoS攻击：</h3><p><strong>SYN Flooding：</strong></p>
-<p>利用TCP连接的常见服务端口攻击。</p>
-<p>表现：短时间大量SYN包。</p>
-<p>TCP连接的三次握手，存储接收到的数据，进行缓存，缓存充满使服务终止。连接请求超过超时的处理，即可最终充满。客户端利用假IP，不发送第三次响应包。</p>
-<p>特点：</p>
-<ul>
-<li>利用TCP/IP协议的薄弱环节进行攻击</li>
-<li>利用较少数据流量就可</li>
-<li>攻击来源无法定位</li>
-<li>在服务端无法区分TCP连接请求的合法性.</li>
-</ul>
-<p>应对：（1）优化系统配置（缓冲区扩大和超时时间减小）（2）优化路由器配置</p>
-<p><strong>Smurf攻击：</strong></p>
-<p>结合使用IP欺骗和ICMP回复的攻击。</p>
-<p><strong>Ping of Death攻击</strong></p>
-<p><strong>Teardrop攻击</strong></p>
-<p><strong>Land攻击：</strong>设置IP为127.0.0.1，向自己发响应包。</p>
-<p><strong>电子邮件轰炸</strong>：SMTP端口（25）：早期未授权访问，发送地址可以自己设定。</p>
-<p>目前为ESMTP服务。hello过程之后，会有自己邮件地址和口令的认证。</p>
-<p>应对：配置路由器和防火墙，识别源头。</p>
-<h3 id="分布式拒绝服务攻击DDoS："><a href="#分布式拒绝服务攻击DDoS：" class="headerlink" title="分布式拒绝服务攻击DDoS："></a>分布式拒绝服务攻击DDoS：</h3><p>相比传统的DoS攻击：（1）网络资源的限制减小（2）隐蔽性高</p>
-<p>DDoS的三级控制结构。客户端（Client）、中间机（Handler）和代理机（Agent）。</p>
-<p>应对：</p>
-<ul>
-<li>在数据流中搜寻特征字符串</li>
-<li>利用数据包的某些特征</li>
-<li>监视本地主机端口的使用</li>
-<li>对通信数据量进行统计</li>
-</ul>
-<h2 id="缓冲区溢出攻击"><a href="#缓冲区溢出攻击" class="headerlink" title="缓冲区溢出攻击"></a>缓冲区溢出攻击</h2><h3 id="缓冲区定义："><a href="#缓冲区定义：" class="headerlink" title="缓冲区定义："></a>缓冲区定义：</h3><p>一段连续的存储空间。（堆或栈的空间）</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> i;</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/03/16/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B01/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
 
-<p>三重含义：（1）在内存存储创建的位置（2）存储空间大小（3）数据存储格式。例如int与double不同。</p>
-<h3 id="缓冲区溢出定义："><a href="#缓冲区溢出定义：" class="headerlink" title="缓冲区溢出定义："></a>缓冲区溢出定义：</h3><p>指写入缓冲区的数据量超过了该缓冲区的最大限度，造成溢出数据改写了缓冲区相邻的原始数据。</p>
-<h3 id="缓冲区溢出危害："><a href="#缓冲区溢出危害：" class="headerlink" title="缓冲区溢出危害："></a>缓冲区溢出危害：</h3><ul>
-<li>实现任意执行代码</li>
-<li>进行DoS攻击</li>
-<li>破坏关键数据，使系统的稳定性和有效性受到影响</li>
-<li>进行蠕虫攻击 Morris</li>
-</ul>
-<h3 id="缓冲区溢出的根本原因："><a href="#缓冲区溢出的根本原因：" class="headerlink" title="缓冲区溢出的根本原因："></a>缓冲区溢出的根本原因：</h3><p>代码操作缓冲区时，没有对缓冲区边界检查，导致溢出数据改写缓冲区相邻单元的数据。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>((*d++=*s++)!=<span class="string">'\0'</span>);      <span class="comment">//strcmp函数实现</span></span><br></pre></td></tr></table></figure>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/16/%E7%BD%91%E7%BB%9C%E4%BE%A6%E5%AF%9F%E5%AE%9E%E9%AA%8C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Peng Zhang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Anred's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/03/16/%E7%BD%91%E7%BB%9C%E4%BE%A6%E5%AF%9F%E5%AE%9E%E9%AA%8C/" itemprop="url">网络侦察实验</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-16T15:23:37+08:00">
+                2020-03-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
           
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" itemprop="url" rel="index">
+                    <span itemprop="name">网络安全</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="任务四-获取目标网站的webshell权限，控制目标机，获得敏感信息"><a href="#任务四-获取目标网站的webshell权限，控制目标机，获得敏感信息" class="headerlink" title="任务四 获取目标网站的webshell权限，控制目标机，获得敏感信息"></a>任务四 获取目标网站的webshell权限，控制目标机，获得敏感信息</h2><h3 id="1-准备工作"><a href="#1-准备工作" class="headerlink" title="1. 准备工作"></a>1. 准备工作</h3><p>Linux指令：从命令行界面进入图形界面（下面两个指令都可）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ startx </span><br><span class="line">$ init 5</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/03/16/%E7%BD%91%E7%BB%9C%E4%BE%A6%E5%AF%9F%E5%AE%9E%E9%AA%8C/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1170,7 +1116,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
