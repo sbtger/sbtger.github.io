@@ -3,19 +3,19 @@
   <entry>
     <title>Linux的C语言编译及调试</title>
     <url>/2020/03/17/Linux%E7%9A%84C%E8%AF%AD%E8%A8%80%E7%BC%96%E8%AF%91%E5%8F%8A%E8%B0%83%E8%AF%95/</url>
-    <content><![CDATA[<h2 id="PIC"><a href="#PIC" class="headerlink" title="PIC"></a>PIC</h2>]]></content>
+    <content><![CDATA[<h2 id="PIC"><a href="#PIC" class="headerlink" title="PIC"></a>PIC</h2><a id="more"></a>]]></content>
       <categories>
-        <category>嵌入式系统安全</category>
+        <category>网络程序设计</category>
       </categories>
       <tags>
-        <tag>嵌入式系统安全</tag>
-        <tag>ARM</tag>
-        <tag>PIC</tag>
+        <tag>网络程序设计</tag>
+        <tag>Linux</tag>
+        <tag>C</tag>
       </tags>
   </entry>
   <entry>
-    <title>嵌入式系统安全笔记1</title>
-    <url>/2020/03/17/%E5%B5%8C%E5%85%A5%E5%BC%8F%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B01/</url>
+    <title>嵌入式系统安全笔记_ARM</title>
+    <url>/2020/03/17/%E5%B5%8C%E5%85%A5%E5%BC%8F%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0_ARM/</url>
     <content><![CDATA[<h2 id="PIC"><a href="#PIC" class="headerlink" title="PIC"></a>PIC</h2><h3 id="中断："><a href="#中断：" class="headerlink" title="中断："></a>中断：</h3><ul>
 <li><p>中断分组管理（快速中断屏蔽）与控制</p>
 </li>
@@ -169,37 +169,8 @@
       </tags>
   </entry>
   <entry>
-    <title>网络侦察实验</title>
-    <url>/2020/03/16/%E7%BD%91%E7%BB%9C%E4%BE%A6%E5%AF%9F%E5%AE%9E%E9%AA%8C/</url>
-    <content><![CDATA[<h2 id="任务四-获取目标网站的webshell权限，控制目标机，获得敏感信息"><a href="#任务四-获取目标网站的webshell权限，控制目标机，获得敏感信息" class="headerlink" title="任务四 获取目标网站的webshell权限，控制目标机，获得敏感信息"></a>任务四 获取目标网站的webshell权限，控制目标机，获得敏感信息</h2><h3 id="1-准备工作"><a href="#1-准备工作" class="headerlink" title="1. 准备工作"></a>1. 准备工作</h3><p>Linux指令：从命令行界面进入图形界面（下面两个指令都可）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ startx </span><br><span class="line">$ init 5</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-
-<p>Linux指令：从图形界面进入命令行界面</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ init 3</span><br></pre></td></tr></table></figure>
-
-<p>PS：实际操作中，在远程的网络安全实验平台上，使用startx一切正常，但是使用另外2条指令会出现问题。先留个坑~。</p>
-<h3 id="2-创建HTML文件上传表单"><a href="#2-创建HTML文件上传表单" class="headerlink" title="2. 创建HTML文件上传表单"></a>2. 创建HTML文件上传表单</h3><p>基本知识：</p>
-<p>（1） 必需的 action 属性规定当提交表单时，向何处发送表单数据。 </p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">"value"</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>（2） enctype 属性规定在发送到服务器之前应该如何对表单数据进行编码。  在使用包含文件上传控件的表单时，必须使用 multipart/form-data 。</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">enctype</span>=<span class="string">"value"</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>创建一个上传表单的简单HTML文件。</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">"对应提交网址处"</span> <span class="attr">method</span>=<span class="string">"post"</span> <span class="attr">enctype</span>=<span class="string">"multipart/form-data"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">"file"</span>&gt;</span>filename: <span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"file"</span> <span class="attr">name</span>=<span class="string">"attach"</span> <span class="attr">id</span>=<span class="string">"file"</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">br</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">name</span>=<span class="string">"submit"</span> <span class="attr">value</span>=<span class="string">"submit"</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>网络安全</category>
-      </categories>
-      <tags>
-        <tag>网络安全</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>网络安全笔记1</title>
-    <url>/2020/03/16/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B01/</url>
+    <title>网络安全笔记_DDoS攻击</title>
+    <url>/2020/03/16/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0_DDoS%E6%94%BB%E5%87%BB/</url>
     <content><![CDATA[<h2 id="网络侦察"><a href="#网络侦察" class="headerlink" title="网络侦察"></a>网络侦察</h2><h3 id="交换式网络环境的监听："><a href="#交换式网络环境的监听：" class="headerlink" title="交换式网络环境的监听："></a>交换式网络环境的监听：</h3><p>（1）ARP欺骗（<strong>ARP spoofing</strong>）：网关的MAC和IP地址与自己的地址绑定。</p>
 <p>（2）在交换机上做端口镜像，把交换机上的数据拷贝到其他端口上。</p>
 <a id="more"></a>
@@ -260,6 +231,35 @@
         <tag>网络安全</tag>
         <tag>DoS</tag>
         <tag>缓冲区溢出</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>网络侦察实验</title>
+    <url>/2020/03/16/%E7%BD%91%E7%BB%9C%E4%BE%A6%E5%AF%9F%E5%AE%9E%E9%AA%8C/</url>
+    <content><![CDATA[<h2 id="任务四-获取目标网站的webshell权限，控制目标机，获得敏感信息"><a href="#任务四-获取目标网站的webshell权限，控制目标机，获得敏感信息" class="headerlink" title="任务四 获取目标网站的webshell权限，控制目标机，获得敏感信息"></a>任务四 获取目标网站的webshell权限，控制目标机，获得敏感信息</h2><h3 id="1-准备工作"><a href="#1-准备工作" class="headerlink" title="1. 准备工作"></a>1. 准备工作</h3><p>Linux指令：从命令行界面进入图形界面（下面两个指令都可）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ startx </span><br><span class="line">$ init 5</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<p>Linux指令：从图形界面进入命令行界面</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ init 3</span><br></pre></td></tr></table></figure>
+
+<p>PS：实际操作中，在远程的网络安全实验平台上，使用startx一切正常，但是使用另外2条指令会出现问题。先留个坑~。</p>
+<h3 id="2-创建HTML文件上传表单"><a href="#2-创建HTML文件上传表单" class="headerlink" title="2. 创建HTML文件上传表单"></a>2. 创建HTML文件上传表单</h3><p>基本知识：</p>
+<p>（1） 必需的 action 属性规定当提交表单时，向何处发送表单数据。 </p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">"value"</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>（2） enctype 属性规定在发送到服务器之前应该如何对表单数据进行编码。  在使用包含文件上传控件的表单时，必须使用 multipart/form-data 。</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">enctype</span>=<span class="string">"value"</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>创建一个上传表单的简单HTML文件。</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">"对应提交网址处"</span> <span class="attr">method</span>=<span class="string">"post"</span> <span class="attr">enctype</span>=<span class="string">"multipart/form-data"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">"file"</span>&gt;</span>filename: <span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"file"</span> <span class="attr">name</span>=<span class="string">"attach"</span> <span class="attr">id</span>=<span class="string">"file"</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">br</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">name</span>=<span class="string">"submit"</span> <span class="attr">value</span>=<span class="string">"submit"</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>网络安全</category>
+      </categories>
+      <tags>
+        <tag>网络安全</tag>
       </tags>
   </entry>
   <entry>
