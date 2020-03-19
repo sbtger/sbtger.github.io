@@ -1,7 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>微机接口_存储器</title>
+    <title>信息采集_爬虫</title>
+    <url>/2020/03/20/%E4%BF%A1%E6%81%AF%E9%87%87%E9%9B%86_%E7%88%AC%E8%99%AB/</url>
+    <content><![CDATA[<h2 id="Scrapy框架："><a href="#Scrapy框架：" class="headerlink" title="Scrapy框架："></a>Scrapy框架：</h2><p>安装Scrapy需要安装lxml、Twisted、scrapy和pypiwin32包。只需要pip install 对应包即可安装。</p>
+<a id="more"></a>
+
+<p><strong>如何查找与本机符合的whl文件的版本？</strong></p>
+<p>有些时候，我们需要利用whl文件安装python的包。whl文件本质上是一个压缩包，里面包含了py文件和经过编译的pyd文件。使得可以在不具备编译环境的情况下进行安装。</p>
+<p>利用pip工具取查询本机对应的安装标签，在命令行中打开python，输入如下代码，即可得到对应安装的标签（如cp37-cp37m-win_amd64）。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> pip._internal.pep425tags</span><br><span class="line">print(pip._internal.pep425tags.get_supported())</span><br></pre></td></tr></table></figure>
+
+<p>如果是32位系统，则输入如下指令</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> pip.pep425tags</span><br><span class="line">print(pip.pep425tags.get_supported())</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+]]></content>
+      <categories>
+        <category>信息内容安全</category>
+      </categories>
+      <tags>
+        <tag>信息内容安全</tag>
+        <tag>爬虫</tag>
+        <tag>信息采集</tag>
+        <tag>Scrapy</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>微机接口笔记_存储器</title>
     <url>/2020/03/19/%E5%BE%AE%E6%9C%BA%E6%8E%A5%E5%8F%A3%E7%AC%94%E8%AE%B0_%E5%AD%98%E5%82%A8%E5%99%A8/</url>
     <content><![CDATA[<h2 id="存储器与CPU的连接"><a href="#存储器与CPU的连接" class="headerlink" title="存储器与CPU的连接"></a>存储器与CPU的连接</h2><h3 id="1-设计接口应考虑的问题"><a href="#1-设计接口应考虑的问题" class="headerlink" title="1. 设计接口应考虑的问题"></a>1. 设计接口应考虑的问题</h3><ul>
 <li>CPU总线的负载能力：总线直接驱动负载能力超过后，应在总线和负载间接缓冲器或驱动器，否则会影响信号逻辑电平。</li>
@@ -9,6 +42,8 @@
 <li>存储器的地址分配和片选</li>
 <li>控制信号的连接</li>
 </ul>
+<a id="more"></a>
+
 <h3 id="2-存储器接口设计"><a href="#2-存储器接口设计" class="headerlink" title="2. 存储器接口设计"></a>2. 存储器接口设计</h3><h4 id="地址译码器："><a href="#地址译码器：" class="headerlink" title="地址译码器："></a>地址译码器：</h4><p><strong>片选操作。</strong>  74LS138译码器是常用的8取1的译码器。</p>
 <p><strong>38译码器功能：</strong>（1）根据片选输入选择对应芯片进行I/O访问。（2）通过38译码器控制存储器的工作。</p>
 <h4 id="存储空间的扩展："><a href="#存储空间的扩展：" class="headerlink" title="存储空间的扩展："></a>存储空间的扩展：</h4><p><strong>位扩展：</strong>芯片层叠。</p>
