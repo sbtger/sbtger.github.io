@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="网络安全," />
+  <meta name="keywords" content="网络安全,Linux," />
 
 
 
@@ -79,17 +79,20 @@
 
 
 
-<meta name="description" content="任务四 获取目标网站的webshell权限，控制目标机，获得敏感信息1. 准备工作Linux指令：从命令行界面进入图形界面（下面两个指令都可） 12$ startx $ init 5">
+<meta name="description" content="checksecChecksec.sh是一个bash脚本，用于检查一些可执行的属性，例如（PIE，RELRO，PaX，Canaries，ASLR，Fortify Source）。它最初是由Tobias Klein编写的，其原始资源可以在这里找到：checksec。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="网络侦察实验">
-<meta property="og:url" content="http://yoursite.com/2020/03/16/%E7%BD%91%E7%BB%9C%E4%BE%A6%E5%AF%9F%E5%AE%9E%E9%AA%8C/index.html">
+<meta property="og:title" content="checksec">
+<meta property="og:url" content="http://yoursite.com/2020/03/22/checksec/index.html">
 <meta property="og:site_name" content="Anred&#39;s Blog">
-<meta property="og:description" content="任务四 获取目标网站的webshell权限，控制目标机，获得敏感信息1. 准备工作Linux指令：从命令行界面进入图形界面（下面两个指令都可） 12$ startx $ init 5">
-<meta property="article:published_time" content="2020-03-16T07:23:37.000Z">
-<meta property="article:modified_time" content="2020-03-16T13:39:41.734Z">
+<meta property="og:description" content="checksecChecksec.sh是一个bash脚本，用于检查一些可执行的属性，例如（PIE，RELRO，PaX，Canaries，ASLR，Fortify Source）。它最初是由Tobias Klein编写的，其原始资源可以在这里找到：checksec。">
+<meta property="og:image" content="http://yoursite.com/2020/03/22/checksec/1.PNG">
+<meta property="article:published_time" content="2020-03-22T15:04:38.000Z">
+<meta property="article:modified_time" content="2020-03-22T15:56:28.499Z">
 <meta property="article:author" content="Peng Zhang">
 <meta property="article:tag" content="网络安全">
+<meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2020/03/22/checksec/1.PNG">
 
 
 
@@ -119,13 +122,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2020/03/16/网络侦察实验/"/>
+  <link rel="canonical" href="http://yoursite.com/2020/03/22/checksec/"/>
 
 
 
 
 
-  <title>网络侦察实验 | Anred's Blog</title>
+  <title>checksec | Anred's Blog</title>
   
 
 
@@ -296,7 +299,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/16/%E7%BD%91%E7%BB%9C%E4%BE%A6%E5%AF%9F%E5%AE%9E%E9%AA%8C/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/22/checksec/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Peng Zhang">
@@ -313,7 +316,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">网络侦察实验</h1>
+          <h1 class="post-title" itemprop="name headline">checksec</h1>
         
 
         <div class="post-meta">
@@ -325,8 +328,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-16T15:23:37+08:00">
-                2020-03-16
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-22T23:04:38+08:00">
+                2020-03-22
               </time>
             
 
@@ -366,8 +369,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2020/03/16/%E7%BD%91%E7%BB%9C%E4%BE%A6%E5%AF%9F%E5%AE%9E%E9%AA%8C/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2020/03/16/%E7%BD%91%E7%BB%9C%E4%BE%A6%E5%AF%9F%E5%AE%9E%E9%AA%8C/" itemprop="commentCount"></span>
+                <a href="/2020/03/22/checksec/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2020/03/22/checksec/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -375,7 +378,7 @@
 
           
           
-             <span id="/2020/03/16/%E7%BD%91%E7%BB%9C%E4%BE%A6%E5%AF%9F%E5%AE%9E%E9%AA%8C/" class="leancloud_visitors" data-flag-title="网络侦察实验">
+             <span id="/2020/03/22/checksec/" class="leancloud_visitors" data-flag-title="checksec">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -400,7 +403,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  296
+                  580
                 </span>
               
 
@@ -425,25 +428,34 @@
       
 
       
-        <h2 id="任务四-获取目标网站的webshell权限，控制目标机，获得敏感信息"><a href="#任务四-获取目标网站的webshell权限，控制目标机，获得敏感信息" class="headerlink" title="任务四 获取目标网站的webshell权限，控制目标机，获得敏感信息"></a>任务四 获取目标网站的webshell权限，控制目标机，获得敏感信息</h2><h3 id="1-准备工作"><a href="#1-准备工作" class="headerlink" title="1. 准备工作"></a>1. 准备工作</h3><p>Linux指令：从命令行界面进入图形界面（下面两个指令都可）</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ startx </span><br><span class="line">$ init 5</span><br></pre></td></tr></table></figure>
+        <h2 id="checksec"><a href="#checksec" class="headerlink" title="checksec"></a>checksec</h2><p>Checksec.sh是一个bash脚本，用于检查一些可执行的属性，例如（PIE，RELRO，PaX，Canaries，ASLR，Fortify Source）。它最初是由Tobias Klein编写的，其原始资源可以在这里找到：<a href="http://www.trapkit.de/tools/checksec.html" target="_blank" rel="noopener">checksec</a>。</p>
 <a id="more"></a>
 
-<p>Linux指令：从图形界面进入命令行界面</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ init 3</span><br></pre></td></tr></table></figure>
+<p><img src="/2020/03/22/checksec/1.PNG" alt="1"></p>
+<ul>
+<li><p><strong>PIE：</strong>地址随机化。如果程序开启了地址随机化选项（PIE enabled），意味着程序每次运行地址都会变化。如果程序没有开启地址随机化选项（No PIE），则程序的基地址为 (0x400000)。</p>
+</li>
+<li><p><strong>RELRO：</strong>RELRO有Partial RELRO和FULL RELRO。如果开启FULL RELRO，意味着我们无法修改GOT表。</p>
+</li>
+<li><p><strong>Stack：</strong>金丝雀机制。如果栈中开启Canary机制（Canary found），那么就不能直接用溢出的方法覆盖栈中返回地址，而且要通过改写指针与局部变量、leak canary、overwrite canary等方法来绕过。</p>
+</li>
+<li><p><strong>NX：</strong>栈不可执行。如果开启NX保护，则栈中数据没有执行权限。call esp或jmp esp的方法无法使用，但可以利用rop的方法绕过。</p>
+</li>
+<li><p><strong>FORTIFY：</strong>格式化字符串保护。FORTIFY_SOURCE机制对格式化字符串有两个限制：（1）包含%n的格式化字符串不能位于程序内存中的可写地址。（2）当使用位置参数时，必须使用范围内的所有参数。所以如果要使用%7$x，你必须同时使用参数1、2、3、4、5和6。</p>
+</li>
+</ul>
+<h2 id="Linux常见的保护机制"><a href="#Linux常见的保护机制" class="headerlink" title="Linux常见的保护机制"></a>Linux常见的保护机制</h2><h3 id="1-NX（Windows中的DEP）"><a href="#1-NX（Windows中的DEP）" class="headerlink" title="1. NX（Windows中的DEP）"></a>1. NX（Windows中的DEP）</h3><p><strong>NX：</strong>No-eXecute</p>
+<p><strong>DEP：</strong>Data Execute Prevention</p>
+<p>数据不可执行。<br>gcc编译选项（默认开启与关闭NX）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc -o <span class="built_in">test</span> test.c</span><br><span class="line">gcc -z execstack -o <span class="built_in">test</span> test.c</span><br></pre></td></tr></table></figure>
 
-<p>PS：实际操作中，在远程的网络安全实验平台上，使用startx一切正常，但是使用另外2条指令会出现问题。先留个坑~。</p>
-<h3 id="2-创建HTML文件上传表单"><a href="#2-创建HTML文件上传表单" class="headerlink" title="2. 创建HTML文件上传表单"></a>2. 创建HTML文件上传表单</h3><p>基本知识：</p>
-<p>（1） 必需的 action 属性规定当提交表单时，向何处发送表单数据。 </p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">"value"</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-PIE（ASLR）"><a href="#2-PIE（ASLR）" class="headerlink" title="2. PIE（ASLR）"></a>2. PIE（ASLR）</h3><p> <strong>PIE</strong>：Position-Independent Excutable</p>
+<p><strong>ASLR</strong>：Address Space Layout Randomization</p>
+<p> 开启PIE选项编译可执行文件，可以使得elf文件拥有共享库属性。ASLR负责栈、库、堆等段的地址随机化。<br>关闭ASLR的bash命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo sh -c <span class="string">"echo 0 &gt; /proc/sys/kernel/randomize_va_space"</span></span><br></pre></td></tr></table></figure>
 
-<p>（2） enctype 属性规定在发送到服务器之前应该如何对表单数据进行编码。  在使用包含文件上传控件的表单时，必须使用 multipart/form-data 。</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">enctype</span>=<span class="string">"value"</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>创建一个上传表单的简单HTML文件。</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">"对应提交网址处"</span> <span class="attr">method</span>=<span class="string">"post"</span> <span class="attr">enctype</span>=<span class="string">"multipart/form-data"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">"file"</span>&gt;</span>filename: <span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"file"</span> <span class="attr">name</span>=<span class="string">"attach"</span> <span class="attr">id</span>=<span class="string">"file"</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">br</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">name</span>=<span class="string">"submit"</span> <span class="attr">value</span>=<span class="string">"submit"</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-
+<h3 id="3-Canary（栈保护）"><a href="#3-Canary（栈保护）" class="headerlink" title="3. Canary（栈保护）"></a>3. Canary（栈保护）</h3><p> 金丝雀（Canary）机制：函数每一次执行时，在栈上随机产生一个置于缓冲区和控制数据之间的Canary值。之后当函数执行结束返回时，检测Canary值，若不一致系统则报出异常。例如当发生缓冲区溢出时，该值则会被覆写。<br>gcc编译选项（默认关闭、禁用与启用栈保护）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gcc -o <span class="built_in">test</span> test.c</span><br><span class="line">gcc -fno-stack-protector -o <span class="built_in">test</span> test.c</span><br><span class="line">gcc -fstack-protector-all -o <span class="built_in">test</span> test.c</span><br></pre></td></tr></table></figure>
       
     </div>
     
@@ -462,6 +474,8 @@
           
             <a href="/tags/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" rel="tag"># 网络安全</a>
           
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
         </div>
       
 
@@ -473,8 +487,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/03/16/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0_DDoS%E6%94%BB%E5%87%BB/" rel="next" title="网络安全笔记_DDoS攻击">
-                <i class="fa fa-chevron-left"></i> 网络安全笔记_DDoS攻击
+              <a href="/2020/03/20/%E4%B8%BB%E6%B5%81%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8_Windows/" rel="next" title="主流操作系统安全_Windows">
+                <i class="fa fa-chevron-left"></i> 主流操作系统安全_Windows
               </a>
             
           </div>
@@ -482,10 +496,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2020/03/17/%E5%B5%8C%E5%85%A5%E5%BC%8F%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0_ARM/" rel="prev" title="嵌入式系统安全笔记_ARM">
-                嵌入式系统安全笔记_ARM <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -638,7 +648,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#任务四-获取目标网站的webshell权限，控制目标机，获得敏感信息"><span class="nav-number">1.</span> <span class="nav-text">任务四 获取目标网站的webshell权限，控制目标机，获得敏感信息</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-准备工作"><span class="nav-number">1.1.</span> <span class="nav-text">1. 准备工作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-创建HTML文件上传表单"><span class="nav-number">1.2.</span> <span class="nav-text">2. 创建HTML文件上传表单</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#checksec"><span class="nav-number">1.</span> <span class="nav-text">checksec</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux常见的保护机制"><span class="nav-number">2.</span> <span class="nav-text">Linux常见的保护机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-NX（Windows中的DEP）"><span class="nav-number">2.1.</span> <span class="nav-text">1. NX（Windows中的DEP）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-PIE（ASLR）"><span class="nav-number">2.2.</span> <span class="nav-text">2. PIE（ASLR）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Canary（栈保护）"><span class="nav-number">2.3.</span> <span class="nav-text">3. Canary（栈保护）</span></a></li></ol></li></ol></div>
             
 
           </div>

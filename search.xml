@@ -1,6 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>checksec</title>
+    <url>/2020/03/22/checksec/</url>
+    <content><![CDATA[<h2 id="checksec"><a href="#checksec" class="headerlink" title="checksec"></a>checksec</h2><p>Checksec.sh是一个bash脚本，用于检查一些可执行的属性，例如（PIE，RELRO，PaX，Canaries，ASLR，Fortify Source）。它最初是由Tobias Klein编写的，其原始资源可以在这里找到：<a href="http://www.trapkit.de/tools/checksec.html" target="_blank" rel="noopener">checksec</a>。</p>
+<a id="more"></a>
+
+<p><img src="/2020/03/22/checksec/1.PNG" alt="1"></p>
+<ul>
+<li><p><strong>PIE：</strong>地址随机化。如果程序开启了地址随机化选项（PIE enabled），意味着程序每次运行地址都会变化。如果程序没有开启地址随机化选项（No PIE），则程序的基地址为 (0x400000)。</p>
+</li>
+<li><p><strong>RELRO：</strong>RELRO有Partial RELRO和FULL RELRO。如果开启FULL RELRO，意味着我们无法修改GOT表。</p>
+</li>
+<li><p><strong>Stack：</strong>金丝雀机制。如果栈中开启Canary机制（Canary found），那么就不能直接用溢出的方法覆盖栈中返回地址，而且要通过改写指针与局部变量、leak canary、overwrite canary等方法来绕过。</p>
+</li>
+<li><p><strong>NX：</strong>栈不可执行。如果开启NX保护，则栈中数据没有执行权限。call esp或jmp esp的方法无法使用，但可以利用rop的方法绕过。</p>
+</li>
+<li><p><strong>FORTIFY：</strong>格式化字符串保护。FORTIFY_SOURCE机制对格式化字符串有两个限制：（1）包含%n的格式化字符串不能位于程序内存中的可写地址。（2）当使用位置参数时，必须使用范围内的所有参数。所以如果要使用%7$x，你必须同时使用参数1、2、3、4、5和6。</p>
+</li>
+</ul>
+<h2 id="Linux常见的保护机制"><a href="#Linux常见的保护机制" class="headerlink" title="Linux常见的保护机制"></a>Linux常见的保护机制</h2><h3 id="1-NX（Windows中的DEP）"><a href="#1-NX（Windows中的DEP）" class="headerlink" title="1. NX（Windows中的DEP）"></a>1. NX（Windows中的DEP）</h3><p><strong>NX：</strong>No-eXecute</p>
+<p><strong>DEP：</strong>Data Execute Prevention</p>
+<p>数据不可执行。<br>gcc编译选项（默认开启与关闭NX）：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">gcc -o <span class="built_in">test</span> test.c</span><br><span class="line">gcc -z execstack -o <span class="built_in">test</span> test.c</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-PIE（ASLR）"><a href="#2-PIE（ASLR）" class="headerlink" title="2. PIE（ASLR）"></a>2. PIE（ASLR）</h3><p> <strong>PIE</strong>：Position-Independent Excutable</p>
+<p><strong>ASLR</strong>：Address Space Layout Randomization</p>
+<p> 开启PIE选项编译可执行文件，可以使得elf文件拥有共享库属性。ASLR负责栈、库、堆等段的地址随机化。<br>关闭ASLR的bash命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo sh -c <span class="string">"echo 0 &gt; /proc/sys/kernel/randomize_va_space"</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-Canary（栈保护）"><a href="#3-Canary（栈保护）" class="headerlink" title="3. Canary（栈保护）"></a>3. Canary（栈保护）</h3><p> 金丝雀（Canary）机制：函数每一次执行时，在栈上随机产生一个置于缓冲区和控制数据之间的Canary值。之后当函数执行结束返回时，检测Canary值，若不一致系统则报出异常。例如当发生缓冲区溢出时，该值则会被覆写。<br>gcc编译选项（默认关闭、禁用与启用栈保护）：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">gcc -o <span class="built_in">test</span> test.c</span><br><span class="line">gcc -fno-stack-protector -o <span class="built_in">test</span> test.c</span><br><span class="line">gcc -fstack-protector-all -o <span class="built_in">test</span> test.c</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>网络安全</category>
+      </categories>
+      <tags>
+        <tag>网络安全</tag>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>主流操作系统安全_Windows</title>
     <url>/2020/03/20/%E4%B8%BB%E6%B5%81%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8_Windows/</url>
     <content><![CDATA[<h2 id="Winodws系统结构"><a href="#Winodws系统结构" class="headerlink" title="Winodws系统结构"></a>Winodws系统结构</h2><h3 id="Windows引导过程："><a href="#Windows引导过程：" class="headerlink" title="Windows引导过程："></a>Windows引导过程：</h3><ul>
