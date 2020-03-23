@@ -1,6 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>网络安全笔记_缓冲区溢出</title>
+    <url>/2020/03/23/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0_%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA/</url>
+    <content><![CDATA[<h2 id="缓冲区溢出"><a href="#缓冲区溢出" class="headerlink" title="缓冲区溢出"></a>缓冲区溢出</h2><h3 id="缓冲区溢出攻击的原理"><a href="#缓冲区溢出攻击的原理" class="headerlink" title="缓冲区溢出攻击的原理"></a>缓冲区溢出攻击的原理</h3><h4 id="1、缓冲区溢出攻击模式："><a href="#1、缓冲区溢出攻击模式：" class="headerlink" title="1、缓冲区溢出攻击模式："></a>1、缓冲区溢出攻击模式：</h4><ul>
+<li>找到可利用的缓冲区溢出隐患</li>
+<li>注入恶意代码</li>
+<li>溢出缓冲区</li>
+<li>重定向到攻击程序</li>
+<li>执行攻击程序</li>
+<li>获得控制权</li>
+<li>任意地执行程序</li>
+</ul>
+<a id="more"></a>
+
+<h4 id="2、进程在内存的布局："><a href="#2、进程在内存的布局：" class="headerlink" title="2、进程在内存的布局："></a>2、进程在内存的布局：</h4><p><strong>代码段/文本段：</strong>用于放置程序的可执行代码（机器码）。</p>
+<p><strong>数据段：</strong>用于放置<strong>已初始化</strong>的全局变量和已初始化的局部静态变量。 已初始化且不为0。</p>
+<p><strong>BSS(Block Started by Symbol)段：</strong>用于放置<strong>未初始化</strong>的全局变量和未初始化的局部静态变量。</p>
+<p><strong>堆：</strong>用于动态分配内存。</p>
+<p><strong>堆栈段：</strong>用于存放函数的参数，返回地址，调用函数的栈基址以及局部非静态变量。</p>
+<p><strong>进程的环境变量和参数</strong></p>
+<p>缓冲区溢出可能发生的位置：栈、堆、数据段和BSS段。</p>
+<h4 id="3、被调函数栈布局："><a href="#3、被调函数栈布局：" class="headerlink" title="3、被调函数栈布局："></a>3、被调函数栈布局：</h4><p>函数调用堆栈的操作：</p>
+<p><strong>main栈帧：</strong></p>
+<ul>
+<li><strong>参数</strong>入栈，一般从右到左压栈。push</li>
+<li><strong>返回地址</strong>的压栈。call function（返回地址压栈；跳转到function）。</li>
+</ul>
+<p><strong>function栈帧：</strong></p>
+<ul>
+<li><strong>push ebp</strong></li>
+<li>被调函数的<strong>局部变量</strong>分配内存空间。</li>
+<li>函数体<strong>执行</strong>。</li>
+<li>执行完成，<strong>ret</strong>。</li>
+</ul>
+<p><strong>潜在危害：</strong></p>
+<ul>
+<li>改写返回地址</li>
+<li>改写调用函数栈的栈帧地址</li>
+<li>改写函数指针</li>
+<li>改写虚函数指针</li>
+<li>改写异常处理指针</li>
+<li>改写数据指针</li>
+</ul>
+<h4 id="4、缓冲区溢出的途径："><a href="#4、缓冲区溢出的途径：" class="headerlink" title="4、缓冲区溢出的途径："></a>4、缓冲区溢出的途径：</h4><ul>
+<li>内存拷贝。</li>
+<li>利用数组的最大下标和数组长度的差异产生。</li>
+<li>利用有符号整数与无符号整数的转换。</li>
+<li>恶意代码（注入）。exec(/bin/sh)</li>
+</ul>
+]]></content>
+      <categories>
+        <category>网络安全</category>
+      </categories>
+      <tags>
+        <tag>网络安全</tag>
+        <tag>缓冲区溢出</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>checksec</title>
     <url>/2020/03/22/checksec/</url>
     <content><![CDATA[<h2 id="checksec"><a href="#checksec" class="headerlink" title="checksec"></a>checksec</h2><p>Checksec.sh是一个bash脚本，用于检查一些可执行的属性，例如（PIE，RELRO，PaX，Canaries，ASLR，Fortify Source）。它最初是由Tobias Klein编写的，其原始资源可以在这里找到：<a href="http://www.trapkit.de/tools/checksec.html" target="_blank" rel="noopener">checksec</a>。</p>
