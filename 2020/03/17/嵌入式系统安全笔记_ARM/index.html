@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="Anred&#39;s Blog">
 <meta property="og:description" content="PIC中断： 中断分组管理（快速中断屏蔽）与控制  统一中断入口：根据中断标志位判断中断的类型。因为中断标志位始终会产生，所以开放中断前需要清除中断标志位。  边沿触发：外部中断可以边沿选择。数字信号低电平的驱动能力比较强，下降沿（更陡峭），下降时间比较短，故从可靠性的角度下降沿触发最佳。  电平变化中断：端口处有异或比较器，当变化时产生中断，从而识别边沿。">
 <meta property="article:published_time" content="2020-03-17T06:00:00.000Z">
-<meta property="article:modified_time" content="2020-03-17T11:53:14.168Z">
+<meta property="article:modified_time" content="2020-03-24T06:32:05.201Z">
 <meta property="article:author" content="Peng Zhang">
 <meta property="article:tag" content="嵌入式系统安全">
 <meta property="article:tag" content="ARM">
@@ -402,7 +402,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2.7k
+                  2.8k
                 </span>
               
 
@@ -430,7 +430,7 @@
         <h2 id="PIC"><a href="#PIC" class="headerlink" title="PIC"></a>PIC</h2><h3 id="中断："><a href="#中断：" class="headerlink" title="中断："></a>中断：</h3><ul>
 <li><p>中断分组管理（快速中断屏蔽）与控制</p>
 </li>
-<li><p>统一中断入口：根据中断标志位判断中断的类型。因为中断标志位始终会产生，所以开放中断前需要清除中断标志位。</p>
+<li><p>统一中断入口：根据中断标志位判断中断的类型。<strong>因为中断标志位始终会产生，所以开放中断前需要清除中断标志位。</strong></p>
 </li>
 <li><p>边沿触发：外部中断可以边沿选择。数字信号低电平的驱动能力比较强，下降沿（更陡峭），下降时间比较短，故从可靠性的角度下降沿触发最佳。</p>
 </li>
@@ -460,21 +460,19 @@
 <p><strong>D</strong> 片上调试 <strong>debug</strong>：响应调试强求暂停</p>
 <p><strong>M</strong> 支持增强型<strong>乘法器</strong>：<strong>32位</strong>乘<strong>32位</strong>得到<strong>64位</strong>。ARMV4版本以后，M变种已为标准配置。增加2条AKM指令：长乘法操作和长乘加操作。有时有乘法没除法。</p>
 <p><strong>I</strong> 嵌入式<strong>ICE</strong>部件：提供<strong>断点</strong>和<strong>调试点</strong>。</p>
-<p><strong>E</strong> 增强DSP指令：（1）增加<strong>16位</strong>乘法和乘加。（2）实现饱和的带符号数的加减法操作的指令。溢出时，使用最大或最小值。因此代码不需要判断溢出。</p>
+<p><strong>E</strong> 增强DSP指令：（1）增加<strong>16位</strong>乘法和乘加。（2）<strong>实现饱和的带符号数的加减法操作的指令。</strong>溢出时，<strong>使用最大或最小值</strong>。因此代码不需要判断溢出。</p>
 <p><strong>J</strong> <strong>Java</strong>加速器Jazelle：提高Java代码的运行速度，最高可达到<strong>8倍</strong>，功耗降低<strong>80%</strong>。</p>
 <p><strong>S</strong> 可综合：提供VHDL或Verilog HDL硬件描述语言设计文件。</p>
 <p><strong>ARM架构的版本：</strong></p>
 <p>更新：（1）不断创新提升性能（2）向下兼容保护软件投入</p>
 <ul>
-<li><p>ARMv4T架构：每条指令1.5个时钟周期。</p>
-</li>
-<li><p>ARMv6架构：Thumb-2指令集。</p>
-</li>
-<li><p>ARMv7架构：A系列（支持大型嵌入式操作系统）、R系列（实时性）和M系列（单片机/MCU，追求低成本低功耗）。ARM Cortex系列，全部采用v7架构。</p>
-</li>
+<li>ARMv4T架构：每条指令1.5个时钟周期。</li>
+<li>ARMv6架构：Thumb-2指令集。</li>
+<li>ARMv7架构：A系列（支持大型嵌入式操作系统）、R系列（实时性）和M系列（单片机/MCU，追求低成本低功耗）。</li>
+<li>ARM Cortex系列，全部采用ARMv7架构。</li>
 </ul>
 <p><strong>三种总线：</strong></p>
-<p>ARM的总线体系结构是AMBA。</p>
+<p>ARM的总线体系结构是AMBA。存在对总线的控制。</p>
 <ul>
 <li><p><strong>AHB：</strong>连接<strong>高性能</strong>系统模块。支持突发数据传输（例如DMA）。支持单个数据传输。支持分离式总线事务处理。</p>
 </li>
@@ -491,23 +489,25 @@
 <p><strong>内部寄存器：</strong></p>
 <p>37个32位寄存器，分为通用寄存器（31）和状态寄存器（6）。</p>
 <p>未分组寄存器（R0<del>R7）和分组寄存器（R8</del>R14）。程序计数器PC（R15）。程序状态寄存器CPSR（R16）。（中断禁止位、T标志位（Thumb）和工作模式位）</p>
+<p>其中，Thumb只用到了R0~R7、R13和R14。</p>
 <p><strong>异常：</strong></p>
 <p>复位、未定义指令异常、软件中断异常、指令预取中止、数据中止、IRQ和FIQ（中断）。异常向量是异常服务程序的入口。</p>
 <p><strong>存储器：</strong></p>
-<p>支持大端存储和小端存储。ARM默认为<strong>小端存储</strong>格式。可以通过硬件输入引脚来配置。对存储单元的访问需要适当地对齐。使用存储器映射方式实现I/O端口地访问（因此<strong>没有in/out指令</strong>，统一指令实现）。</p>
+<p>支持大端存储和小端存储。ARM默认为<strong>小端存储</strong>格式。可以通过硬件输入<strong>引脚或配置字</strong>来配置。对存储单元的访问需要适当地对齐。使用存储器映射方式实现I/O端口地访问（因此<strong>没有in/out指令</strong>，统一指令实现）。</p>
 <h3 id="2-ARM-存储器"><a href="#2-ARM-存储器" class="headerlink" title="2. ARM 存储器"></a>2. ARM 存储器</h3><p><strong>存储器分类：</strong></p>
 <ul>
 <li>主存储器：内存。只读存储器（ROM）、随机存储器（RAM）。</li>
 <li>辅存储器：外设。硬盘。</li>
 </ul>
-<p>只读存储器（ROM）：Flash技术。CF卡、SD卡。</p>
+<p>访问速度：寄存器&gt;cache&gt;SRAM&gt;DRAM&gt;ROM</p>
+<p>辅助存储器：Flash技术。CF卡、SD卡。</p>
 <p><strong>NAND Flash：</strong>以<strong>页</strong>为单位读和编程操作和以<strong>块</strong>为单位进行擦除。</p>
 <p>K8F1208芯片：4096个Block，每个Block有32个Page，每个Page有528字节，512字节存储+16字节<strong>校验位</strong>。因此，对NAND Flash操作的地址分为3部分：块地址、页地址和页内地址。</p>
 <p><strong>存储系统机制：</strong></p>
-<p>存储管理单元（MMU）：主要用来完成虚实地址和物理地址之间的转换。访问权限控制。MMU管理方式：段式、页式和段页式。</p>
+<p><strong>存储管理单元（MMU）：</strong>主要用来完成虚实地址和物理地址之间的转换。访问权限控制。MMU管理方式：<strong>段式、页式和段页式</strong>。</p>
 <h3 id="3-ARM-时钟及电源管理"><a href="#3-ARM-时钟及电源管理" class="headerlink" title="3. ARM 时钟及电源管理"></a>3. ARM 时钟及电源管理</h3><p><strong>S3C2410时钟结构：</strong></p>
 <p>不同总线对应有不同时钟。提供给<strong>CPU</strong>的<strong>FCLK</strong>、提供给<strong>AHB</strong>总线设备的<strong>HCLK</strong>和提供给<strong>APB</strong>总线设备的<strong>PCLK</strong>。</p>
-<p><strong>2个锁相环（PLLs）：</strong>外部输入低频，利用闭环倍频。低频比较精准，高频不够精准。软件可以控制是否提供锁相环给某个设备，从而分级控制，降低功耗，规避干扰。1个是提供<strong>总线时钟</strong>，1个是提供<strong>USB时钟</strong>。</p>
+<p><strong>2个锁相环（PLLs）：</strong>外部输入低频，利用闭环倍频。<strong>低频比较精准</strong>，高频不够精准。软件可以控制是否提供锁相环给某个设备，<strong>可以关闭锁相环</strong>，从而分级控制，降低功耗，规避干扰。1个是提供<strong>总线时钟</strong>，1个是提供<strong>USB时钟</strong>。</p>
 <p><strong>S3C2410电源管理模式：</strong></p>
 <p>电源管理模式（<strong>模式管理</strong>）：</p>
 <ul>
@@ -523,13 +523,13 @@
 <ul>
 <li><p>看门狗定时器：当程序“跑飞”时，恢复系统的运行，即监视并恢复程序正常运行。时钟（PCLK）。可能会有专用的内部振荡器。2个功能（定时器功能和复位功能）。组成部分（预分频器、再分频器、WTDAT数据寄存器、WTCNT计数器、WTCON控制寄存器和复位信号发生器）。先赋值，再启动。</p>
 </li>
-<li><p>RTC部件：实时时钟，软件编程支持。存在数据失联问题（例如，读时间时，高位年月或日改变，导致数据错误实联），因此数据需要多次读确保数据不失联。报警功能可以提供闹钟功能。</p>
+<li><p>RTC部件：实时时钟，软件编程支持。有的有独立时钟，有的有独立电源。存在数据失联问题（例如，读时间时，高位年月或日改变，导致数据错误实联），因此数据需要多次读确保数据不失联。报警功能可以提供闹钟功能。<strong>时钟精度要求高</strong>。</p>
 </li>
-<li><p>Timer部件：主要是脉宽调制（PWM）。任何模拟信号都可以使用PWM来实现，数字信号生成模拟信号。具有死区管理的功能。支持DMA的请求模式。DMA和CPU共同使用时，都需要控制总线，因此DMA的加入一定会影响CPU的总线执行的时序。如果需要精确的软件延时（循环实现），又要使用DMA，则计时会不准确。</p>
+<li><p>Timer部件：主要是脉宽调制（PWM）。任何模拟信号都可以使用PWM来实现，数字信号生成模拟信号。具有<strong>死区管理</strong>的功能。Timer0可以用于控制大功率设备。支持DMA的请求模式。DMA和CPU共同使用时，都需要控制总线，因此DMA的加入一定会影响CPU的总线执行的时序。如果需要精确的软件延时（循环实现），又要使用DMA，则计时会不准确。</p>
 </li>
 </ul>
 <h3 id="5-ARM-中断"><a href="#5-ARM-中断" class="headerlink" title="5. ARM 中断"></a>5. ARM 中断</h3><p>对于设备的访问有：程序查询方式（效率比较低）、中断方式和DMA方式。</p>
-<p><strong>特点：</strong>（1）实时性能好（2）调试较复杂（中断嵌套）</p>
+<p><strong>特点：</strong>（1）<strong>实时</strong>性能好（2）调试较复杂（中断嵌套）</p>
 <p>可以处理难以预料的故障。</p>
 <p><strong>DMA方式与中断方式相比：</strong></p>
 <ul>
@@ -543,16 +543,17 @@
 <p>中断主要分为普通中断（IRQ）和快速（异常）中断（FIQ）。</p>
 <p><strong>中断管理：</strong></p>
 <p>主要通过模式、屏蔽、优先级和挂起（标志）来实现。快速中断没有优先级的判断。</p>
-<p>ARM拥有独立的中断向量和分组的中断向量（根据优先级）。</p>
-<p>FIQ快速异常中断的执行优先级更高。</p>
+<p>ARM拥有<strong>独立的</strong>中断向量和<strong>分组的</strong>中断向量（根据优先级）。</p>
+<p>FIQ<strong>快速异常中断</strong>的执行优先级更高。</p>
 <h3 id="6-ARM-DMA"><a href="#6-ARM-DMA" class="headerlink" title="6. ARM DMA"></a>6. ARM DMA</h3><p><strong>定义：</strong><br>DMA技术是一种高速的数据传输方式，允许在外部设备和存储器之间、存储器与存储器之间等直接传输数据。</p>
+<p><strong>哪些部件可以作为源与目的的？</strong></p>
 <p><strong>外部DMA请求：</strong></p>
 <ul>
 <li>单服务请求（突发单字节的传输）</li>
 <li>单服务握手</li>
 <li>全服务握手</li>
 </ul>
-<p><strong>CMA的知识点：</strong></p>
+<p><strong>DMA的知识点：</strong></p>
 <ul>
 <li><p>优先级</p>
 </li>
@@ -564,9 +565,9 @@
 </li>
 <li><p>是否支持突发单数据传递</p>
 </li>
-<li><p>生成数据和数据传输完毕后，能不能产生CMA的中断</p>
+<li><p>生成数据和数据传输完毕后，能不能产生DMA的中断</p>
 </li>
-<li><p>CMA的使用会影响CPU的时间</p>
+<li><p><strong>DMA的使用会影响CPU的时间</strong></p>
 </li>
 </ul>
 
@@ -603,8 +604,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/03/16/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0_DDoS%E6%94%BB%E5%87%BB/" rel="next" title="网络安全笔记_DDoS攻击">
-                <i class="fa fa-chevron-left"></i> 网络安全笔记_DDoS攻击
+              <a href="/2020/03/16/%E7%BD%91%E7%BB%9C%E4%BE%A6%E5%AF%9F%E5%AE%9E%E9%AA%8C/" rel="next" title="网络侦察实验">
+                <i class="fa fa-chevron-left"></i> 网络侦察实验
               </a>
             
           </div>
@@ -697,7 +698,7 @@
             
               <div class="site-state-item site-state-posts">
                 <a href="/archives">
-                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -719,7 +720,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-count">21</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -802,7 +803,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">8.5k</span>
+    <span title="Site words total count">9.4k</span>
   
 </div>
 
