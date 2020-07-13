@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="python,numpy," />
 
 
 
@@ -79,11 +79,17 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="Anred&#39;s Blog">
-<meta property="og:url" content="http://yoursite.com/categories/%E4%B8%BB%E6%B5%81%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8/index.html">
+<meta name="description" content="常用python代码 1. numpy、torch tensor和Image之间相互转换（1）numpy与Image之间互相转换123456from PIL import Image  import numpy as npim &#x3D; Image.open(&quot;a.jpg&quot;)img &#x3D; np.array(im)      # image to numpyim&#x3D;Image.fromarray(img) #">
+<meta property="og:type" content="article">
+<meta property="og:title" content="常用python代码">
+<meta property="og:url" content="http://yoursite.com/2020/07/13/python-code/index.html">
 <meta property="og:site_name" content="Anred&#39;s Blog">
+<meta property="og:description" content="常用python代码 1. numpy、torch tensor和Image之间相互转换（1）numpy与Image之间互相转换123456from PIL import Image  import numpy as npim &#x3D; Image.open(&quot;a.jpg&quot;)img &#x3D; np.array(im)      # image to numpyim&#x3D;Image.fromarray(img) #">
+<meta property="article:published_time" content="2020-07-13T01:43:14.000Z">
+<meta property="article:modified_time" content="2020-07-13T02:15:53.415Z">
 <meta property="article:author" content="Peng Zhang">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="numpy">
 <meta name="twitter:card" content="summary">
 
 
@@ -114,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/categories/主流操作系统安全/"/>
+  <link rel="canonical" href="http://yoursite.com/2020/07/13/python-code/"/>
 
 
 
 
 
-  <title>分类: 主流操作系统安全 | Anred's Blog</title>
+  <title>常用python代码 | Anred's Blog</title>
   
 
 
@@ -139,7 +145,7 @@
     
   
 
-  <div class="container sidebar-position-left ">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -277,55 +283,218 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block category">
+  <div id="posts" class="posts-expand">
+    
 
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h1>主流操作系统安全<small>分类</small>
-        </h1>
-      </div>
+  
 
-      
-        
+  
+  
+  
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/13/python-code/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Peng Zhang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Anred's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/2020/03/20/%E4%B8%BB%E6%B5%81%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8_Windows/" itemprop="url">
-              
-                <span itemprop="name">主流操作系统安全_Windows</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">常用python代码</h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2020-03-20T16:30:15+08:00"
-              content="2020-03-20" >
-          03-20
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-13T09:43:14+08:00">
+                2020-07-13
+              </time>
+            
 
-    </header>
-  </article>
+            
 
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python/" itemprop="url" rel="index">
+                    <span itemprop="name">python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2020/07/13/python-code/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2020/07/13/python-code/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2020/07/13/python-code/" class="leancloud_visitors" data-flag-title="常用python代码">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  157
+                </span>
+              
+
+              
+
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="常用python代码"><a href="#常用python代码" class="headerlink" title="常用python代码"></a>常用python代码</h1><hr>
+<h2 id="1-numpy、torch-tensor和Image之间相互转换"><a href="#1-numpy、torch-tensor和Image之间相互转换" class="headerlink" title="1. numpy、torch tensor和Image之间相互转换"></a>1. numpy、torch tensor和Image之间相互转换</h2><h3 id="（1）numpy与Image之间互相转换"><a href="#（1）numpy与Image之间互相转换" class="headerlink" title="（1）numpy与Image之间互相转换"></a>（1）numpy与Image之间互相转换</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image  </span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">im = Image.open(<span class="string">"a.jpg"</span>)</span><br><span class="line"></span><br><span class="line">img = np.array(im)      <span class="comment"># image to numpy</span></span><br><span class="line">im=Image.fromarray(img) <span class="comment"># numpy to image</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="（2）numpy与torch-tensor之间互相转换"><a href="#（2）numpy与torch-tensor之间互相转换" class="headerlink" title="（2）numpy与torch tensor之间互相转换"></a>（2）numpy与torch tensor之间互相转换</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">a = torch.ones(<span class="number">5</span>)</span><br><span class="line">b = a.numpy()			<span class="comment"># torch tensor to numpy</span></span><br><span class="line">a = torch.from_numpy(b)  <span class="comment"># numpy to torch tensor</span></span><br><span class="line"><span class="comment"># 转换后的tensor与numpy指向同一地址，对一方值的改变会改变另一方</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="（3）torch-tensor与Image之间互相转换"><a href="#（3）torch-tensor与Image之间互相转换" class="headerlink" title="（3）torch tensor与Image之间互相转换"></a>（3）torch tensor与Image之间互相转换</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"></span><br><span class="line">path_img = <span class="string">"./1.bmp"</span></span><br><span class="line">img_pil = Image.open(path_img).convert(<span class="string">'RGB'</span>)</span><br><span class="line">img_tensor = transforms.Compose([</span><br><span class="line">    <span class="comment"># transforms.Resize((224, 224)),</span></span><br><span class="line">    transforms.ToTensor(),  <span class="comment"># Image to torch tensor</span></span><br><span class="line">    <span class="comment"># transforms.Normalize(norm_mean, norm_std),</span></span><br><span class="line">])(img_pil)</span><br><span class="line"></span><br><span class="line">img = transforms.ToPILImage()(img_tensor)</span><br><span class="line"><span class="comment"># torch tensor to Image</span></span><br></pre></td></tr></table></figure>
+
+<hr>
 
       
     </div>
+    
+    
+    
 
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag"># python</a>
+          
+            <a href="/tags/numpy/" rel="tag"># numpy</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/25/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%94%E8%AE%B0_%E5%AD%98%E5%82%A8%E5%99%A8%E5%AF%BB%E5%9D%80/" rel="next" title="汇编语言程序设计笔记_存储器寻址">
+                <i class="fa fa-chevron-left"></i> 汇编语言程序设计笔记_存储器寻址
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -333,6 +502,13 @@
 
 
           
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
 
         </div>
         
@@ -353,8 +529,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -432,6 +617,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#常用python代码"><span class="nav-number">1.</span> <span class="nav-text">常用python代码</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-numpy、torch-tensor和Image之间相互转换"><span class="nav-number">1.1.</span> <span class="nav-text">1. numpy、torch tensor和Image之间相互转换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#（1）numpy与Image之间互相转换"><span class="nav-number">1.1.1.</span> <span class="nav-text">（1）numpy与Image之间互相转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#（2）numpy与torch-tensor之间互相转换"><span class="nav-number">1.1.2.</span> <span class="nav-text">（2）numpy与torch tensor之间互相转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#（3）torch-tensor与Image之间互相转换"><span class="nav-number">1.1.3.</span> <span class="nav-text">（3）torch tensor与Image之间互相转换</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -591,6 +792,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
@@ -981,38 +1186,37 @@
   
   <script>
     
-    function showTime(Counter) {
-      var entries = [];
+    function addCount(Counter) {
       var $visitors = $('.leancloud_visitors');
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
 
-      $visitors.each(function() {
-        entries.push( $(this).attr('id').trim() );
-      });
-
-      Counter('get', '/classes/Counter', { where: JSON.stringify({ url: { '$in': entries } }) })
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
         .done(function({ results }) {
-          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
-
-          if (results.length === 0) {
-            $visitors.find(COUNT_CONTAINER_REF).text(0);
-            return;
-          }
-
-          for (var i = 0; i < results.length; i++) {
-            var item = results[i];
-            var url = item.url;
-            var time = item.time;
-            var element = document.getElementById(url);
-
-            $(element).find(COUNT_CONTAINER_REF).text(time);
-          }
-          for (var i = 0; i < entries.length; i++) {
-            var url = entries[i];
-            var element = document.getElementById(url);
-            var countSpan = $(element).find(COUNT_CONTAINER_REF);
-            if (countSpan.text() == '') {
-              countSpan.text(0);
-            }
+          if (results.length > 0) {
+            var counter = results[0];
+            
+            Counter('put', '/classes/Counter/' + counter.objectId, JSON.stringify({ time: { '__op': 'Increment', 'amount': 1 } }))
+            
+              .done(function() {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.time + 1);
+              })
+            
+              .fail(function ({ responseJSON }) {
+                console.log('Failed to save Visitor num, with error message: ' + responseJSON.error);
+              })
+          } else {
+            
+              Counter('post', '/classes/Counter', JSON.stringify({ title: title, url: url, time: 1 }))
+                .done(function() {
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(1);
+                })
+                .fail(function() {
+                  console.log('Failed to create');
+                });
+            
           }
         })
         .fail(function ({ responseJSON }) {
@@ -1037,9 +1241,9 @@
             });
           };
           
-            if ($('.post-title-link').length >= 1) {
-              showTime(Counter);
-            }
+            const localhost = /http:\/\/(localhost|127.0.0.1|0.0.0.0)/;
+            if (localhost.test(document.URL)) return;
+            addCount(Counter);
           
         });
     });
