@@ -18,6 +18,8 @@
       <tags>
         <tag>python</tag>
         <tag>numpy</tag>
+        <tag>PIL</tag>
+        <tag>torch</tag>
       </tags>
   </entry>
   <entry>
