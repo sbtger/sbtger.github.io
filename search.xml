@@ -47,22 +47,22 @@
 <tbody><tr>
 <td align="center">None</td>
 <td align="center">二范数（默认）</td>
-<td align="center">![](<a href="http://chart.googleapis.com/chart?cht=tx&amp;chl=\Large" target="_blank" rel="noopener">http://chart.googleapis.com/chart?cht=tx&amp;chl=\Large</a> sqrt{x_1^2+x_2^2+…+x_2^2})</td>
+<td align="center">$sqrt{x_1^2+x_2^2+…+x_n^2}$</td>
 </tr>
 <tr>
 <td align="center">1</td>
 <td align="center">一范数</td>
-<td align="center"></td>
+<td align="center">$|x_1|+|x_2|+…+|x_n|$</td>
 </tr>
 <tr>
 <td align="center">2</td>
 <td align="center">二范数</td>
-<td align="center"></td>
+<td align="center">$sqrt{x_1^2+x_2^2+…+x_2^2}$</td>
 </tr>
 <tr>
 <td align="center">np.inf</td>
 <td align="center">无穷范数</td>
-<td align="center"></td>
+<td align="center">$max(|x_i|)$</td>
 </tr>
 </tbody></table>
 ]]></content>
@@ -635,8 +635,8 @@
       </categories>
       <tags>
         <tag>网络安全</tag>
-        <tag>缓冲区溢出</tag>
         <tag>DoS</tag>
+        <tag>缓冲区溢出</tag>
       </tags>
   </entry>
   <entry>
