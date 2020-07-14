@@ -398,7 +398,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  479
+                  502
                 </span>
               
 
@@ -443,12 +443,12 @@
 
 <hr>
 <h2 id="3-numpy的sum-函数"><a href="#3-numpy的sum-函数" class="headerlink" title="3. numpy的sum()函数"></a>3. numpy的sum()函数</h2><p>当sum()不传参数时，表示所有元素的总和。</p>
-<p>*<em>axis: *</em>表示相加的不同维度。</p>
+<p><strong>axis: 表示相加的不同维度。</strong></p>
 <p>参数axis的值可以选取0、1和2，分别是从最外层向内层剥开计算，减少维度。</p>
 <p>参数axis的值可以选取-3、-2和-1，分别是从最内层向外剥开开计算，减少维度。</p>
 <p>如下图，numpy的sum()函数使用实例。</p>
 <p><img src="/2020/07/13/python-code/1.PNG" alt="image 1"></p>
-<p>*<em>keepdims: *</em>表示是否保持矩阵二维特性。</p>
+<p><strong>keepdims: 表示是否保持矩阵二维特性。</strong></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">array([[<span class="number">1</span>],[<span class="number">2</span>]])</span><br><span class="line">array([<span class="number">1</span>,<span class="number">2</span>])</span><br></pre></td></tr></table></figure>
 
 <hr>
@@ -456,8 +456,8 @@
 <p><strong>norm 范数</strong></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">x_norm = np.linalg.norm(x, ord=<span class="literal">None</span>, axis=<span class="literal">None</span>, Keepdims=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
 
-<p>*<em>x: *</em>表示输入数据。可以为向量或者矩阵。</p>
-<p>*<em>ord: *</em>表示范数类型。</p>
+<p><strong>x: 表示输入数据。可以为向量或者矩阵。</strong></p>
+<p><strong>ord: 表示范数类型。</strong></p>
 <table>
 <thead>
 <tr>
@@ -469,7 +469,7 @@
 <tbody><tr>
 <td align="center">None</td>
 <td align="center">二范数（默认）</td>
-<td align="center">$sqrt{x_1^2+x_2^2+…+x_n^2}$</td>
+<td align="center">$\sqrt{x_1^2+x_2^2+…+x_n^2}$</td>
 </tr>
 <tr>
 <td align="center">1</td>
@@ -479,7 +479,7 @@
 <tr>
 <td align="center">2</td>
 <td align="center">二范数</td>
-<td align="center">$sqrt{x_1^2+x_2^2+…+x_2^2}$</td>
+<td align="center">$\sqrt{x_1^2+x_2^2+…+x_2^2}$</td>
 </tr>
 <tr>
 <td align="center">np.inf</td>
@@ -487,6 +487,9 @@
 <td align="center">$max(|x_i|)$</td>
 </tr>
 </tbody></table>
+<p><strong>axis: 表示从不同维度处理。</strong></p>
+<p><strong>keepdims: 表示是否保持矩阵二维特性。</strong></p>
+<hr>
 
           
         

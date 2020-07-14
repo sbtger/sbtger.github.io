@@ -21,12 +21,12 @@
 
 <hr>
 <h2 id="3-numpy的sum-函数"><a href="#3-numpy的sum-函数" class="headerlink" title="3. numpy的sum()函数"></a>3. numpy的sum()函数</h2><p>当sum()不传参数时，表示所有元素的总和。</p>
-<p>*<em>axis: *</em>表示相加的不同维度。</p>
+<p><strong>axis: 表示相加的不同维度。</strong></p>
 <p>参数axis的值可以选取0、1和2，分别是从最外层向内层剥开计算，减少维度。</p>
 <p>参数axis的值可以选取-3、-2和-1，分别是从最内层向外剥开开计算，减少维度。</p>
 <p>如下图，numpy的sum()函数使用实例。</p>
 <p><img src="/2020/07/13/python-code/1.PNG" alt="image 1"></p>
-<p>*<em>keepdims: *</em>表示是否保持矩阵二维特性。</p>
+<p><strong>keepdims: 表示是否保持矩阵二维特性。</strong></p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">array([[<span class="number">1</span>],[<span class="number">2</span>]])</span><br><span class="line">array([<span class="number">1</span>,<span class="number">2</span>])</span><br></pre></td></tr></table></figure>
 
 <hr>
@@ -34,8 +34,8 @@
 <p><strong>norm 范数</strong></p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">x_norm = np.linalg.norm(x, ord=<span class="literal">None</span>, axis=<span class="literal">None</span>, Keepdims=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
 
-<p>*<em>x: *</em>表示输入数据。可以为向量或者矩阵。</p>
-<p>*<em>ord: *</em>表示范数类型。</p>
+<p><strong>x: 表示输入数据。可以为向量或者矩阵。</strong></p>
+<p><strong>ord: 表示范数类型。</strong></p>
 <table>
 <thead>
 <tr>
@@ -47,7 +47,7 @@
 <tbody><tr>
 <td align="center">None</td>
 <td align="center">二范数（默认）</td>
-<td align="center">$sqrt{x_1^2+x_2^2+…+x_n^2}$</td>
+<td align="center">$\sqrt{x_1^2+x_2^2+…+x_n^2}$</td>
 </tr>
 <tr>
 <td align="center">1</td>
@@ -57,7 +57,7 @@
 <tr>
 <td align="center">2</td>
 <td align="center">二范数</td>
-<td align="center">$sqrt{x_1^2+x_2^2+…+x_2^2}$</td>
+<td align="center">$\sqrt{x_1^2+x_2^2+…+x_2^2}$</td>
 </tr>
 <tr>
 <td align="center">np.inf</td>
@@ -65,6 +65,9 @@
 <td align="center">$max(|x_i|)$</td>
 </tr>
 </tbody></table>
+<p><strong>axis: 表示从不同维度处理。</strong></p>
+<p><strong>keepdims: 表示是否保持矩阵二维特性。</strong></p>
+<hr>
 ]]></content>
       <categories>
         <category>python</category>
@@ -546,35 +549,6 @@
       </tags>
   </entry>
   <entry>
-    <title>网络侦察实验</title>
-    <url>/2020/03/16/%E7%BD%91%E7%BB%9C%E4%BE%A6%E5%AF%9F%E5%AE%9E%E9%AA%8C/</url>
-    <content><![CDATA[<h2 id="任务四-获取目标网站的webshell权限，控制目标机，获得敏感信息"><a href="#任务四-获取目标网站的webshell权限，控制目标机，获得敏感信息" class="headerlink" title="任务四 获取目标网站的webshell权限，控制目标机，获得敏感信息"></a>任务四 获取目标网站的webshell权限，控制目标机，获得敏感信息</h2><h3 id="1-准备工作"><a href="#1-准备工作" class="headerlink" title="1. 准备工作"></a>1. 准备工作</h3><p>Linux指令：从命令行界面进入图形界面（下面两个指令都可）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ startx </span><br><span class="line">$ init 5</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-
-<p>Linux指令：从图形界面进入命令行界面</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ init 3</span><br></pre></td></tr></table></figure>
-
-<p>PS：实际操作中，在远程的网络安全实验平台上，使用startx一切正常，但是使用另外2条指令会出现问题。先留个坑~。</p>
-<h3 id="2-创建HTML文件上传表单"><a href="#2-创建HTML文件上传表单" class="headerlink" title="2. 创建HTML文件上传表单"></a>2. 创建HTML文件上传表单</h3><p>基本知识：</p>
-<p>（1） 必需的 action 属性规定当提交表单时，向何处发送表单数据。 </p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">"value"</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>（2） enctype 属性规定在发送到服务器之前应该如何对表单数据进行编码。  在使用包含文件上传控件的表单时，必须使用 multipart/form-data 。</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">enctype</span>=<span class="string">"value"</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>创建一个上传表单的简单HTML文件。</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">"对应提交网址处"</span> <span class="attr">method</span>=<span class="string">"post"</span> <span class="attr">enctype</span>=<span class="string">"multipart/form-data"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">"file"</span>&gt;</span>filename: <span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"file"</span> <span class="attr">name</span>=<span class="string">"attach"</span> <span class="attr">id</span>=<span class="string">"file"</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">br</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">name</span>=<span class="string">"submit"</span> <span class="attr">value</span>=<span class="string">"submit"</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>网络安全</category>
-      </categories>
-      <tags>
-        <tag>网络安全</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>网络安全笔记_DDoS攻击</title>
     <url>/2020/03/16/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0_DDoS%E6%94%BB%E5%87%BB/</url>
     <content><![CDATA[<h2 id="网络侦察"><a href="#网络侦察" class="headerlink" title="网络侦察"></a>网络侦察</h2><h3 id="交换式网络环境的监听："><a href="#交换式网络环境的监听：" class="headerlink" title="交换式网络环境的监听："></a>交换式网络环境的监听：</h3><p>（1）ARP欺骗（<strong>ARP spoofing</strong>）：网关的MAC和IP地址与自己的地址绑定。</p>
@@ -637,6 +611,35 @@
         <tag>网络安全</tag>
         <tag>DoS</tag>
         <tag>缓冲区溢出</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>网络侦察实验</title>
+    <url>/2020/03/16/%E7%BD%91%E7%BB%9C%E4%BE%A6%E5%AF%9F%E5%AE%9E%E9%AA%8C/</url>
+    <content><![CDATA[<h2 id="任务四-获取目标网站的webshell权限，控制目标机，获得敏感信息"><a href="#任务四-获取目标网站的webshell权限，控制目标机，获得敏感信息" class="headerlink" title="任务四 获取目标网站的webshell权限，控制目标机，获得敏感信息"></a>任务四 获取目标网站的webshell权限，控制目标机，获得敏感信息</h2><h3 id="1-准备工作"><a href="#1-准备工作" class="headerlink" title="1. 准备工作"></a>1. 准备工作</h3><p>Linux指令：从命令行界面进入图形界面（下面两个指令都可）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ startx </span><br><span class="line">$ init 5</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<p>Linux指令：从图形界面进入命令行界面</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ init 3</span><br></pre></td></tr></table></figure>
+
+<p>PS：实际操作中，在远程的网络安全实验平台上，使用startx一切正常，但是使用另外2条指令会出现问题。先留个坑~。</p>
+<h3 id="2-创建HTML文件上传表单"><a href="#2-创建HTML文件上传表单" class="headerlink" title="2. 创建HTML文件上传表单"></a>2. 创建HTML文件上传表单</h3><p>基本知识：</p>
+<p>（1） 必需的 action 属性规定当提交表单时，向何处发送表单数据。 </p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">"value"</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>（2） enctype 属性规定在发送到服务器之前应该如何对表单数据进行编码。  在使用包含文件上传控件的表单时，必须使用 multipart/form-data 。</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">enctype</span>=<span class="string">"value"</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>创建一个上传表单的简单HTML文件。</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">"对应提交网址处"</span> <span class="attr">method</span>=<span class="string">"post"</span> <span class="attr">enctype</span>=<span class="string">"multipart/form-data"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">"file"</span>&gt;</span>filename: <span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"file"</span> <span class="attr">name</span>=<span class="string">"attach"</span> <span class="attr">id</span>=<span class="string">"file"</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">br</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">name</span>=<span class="string">"submit"</span> <span class="attr">value</span>=<span class="string">"submit"</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>网络安全</category>
+      </categories>
+      <tags>
+        <tag>网络安全</tag>
       </tags>
   </entry>
   <entry>
