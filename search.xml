@@ -4,13 +4,67 @@
     <title>常用python代码</title>
     <url>/2020/07/13/python-code/</url>
     <content><![CDATA[<h1 id="常用python代码"><a href="#常用python代码" class="headerlink" title="常用python代码"></a>常用python代码</h1><hr>
-<h2 id="1-numpy、torch-tensor和Image之间相互转换"><a href="#1-numpy、torch-tensor和Image之间相互转换" class="headerlink" title="1. numpy、torch tensor和Image之间相互转换"></a>1. numpy、torch tensor和Image之间相互转换</h2><h3 id="（1）numpy与Image之间互相转换"><a href="#（1）numpy与Image之间互相转换" class="headerlink" title="（1）numpy与Image之间互相转换"></a>（1）numpy与Image之间互相转换</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image  </span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">im = Image.open(<span class="string">"a.jpg"</span>)</span><br><span class="line"></span><br><span class="line">img = np.array(im)      <span class="comment"># image to numpy</span></span><br><span class="line">im=Image.fromarray(img) <span class="comment"># numpy to image</span></span><br></pre></td></tr></table></figure>
+<h2 id="1-numpy-array、torch-tensor和Image之间相互转换"><a href="#1-numpy-array、torch-tensor和Image之间相互转换" class="headerlink" title="1. numpy array、torch tensor和Image之间相互转换"></a>1. numpy array、torch tensor和Image之间相互转换</h2><h3 id="（1）numpy-array与Image之间互相转换"><a href="#（1）numpy-array与Image之间互相转换" class="headerlink" title="（1）numpy array与Image之间互相转换"></a>（1）numpy array与Image之间互相转换</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image  </span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">im = Image.open(<span class="string">"a.jpg"</span>)</span><br><span class="line"></span><br><span class="line">img = np.array(im)      <span class="comment"># image to numpy array</span></span><br><span class="line">im=Image.fromarray(img) <span class="comment"># numpy array to image</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="（2）numpy与torch-tensor之间互相转换"><a href="#（2）numpy与torch-tensor之间互相转换" class="headerlink" title="（2）numpy与torch tensor之间互相转换"></a>（2）numpy与torch tensor之间互相转换</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">a = torch.ones(<span class="number">5</span>)</span><br><span class="line">b = a.numpy()			<span class="comment"># torch tensor to numpy</span></span><br><span class="line">a = torch.from_numpy(b)  <span class="comment"># numpy to torch tensor</span></span><br><span class="line"><span class="comment"># 转换后的tensor与numpy指向同一地址，对一方值的改变会改变另一方</span></span><br></pre></td></tr></table></figure>
+<h3 id="（2）numpy-array与torch-tensor之间互相转换"><a href="#（2）numpy-array与torch-tensor之间互相转换" class="headerlink" title="（2）numpy array与torch tensor之间互相转换"></a>（2）numpy array与torch tensor之间互相转换</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">a = torch.ones(<span class="number">5</span>)</span><br><span class="line">b = a.numpy()			<span class="comment"># torch tensor to numpy array</span></span><br><span class="line">a = torch.from_numpy(b)  <span class="comment"># numpy array to torch tensor</span></span><br><span class="line"><span class="comment"># 转换后的tensor与numpy array指向同一地址，对一方值的改变会改变另一方</span></span><br></pre></td></tr></table></figure>
 
 <h3 id="（3）torch-tensor与Image之间互相转换"><a href="#（3）torch-tensor与Image之间互相转换" class="headerlink" title="（3）torch tensor与Image之间互相转换"></a>（3）torch tensor与Image之间互相转换</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"></span><br><span class="line">path_img = <span class="string">"./1.bmp"</span></span><br><span class="line">img_pil = Image.open(path_img).convert(<span class="string">'RGB'</span>)</span><br><span class="line">img_tensor = transforms.Compose([</span><br><span class="line">    <span class="comment"># transforms.Resize((224, 224)),</span></span><br><span class="line">    transforms.ToTensor(),  <span class="comment"># Image to torch tensor</span></span><br><span class="line">    <span class="comment"># transforms.Normalize(norm_mean, norm_std),</span></span><br><span class="line">])(img_pil)</span><br><span class="line"></span><br><span class="line">img = transforms.ToPILImage()(img_tensor)</span><br><span class="line"><span class="comment"># torch tensor to Image</span></span><br></pre></td></tr></table></figure>
 
 <hr>
+<h2 id="2-numpy-array与list之间的转换"><a href="#2-numpy-array与list之间的转换" class="headerlink" title="2. numpy array与list之间的转换"></a>2. numpy array与list之间的转换</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">a = [[<span class="number">1.0</span>, <span class="number">2.0</span>], [<span class="number">2.0</span>, <span class="number">1.0</span>]] <span class="comment"># list a</span></span><br><span class="line">b = np.asarray(a) 			<span class="comment"># list to numpy array</span></span><br><span class="line">c = b.tolist()			    <span class="comment"># numpy array to list</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>numpy array与list的区别：</strong></p>
+<p>存放的数据类型是否需要相同。numpy array存放的数据类型需要相同，list不需要相同。 </p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">a = [<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>,<span class="string">'1'</span>,<span class="string">'2'</span>,<span class="string">'3'</span>]</span><br><span class="line">b = np.array([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>])</span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<h2 id="3-numpy的sum-函数"><a href="#3-numpy的sum-函数" class="headerlink" title="3. numpy的sum()函数"></a>3. numpy的sum()函数</h2><p>当sum()不传参数时，表示所有元素的总和。</p>
+<p>*<em>axis: *</em>表示相加的不同维度。</p>
+<p>参数axis的值可以选取0、1和2，分别是从最外层向内层剥开计算，减少维度。</p>
+<p>参数axis的值可以选取-3、-2和-1，分别是从最内层向外剥开开计算，减少维度。</p>
+<p>如下图，numpy的sum()函数使用实例。</p>
+<p><img src="/2020/07/13/python-code/1.PNG" alt="image 1"></p>
+<p>*<em>keepdims: *</em>表示是否保持矩阵二维特性。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">array([[<span class="number">1</span>],[<span class="number">2</span>]])</span><br><span class="line">array([<span class="number">1</span>,<span class="number">2</span>])</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="4-np-linalg-norm-函数"><a href="#4-np-linalg-norm-函数" class="headerlink" title="4. np.linalg.norm()函数"></a>4. np.linalg.norm()函数</h2><p><strong>linalg = linear + algebra 线性代数</strong> </p>
+<p><strong>norm 范数</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">x_norm = np.linalg.norm(x, ord=<span class="literal">None</span>, axis=<span class="literal">None</span>, Keepdims=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
+
+<p>*<em>x: *</em>表示输入数据。可以为向量或者矩阵。</p>
+<p>*<em>ord: *</em>表示范数类型。</p>
+<table>
+<thead>
+<tr>
+<th align="center">ord</th>
+<th align="center">范数类型</th>
+<th align="center">计算公式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">None</td>
+<td align="center">二范数（默认）</td>
+<td align="center">![](<a href="http://chart.googleapis.com/chart?cht=tx&amp;chl=\Large" target="_blank" rel="noopener">http://chart.googleapis.com/chart?cht=tx&amp;chl=\Large</a> sqrt{x_1^2+x_2^2+…+x_2^2})</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">一范数</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">二范数</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">np.inf</td>
+<td align="center">无穷范数</td>
+<td align="center"></td>
+</tr>
+</tbody></table>
 ]]></content>
       <categories>
         <category>python</category>
@@ -581,8 +635,8 @@
       </categories>
       <tags>
         <tag>网络安全</tag>
-        <tag>DoS</tag>
         <tag>缓冲区溢出</tag>
+        <tag>DoS</tag>
       </tags>
   </entry>
   <entry>
