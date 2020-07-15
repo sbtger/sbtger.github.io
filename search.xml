@@ -1,6 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>android_security</title>
+    <url>/2020/07/15/android-security/</url>
+    <content><![CDATA[<div id="hexo-blog-encrypt" data-wpm="抱歉, 这个密码看着不太对, 请再试试." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
+  <div class="hbe-input-container">
+  <input type="password" id="hbePass" placeholder="" />
+    <label for="hbePass">这里需要密码才能访问。</label>
+    <div class="bottom-line"></div>
+  </div>
+  <script id="hbeData" type="hbeData" data-hmacdigest="a8e96754a8d7d5f5efe01ffb6c5b1525b085005d346b41d262e358ea366f7e72">a67a18bb5b4774433640c268ada6bf1245b6818d4819a24dff6fd0580c7c8fc606709d652a3b82cfa61e5dd8892febf5c983fd10ad1c85d464ef1ea75a45c41efd8763a5f7b333a19dd75645a21e3be802ba08de1be1c4517b2e55f46dc8b65f0015eb4ecf91c9ebf4772853aea28e215b743787c3c08af1f99b454c89c6433044c77b474a9d29131e70a72dfeb33186f093760fb17c39011254877da4c88bd5df2051e7e77e0f6833aa6473785fdfcffeddbe88b088d53493efc0a89785e9c6d65b6836cf8a293d5da62cd9dbc6e5adeaedadc87d1bf2da4fda83d43c69f999ae8f1e43203794f0a8b67be23cc0bc207ac3370f9204f9649ad45a03e6f9e970b93ad08d820e6987059d4ec335662cf4be7444e97af461d450ca2c09e3e8d2058f3e7ce6f8735f578f679b4ef107235ebf8b650fd035f7c3c5bdd88933954845bf62c767ca8b18ed6c60b4f368144b9b6e22b2f3c4ebeccd1194cba2a5e807f9837ebf9b2ca375bde76a8881efb1125faf652c21367343381f4469b7a4d736c0ccc01aaf7e439d9089d9b0ef9f6cad2b17785427ffb713e2a244018710e6919ac7caa21ba765819c3a30813e20c2b17bd1f72bdfeaf7ddc41f5b2fd1abab7419c3c8aca698c3c2c3c81522db96e5773510204dbcb935b52c73dc1bd95050f777fd2f0197a8d9f9790e224cd736debbc6a1cf30c61385f8db6e041ea290c481b9e05f8700122222ef9b0881c312b64bb1728a46e3db38bfbb4ebb9f3593fa160922f512fd5a9f509333414a54f504ee7a6d1e8edd8dcb985e198714a3e9a7d54dc7c230e6567824806dc3590bf402c1da7e639906b9bdab8506e99a8a3fdf76926cab747c8a9f9932171180d667f381873a97e4df08031ce075e88b6789218702d41b32f1c306240314ef86549699e4abbfd58773f6c4d251d5104ea2a92fdbe34692236c7026d135a762dda30c4928fee069874411e4839404ef70762aec6337472104de8b6e7aab19b5e455c174608ceab534b9a2e5c59fda0ba347d84fb424fe4b37ae209c370f78b4bede0401dccdb1eee989017ddba506dc125dc20b8c9976e2d17cce309bc417d0ac463b52f731204e6934320a5f044b7e3bd6b2aa5184800377743d522f62fb3b1a865f88648af98476e05ae27ce0312906d0422acd476568f719f019d1fd52fe756141107e0099cb89c1a534096986892ec114b09db57c21a9c6ec6c47377b41a05a3b72ce8017ebed6c8ad0945778d6de32f0b339fc410d96e5ca0fb163f9e15f4b61353cfcb4c572cec456d2a682e4e96df7d207fe16aad17393a37fd3026f5d0d462d5de491738d62f86596793d31a8f201f8200c569130e1d2b376fe4457ff8b4b52d6bd791c19327a2a2f6361a120604c0c206c6455f571f6e1ce30b655d35626118db19b4bf58cc13aabd2d312d5f022985d6f18a319b3c406f742b4c8bf3b7bd727baa4a55296660e46b81ea0cc63886c9c926235bb011fe1de3c859cbe8dbb111a36624343ca2f1a7c00de5a7da7e9ecae99f1c64a129535a2cf550a96e2eef8e1c4be001d4ca42f6e37495c06a579ecf4ebf778fa625297868876b0015a7dfc8cd4a0b652f5f8c647e66a491557e42ccf0a21a4135b796f09243aea5cfb848d9df05df0f247cec697a79d9cf83aeaa07f780383ab7d6932b0c5ef9501b66fdc60776bb689d99d3e9a67b9eb9a21d5078d4e65114ebf877d893ea398bc260a0ac401ad79bbb4a3d6d26b77a41f7a1c37ff67684b6b58c88e1cf72e098a9be59be207c13b240d7ee2ccf14e20c6ed6a30443fb0ed1ea6646cc26f4b0f56be0f30f29c84dc8e14dced2b22c597ddf4562301efbed833ac2845c1a45b18fb302518fff7a5bf55af31a4e202c91a2fe4f091ed0e134d608979f7eb5471ba3b2d26220d548ff35c4c83473355320aaf431cf31834afea96313477c81cd8b03da0fa8d8f42243f4428fb43e3ba6066c87475c27476baace27fb4f38e9508440d28c2ecc9c08a279d6e73e92381eea95dcfe1ecc89a4fc9d0edf146d981012a609b7f880879573c2573f15276b54055d0d597ea9e442f989317ee0ce9a632e1c789aaba27dfc29d07019c99306dbebc817a0dba484c92a13eb2e6e71fa44ae20ca6bf0fdd0096bb9ff0f7d0c33a12b52ea4b3002a1914ef7f164f7258cef753076e52cffd4760c6932d80549f99e57d00b5d1f6faa253b243cde02ecbc8d3f5594f732658d5f418d7e452b822d31fb36b179e386995f1c19647fc888379ad04bdf414b66943b9c9fda87ca76b434c8e046328e0e14570733c30905c36bd4847fd0349667dd5784bac75fc787d1db4654e65e1766f1b25f73e8fff25e63d819411e323f40aaaea857d51f909c4a50ead23fe3299887031d9950fdbef567b199aecbde2694479451bfd8b8445a2817a311013142ac436462a86e11a5ffe053bd6abcf9881a422aa963e05696971e9cd1457943d721906f42a70731cdd083e37d4fae2f40f8e4e4842633b3f4b0ad3179d48f7a59983ef6ecd9a91dba300443c3534c380b310789becfdf5d81cb3b79f07ebb8be3855d16d95da515a9e26e791a2b005948d5bbaadd0be7d3cfed25cf1fe1347b97513d4dab22386dab19b7e6555eed642410188385f78ca42472860eb628f140a61eac3cd91d441f85223b117a2c39c01b25fe978f4b9ede0f03fb111c8f6b6e5a4c8f6a6e72a75db1e86830bba85dbd53babb936905ea72d431f89b85511b69dbff9f2fc1d3b1eb9b584f6cc9c8346dbca46feeeef8fa709ab13564dc31e398d4a61c3eb01801004f2f70c07c39a883ac38205679ed36f7971eb22fd14dac4d2218675f2707e727a0b6394f9a534f045619bfe277e335119bcd36182a334b65a01e0fa02342cbbc5ac00270b6dde9528fd8839a05d0b50417b2d6f4679e58325666ccb9ecca83cdc04f16c6d52c967669dd03a45604841f43aa8326c0a090a63d8f027c5eba28919e7e0b71d86a99cbf087364aa9233146694dd621605402f58fa3c737971f524e4a82cac7e7017257e161758be4c125b9dbeac4258f2281079374d74a5abcae7edfc97b7d8194752e0d94ea552b853df8768890b32b75331ef998190ca724c6e0821aeff63d7f7baf3c711a69d7c8de36fed6880dbec31987c3b3f20034cb84101097a8c5978ce774fa092d23dafd79eeed2d97f790845ab60aa3908bcce643eea2644a7abd0382d165010d05b409a5061248db3e845172775d9093e56fa36781ee251aad3fc089451ddce3f7186f75a2bf1b142a669f28b6cb575c559a189e477b774cb838ac0e84669ba8ad905230c0ff0250ae1f4bd033335ddf972a76b872c59996175799a56a98ba7c5e57b8ccd419afb768676dd51d9af9928d7474b6100d692aef9959d2db0959f1593febe001616e714714b7aaa4725dd23fff8984bdf78326f412619c3bb594e0f67fba238c9ae5415eed79bee558256ec4dc8f7bc01fb99b5235361a59c0c17354eca74119d75a4aebf0d2802baf787edc340c4202766cb22fd4daf686732c429d8628c289660dd0d0beb59a3addf29a0aeeed93cf8b5ee7b7d3903cf6aca87a31ea94093231793ddf7e840e107bbe65ba2651e07c3ad3f9e49d7e110eaff8d85006016d1253fa5178be15f3588e4c44d4db6e7e67e0c9234e7e2bddad0a0d04c86fcf8a4ed5eabfa7710bc12b4d6a5015f2dad31b269501aee1eac371f82ccd878c575283073a11d09d382841a3de04bd3350c2eb9100bbf80119a4f6719f4099c2de9f9deed8f8dc70d378787ac63e1cdab6bec796c4cac2e138a231e03e1d6b12c419bae68885cfb32caa8d44bd8003617a1bc9d330e7b422a827cc402a818a7069f49f5de4b3c3cdd0b9961a42cfa</script>
+</div>
+<script src="/lib/blog-encrypt.js"></script><link href="/css/blog-encrypt.css" rel="stylesheet" type="text/css">]]></content>
+      <categories>
+        <category>android security</category>
+      </categories>
+      <tags>
+        <tag>android</tag>
+        <tag>security</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>常用python代码</title>
     <url>/2020/07/13/python-code/</url>
     <content><![CDATA[<h1 id="常用python代码"><a href="#常用python代码" class="headerlink" title="常用python代码"></a>常用python代码</h1><hr>
@@ -549,6 +569,35 @@
       </tags>
   </entry>
   <entry>
+    <title>网络侦察实验</title>
+    <url>/2020/03/16/%E7%BD%91%E7%BB%9C%E4%BE%A6%E5%AF%9F%E5%AE%9E%E9%AA%8C/</url>
+    <content><![CDATA[<h2 id="任务四-获取目标网站的webshell权限，控制目标机，获得敏感信息"><a href="#任务四-获取目标网站的webshell权限，控制目标机，获得敏感信息" class="headerlink" title="任务四 获取目标网站的webshell权限，控制目标机，获得敏感信息"></a>任务四 获取目标网站的webshell权限，控制目标机，获得敏感信息</h2><h3 id="1-准备工作"><a href="#1-准备工作" class="headerlink" title="1. 准备工作"></a>1. 准备工作</h3><p>Linux指令：从命令行界面进入图形界面（下面两个指令都可）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ startx </span><br><span class="line">$ init 5</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<p>Linux指令：从图形界面进入命令行界面</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ init 3</span><br></pre></td></tr></table></figure>
+
+<p>PS：实际操作中，在远程的网络安全实验平台上，使用startx一切正常，但是使用另外2条指令会出现问题。先留个坑~。</p>
+<h3 id="2-创建HTML文件上传表单"><a href="#2-创建HTML文件上传表单" class="headerlink" title="2. 创建HTML文件上传表单"></a>2. 创建HTML文件上传表单</h3><p>基本知识：</p>
+<p>（1） 必需的 action 属性规定当提交表单时，向何处发送表单数据。 </p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">"value"</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>（2） enctype 属性规定在发送到服务器之前应该如何对表单数据进行编码。  在使用包含文件上传控件的表单时，必须使用 multipart/form-data 。</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">enctype</span>=<span class="string">"value"</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>创建一个上传表单的简单HTML文件。</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">"对应提交网址处"</span> <span class="attr">method</span>=<span class="string">"post"</span> <span class="attr">enctype</span>=<span class="string">"multipart/form-data"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">"file"</span>&gt;</span>filename: <span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"file"</span> <span class="attr">name</span>=<span class="string">"attach"</span> <span class="attr">id</span>=<span class="string">"file"</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">br</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">name</span>=<span class="string">"submit"</span> <span class="attr">value</span>=<span class="string">"submit"</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>网络安全</category>
+      </categories>
+      <tags>
+        <tag>网络安全</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>网络安全笔记_DDoS攻击</title>
     <url>/2020/03/16/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0_DDoS%E6%94%BB%E5%87%BB/</url>
     <content><![CDATA[<h2 id="网络侦察"><a href="#网络侦察" class="headerlink" title="网络侦察"></a>网络侦察</h2><h3 id="交换式网络环境的监听："><a href="#交换式网络环境的监听：" class="headerlink" title="交换式网络环境的监听："></a>交换式网络环境的监听：</h3><p>（1）ARP欺骗（<strong>ARP spoofing</strong>）：网关的MAC和IP地址与自己的地址绑定。</p>
@@ -611,35 +660,6 @@
         <tag>网络安全</tag>
         <tag>DoS</tag>
         <tag>缓冲区溢出</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>网络侦察实验</title>
-    <url>/2020/03/16/%E7%BD%91%E7%BB%9C%E4%BE%A6%E5%AF%9F%E5%AE%9E%E9%AA%8C/</url>
-    <content><![CDATA[<h2 id="任务四-获取目标网站的webshell权限，控制目标机，获得敏感信息"><a href="#任务四-获取目标网站的webshell权限，控制目标机，获得敏感信息" class="headerlink" title="任务四 获取目标网站的webshell权限，控制目标机，获得敏感信息"></a>任务四 获取目标网站的webshell权限，控制目标机，获得敏感信息</h2><h3 id="1-准备工作"><a href="#1-准备工作" class="headerlink" title="1. 准备工作"></a>1. 准备工作</h3><p>Linux指令：从命令行界面进入图形界面（下面两个指令都可）</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ startx </span><br><span class="line">$ init 5</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-
-<p>Linux指令：从图形界面进入命令行界面</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ init 3</span><br></pre></td></tr></table></figure>
-
-<p>PS：实际操作中，在远程的网络安全实验平台上，使用startx一切正常，但是使用另外2条指令会出现问题。先留个坑~。</p>
-<h3 id="2-创建HTML文件上传表单"><a href="#2-创建HTML文件上传表单" class="headerlink" title="2. 创建HTML文件上传表单"></a>2. 创建HTML文件上传表单</h3><p>基本知识：</p>
-<p>（1） 必需的 action 属性规定当提交表单时，向何处发送表单数据。 </p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">"value"</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>（2） enctype 属性规定在发送到服务器之前应该如何对表单数据进行编码。  在使用包含文件上传控件的表单时，必须使用 multipart/form-data 。</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">enctype</span>=<span class="string">"value"</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>创建一个上传表单的简单HTML文件。</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">"对应提交网址处"</span> <span class="attr">method</span>=<span class="string">"post"</span> <span class="attr">enctype</span>=<span class="string">"multipart/form-data"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">"file"</span>&gt;</span>filename: <span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"file"</span> <span class="attr">name</span>=<span class="string">"attach"</span> <span class="attr">id</span>=<span class="string">"file"</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">br</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">name</span>=<span class="string">"submit"</span> <span class="attr">value</span>=<span class="string">"submit"</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>网络安全</category>
-      </categories>
-      <tags>
-        <tag>网络安全</tag>
       </tags>
   </entry>
   <entry>
