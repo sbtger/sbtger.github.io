@@ -398,7 +398,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  290
+                  460
                 </span>
               
 
@@ -424,14 +424,29 @@
 
       
         
-          这是一篇加密博文，请输入密码后查看
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2020/07/15/android-security/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
+          
+            <h1 id="Android-Security"><a href="#Android-Security" class="headerlink" title="Android Security"></a>Android Security</h1><hr>
+<h2 id="1-Android基础知识"><a href="#1-Android基础知识" class="headerlink" title="1.Android基础知识"></a>1.Android基础知识</h2><hr>
+<p>Android系统架构主要分为：应用层（java）、框架层（java）、库文件（C）&amp;Android运行时（运行java代码的虚拟机）和Linux kernel。</p>
+<h3 id="Android四大组件："><a href="#Android四大组件：" class="headerlink" title="Android四大组件："></a>Android四大组件：</h3><p>Activity：窗口界面。Activity之间通过Intent进行通信。android应用的每一个Activity都必须在AndroidManifest.xml配置文件中声明。</p>
+<p>Service：运行于后台，一般不需要与用户交互。一般为其他组件提供后台服务或监控其他组件的运行。有两种工作状态，一种是启动状态，主要用于执行后台计算；另一种是绑定状态，主要用于其他组件和service的交互。配置文件中需要声明全部service。</p>
+<p>Content Provider：存放和获取数据并使这些数据可以被所有应用程序访问。应用程序间共享数据的唯一方法。</p>
+<p>Broadcast Receiver：为了便于进行系统级别的消息推送。本质是一种全局的监听器，可以实现系统中不同组件之间的通信。发送广播用Intent，接收广播用广播接收器BroadcastReceiver。静态注册&amp;动态注册。</p>
+<h3 id="Android安全机制："><a href="#Android安全机制：" class="headerlink" title="Android安全机制："></a>Android安全机制：</h3><p><strong>安全沙箱：</strong></p>
+<p>Android每个应用程序都拥有唯一的UID和GID，每个应用是隔离的（文件/进程）。</p>
+<p>数据目录：/data/data/。</p>
+<p><strong>两个应用程序共享文件方法：</strong></p>
+<p>（1）两个应用使用同样的证书签名，并在样式清单中使用相同shareUserId，可以互相访问彼此的数据目录。</p>
+<p>（2）利用content provider，设置权限提供数据。</p>
+<p><strong>权限控制：</strong></p>
+<p>Normal级：申请后即可使用。</p>
+<p>Dangerous级：在安装时由用户确认才可用。</p>
+<p>Signature级：必须相同签名才能用。</p>
+<p>Signatureorsystem：必须系统用户才可用。</p>
+<h2 id="2-Android应用攻击面分析"><a href="#2-Android应用攻击面分析" class="headerlink" title="2.Android应用攻击面分析"></a>2.Android应用攻击面分析</h2><hr>
+<h2 id="3-Android应用测试思路"><a href="#3-Android应用测试思路" class="headerlink" title="3.Android应用测试思路"></a>3.Android应用测试思路</h2><hr>
+
+          
         
       
     </div>
@@ -2363,7 +2378,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">10.3k</span>
+    <span title="Site words total count">10.4k</span>
   
 </div>
 
