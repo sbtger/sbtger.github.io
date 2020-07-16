@@ -13,7 +13,7 @@
 <h3 id="Android安全机制："><a href="#Android安全机制：" class="headerlink" title="Android安全机制："></a>Android安全机制：</h3><p><strong>安全沙箱：</strong></p>
 <p>Android每个应用程序都拥有唯一的UID和GID，每个应用是隔离的（文件/进程）。</p>
 <p>数据目录：/data/data/。</p>
-<p><strong>两个应用程序共享文件方法：</strong></p>
+<p>两个应用程序共享文件方法：</p>
 <p>（1）两个应用使用同样的证书签名，并在样式清单中使用相同shareUserId，可以互相访问彼此的数据目录。</p>
 <p>（2）利用content provider，设置权限提供数据。</p>
 <p><strong>权限控制：</strong></p>
@@ -21,8 +21,71 @@
 <p>Dangerous级：在安装时由用户确认才可用。</p>
 <p>Signature级：必须相同签名才能用。</p>
 <p>Signatureorsystem：必须系统用户才可用。</p>
+<p><strong>APK反编译</strong></p>
+<p>APK实际为Zip压缩包，unzip后可以获得dex文件。dex文件是DalvikVM executes的简称，是执行文件。我们可以获得：AndroidManifest.xml文件（全局配置文件）、Classes.dex（Dalvik字节码）、资源文件和lib文件夹下的库文件.so文件由C/C++编写和签名文件。</p>
+<p>APK反编译IDE：APK改之理。so反编译工具：IDA。</p>
+<p>想一想：怎么不输入MD5值，获得权限。</p>
 <h2 id="2-Android应用攻击面分析"><a href="#2-Android应用攻击面分析" class="headerlink" title="2.Android应用攻击面分析"></a>2.Android应用攻击面分析</h2><hr>
+<h3 id="四大组件攻击面分析"><a href="#四大组件攻击面分析" class="headerlink" title="四大组件攻击面分析"></a>四大组件攻击面分析</h3><ul>
+<li>组件含有权限代理攻击：</li>
+</ul>
+<p>造成应用功能泄露、拒绝服务等问题。</p>
+<ul>
+<li>组件暴露：</li>
+</ul>
+<p>exported属性为true，表示对外暴露。</p>
+<ul>
+<li>组件配置失当：</li>
+</ul>
+<p>造成的被劫持问题。</p>
+<h3 id="Intent攻击面分析："><a href="#Intent攻击面分析：" class="headerlink" title="Intent攻击面分析："></a>Intent攻击面分析：</h3><p>数据通信的桥梁，app2app。</p>
+<ul>
+<li><p>可能携带敏感数据，IMEI，key，phone number。</p>
+</li>
+<li><p>内容为空，拒绝服务。</p>
+</li>
+<li><p>隐式Intent被劫持</p>
+</li>
+<li><p>Pending Intent 感觉是A通过B发送信息给C。A交给B将来要发送的包，给如果A不存在了，B依然可以发送信息。“双无”Intent是无component，无action。try catch结构</p>
+</li>
+</ul>
+<h3 id="Webview攻击面分析："><a href="#Webview攻击面分析：" class="headerlink" title="Webview攻击面分析："></a>Webview攻击面分析：</h3><p>简单小型类似浏览器的组件。</p>
+<ul>
+<li>远程代码执行。</li>
+<li>File域控制不严。</li>
+<li>信息泄露。</li>
+<li>Url外部可控。</li>
+</ul>
+<h3 id="物理攻击："><a href="#物理攻击：" class="headerlink" title="物理攻击："></a>物理攻击：</h3><ul>
+<li>拆解设备：接口、调试端口、可拆卸的Flash</li>
+<li>USB：</li>
+<li>ADB：4.2.2之前ADB shell不需要认证，之后需要手动点击认证。</li>
+</ul>
+<h3 id="邻接攻击："><a href="#邻接攻击：" class="headerlink" title="邻接攻击："></a>邻接攻击：</h3><ul>
+<li>GPS欺骗</li>
+<li>基带</li>
+<li>蓝牙</li>
+<li>Wi-Fi：wpa算法、中间人攻击。</li>
+<li>NFC：数据传输、移动支付。</li>
+</ul>
 <h2 id="3-Android应用测试思路"><a href="#3-Android应用测试思路" class="headerlink" title="3.Android应用测试思路"></a>3.Android应用测试思路</h2><hr>
+<p>APK改后缀名后UnZip。</p>
+<p>AndroidManifest.xml提取出来。</p>
+<h3 id="分析程序包"><a href="#分析程序包" class="headerlink" title="分析程序包"></a>分析程序包</h3><p>权限、组件、协议实现、Manifest和逆向代码。</p>
+<h3 id="寻找攻击面"><a href="#寻找攻击面" class="headerlink" title="寻找攻击面"></a>寻找攻击面</h3><p>导出的组件、监听的端口、IPC、网络协议、密码学实现和Web</p>
+<h3 id="监控应用行为"><a href="#监控应用行为" class="headerlink" title="监控应用行为"></a>监控应用行为</h3><p>附加调试、敏感函数调用、日志输出、文件系统和网络流量。</p>
+<h3 id="模糊测试"><a href="#模糊测试" class="headerlink" title="模糊测试"></a>模糊测试</h3><p>组件和文件格式。</p>
+<h3 id="Drozer"><a href="#Drozer" class="headerlink" title="Drozer"></a>Drozer</h3><p>Android的安全测试框架。</p>
+<p>功能：</p>
+<ul>
+<li>查询已安装的包信息。</li>
+<li>确定APP的受攻击面</li>
+<li>查询组件信息</li>
+<li>启动组件</li>
+<li>从Content Provider中获取信息</li>
+<li>检查Content Provider的脆弱性</li>
+<li>编写自定义模块</li>
+</ul>
 ]]></content>
       <categories>
         <category>android security</category>
@@ -670,8 +733,8 @@
       </categories>
       <tags>
         <tag>网络安全</tag>
-        <tag>DoS</tag>
         <tag>缓冲区溢出</tag>
+        <tag>DoS</tag>
       </tags>
   </entry>
   <entry>
