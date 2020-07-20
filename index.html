@@ -292,6 +292,200 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Peng Zhang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Anred's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/" itemprop="url">20200721Android安全之组件安全</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-21T00:01:18+08:00">
+                2020-07-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/android-security/" itemprop="url" rel="index">
+                    <span itemprop="name">android security</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/" class="leancloud_visitors" data-flag-title="20200721Android安全之组件安全">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1.7k
+                </span>
+              
+
+              
+
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="Android-安全之组件安全"><a href="#Android-安全之组件安全" class="headerlink" title="Android 安全之组件安全"></a>Android 安全之组件安全</h1><h2 id="1-暴露Activity组件"><a href="#1-暴露Activity组件" class="headerlink" title="1. 暴露Activity组件"></a>1. 暴露Activity组件</h2><h3 id="漏洞利用的目的："><a href="#漏洞利用的目的：" class="headerlink" title="漏洞利用的目的："></a>漏洞利用的目的：</h3><p>通过当前已经暴露的组件跳转访问到私有组件界面。</p>
+<h3 id="漏洞利用过程："><a href="#漏洞利用过程：" class="headerlink" title="漏洞利用过程："></a>漏洞利用过程：</h3><p>根据反编译可以看出，触发通过的条件是传入值为1的int变量key和值为“hello”的String变量value。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">a</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Intent intent = getIntent();</span><br><span class="line">    <span class="keyword">if</span> (intent != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">int</span> i = intent.getIntExtra(<span class="string">"key"</span>, <span class="number">0</span>);</span><br><span class="line">        String str = intent.getStringExtra(<span class="string">"value"</span>);</span><br><span class="line">        <span class="keyword">if</span> (i == <span class="number">1</span> &amp;&amp; <span class="string">"hello"</span>.equals(str))</span><br><span class="line">            dosomething(); </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">dosomething</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    startActivity(<span class="keyword">new</span> Intent((Context)<span class="keyword">this</span>, NoExportActivity<span class="class">.<span class="keyword">class</span>))</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由此，利用adb命令访问activity组件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb shell am start -n com.example.bughunter/com.example.bughunter.ComponentSecurity.ExportActivity --ei key 1 -e value "hello"</span><br></pre></td></tr></table></figure>
+
+<p>利用start访问activity组件，其中“-n”后面是“包名/类名”，“–ei”表示传入int类型值，“-e”表示传入String值。由此，即可进入私有隐藏界面。</p>
+  <div align="left">  <img src="/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/1.PNG" alt="1" style="zoom:60%;"></div>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/07/21/20200721Android%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/15/android-security/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -424,91 +618,19 @@
 
       
         
-          
-            <h1 id="Android-Security"><a href="#Android-Security" class="headerlink" title="Android Security"></a>Android Security</h1><h2 id="1-Android基础知识"><a href="#1-Android基础知识" class="headerlink" title="1.Android基础知识"></a>1.Android基础知识</h2><hr>
+          <h1 id="Android-Security"><a href="#Android-Security" class="headerlink" title="Android Security"></a>Android Security</h1><h2 id="1-Android基础知识"><a href="#1-Android基础知识" class="headerlink" title="1.Android基础知识"></a>1.Android基础知识</h2><hr>
 <p>Android系统架构主要分为：应用层（java）、框架层（java）、库文件（C）&amp;Android运行时（运行java代码的虚拟机）和Linux kernel。</p>
 <h3 id="Android四大组件："><a href="#Android四大组件：" class="headerlink" title="Android四大组件："></a>Android四大组件：</h3><p>Activity：窗口界面。Activity之间通过Intent进行通信。android应用的每一个Activity都必须在AndroidManifest.xml配置文件中声明。</p>
 <p>Service：运行于后台，一般不需要与用户交互。一般为其他组件提供后台服务或监控其他组件的运行。有两种工作状态，一种是启动状态，主要用于执行后台计算；另一种是绑定状态，主要用于其他组件和service的交互。配置文件中需要声明全部service。</p>
 <p>Content Provider：存放和获取数据并使这些数据可以被所有应用程序访问。应用程序间共享数据的唯一方法。</p>
 <p>Broadcast Receiver：为了便于进行系统级别的消息推送。本质是一种全局的监听器，可以实现系统中不同组件之间的通信。发送广播用Intent，接收广播用广播接收器BroadcastReceiver。静态注册&amp;动态注册。</p>
-<h3 id="Android安全机制："><a href="#Android安全机制：" class="headerlink" title="Android安全机制："></a>Android安全机制：</h3><p><strong>安全沙箱：</strong></p>
-<p>Android每个应用程序都拥有唯一的UID和GID，每个应用是隔离的（文件/进程）。</p>
-<p>数据目录：/data/data/。</p>
-<p>两个应用程序共享文件方法：</p>
-<p>（1）两个应用使用同样的证书签名，并在样式清单中使用相同shareUserId，可以互相访问彼此的数据目录。</p>
-<p>（2）利用content provider，设置权限提供数据。</p>
-<p><strong>权限控制：</strong></p>
-<p>Normal级：申请后即可使用。</p>
-<p>Dangerous级：在安装时由用户确认才可用。</p>
-<p>Signature级：必须相同签名才能用。</p>
-<p>Signatureorsystem：必须系统用户才可用。</p>
-<p><strong>APK反编译</strong></p>
-<p>APK实际为Zip压缩包，unzip后可以获得dex文件。dex文件是DalvikVM executes的简称，是执行文件。我们可以获得：AndroidManifest.xml文件（全局配置文件）、Classes.dex（Dalvik字节码）、资源文件和lib文件夹下的库文件.so文件由C/C++编写和签名文件。</p>
-<p>APK反编译IDE：APK改之理。so反编译工具：IDA。</p>
-<p>想一想：怎么不输入MD5值，获得权限。</p>
-<h2 id="2-Android应用攻击面分析"><a href="#2-Android应用攻击面分析" class="headerlink" title="2.Android应用攻击面分析"></a>2.Android应用攻击面分析</h2><hr>
-<h3 id="四大组件攻击面分析"><a href="#四大组件攻击面分析" class="headerlink" title="四大组件攻击面分析"></a>四大组件攻击面分析</h3><ul>
-<li>组件含有权限代理攻击：</li>
-</ul>
-<p>造成应用功能泄露、拒绝服务等问题。</p>
-<ul>
-<li>组件暴露：</li>
-</ul>
-<p>exported属性为true，表示对外暴露。</p>
-<ul>
-<li>组件配置失当：</li>
-</ul>
-<p>造成的被劫持问题。</p>
-<h3 id="Intent攻击面分析："><a href="#Intent攻击面分析：" class="headerlink" title="Intent攻击面分析："></a>Intent攻击面分析：</h3><p>数据通信的桥梁，app2app。</p>
-<ul>
-<li><p>可能携带敏感数据，IMEI，key，phone number。</p>
-</li>
-<li><p>内容为空，拒绝服务。</p>
-</li>
-<li><p>隐式Intent被劫持</p>
-</li>
-<li><p>Pending Intent 感觉是A通过B发送信息给C。A交给B将来要发送的包，给如果A不存在了，B依然可以发送信息。“双无”Intent是无component，无action。try catch结构</p>
-</li>
-</ul>
-<h3 id="Webview攻击面分析："><a href="#Webview攻击面分析：" class="headerlink" title="Webview攻击面分析："></a>Webview攻击面分析：</h3><p>简单小型类似浏览器的组件。</p>
-<ul>
-<li>远程代码执行。</li>
-<li>File域控制不严。</li>
-<li>信息泄露。</li>
-<li>Url外部可控。</li>
-</ul>
-<h3 id="物理攻击："><a href="#物理攻击：" class="headerlink" title="物理攻击："></a>物理攻击：</h3><ul>
-<li>拆解设备：接口、调试端口、可拆卸的Flash</li>
-<li>USB：</li>
-<li>ADB：4.2.2之前ADB shell不需要认证，之后需要手动点击认证。</li>
-</ul>
-<h3 id="邻接攻击："><a href="#邻接攻击：" class="headerlink" title="邻接攻击："></a>邻接攻击：</h3><ul>
-<li>GPS欺骗</li>
-<li>基带</li>
-<li>蓝牙</li>
-<li>Wi-Fi：wpa算法、中间人攻击。</li>
-<li>NFC：数据传输、移动支付。</li>
-</ul>
-<h2 id="3-Android应用测试思路"><a href="#3-Android应用测试思路" class="headerlink" title="3.Android应用测试思路"></a>3.Android应用测试思路</h2><hr>
-<p>APK改后缀名后UnZip。</p>
-<p>AndroidManifest.xml提取出来。</p>
-<h3 id="分析程序包"><a href="#分析程序包" class="headerlink" title="分析程序包"></a>分析程序包</h3><p>权限、组件、协议实现、Manifest和逆向代码。</p>
-<h3 id="寻找攻击面"><a href="#寻找攻击面" class="headerlink" title="寻找攻击面"></a>寻找攻击面</h3><p>导出的组件、监听的端口、IPC、网络协议、密码学实现和Web</p>
-<h3 id="监控应用行为"><a href="#监控应用行为" class="headerlink" title="监控应用行为"></a>监控应用行为</h3><p>附加调试、敏感函数调用、日志输出、文件系统和网络流量。</p>
-<h3 id="模糊测试"><a href="#模糊测试" class="headerlink" title="模糊测试"></a>模糊测试</h3><p>组件和文件格式。</p>
-<h3 id="Drozer"><a href="#Drozer" class="headerlink" title="Drozer"></a>Drozer</h3><p>Android的安全测试框架。</p>
-<p>功能：</p>
-<ul>
-<li>查询已安装的包信息。</li>
-<li>确定APP的受攻击面</li>
-<li>查询组件信息</li>
-<li>启动组件</li>
-<li>从Content Provider中获取信息</li>
-<li>检查Content Provider的脆弱性</li>
-<li>编写自定义模块</li>
-</ul>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/07/15/android-security/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -687,74 +809,19 @@
 
       
         
-          
-            <h1 id="常用python代码"><a href="#常用python代码" class="headerlink" title="常用python代码"></a>常用python代码</h1><hr>
+          <h1 id="常用python代码"><a href="#常用python代码" class="headerlink" title="常用python代码"></a>常用python代码</h1><hr>
 <h2 id="1-numpy-array、torch-tensor和Image之间相互转换"><a href="#1-numpy-array、torch-tensor和Image之间相互转换" class="headerlink" title="1. numpy array、torch tensor和Image之间相互转换"></a>1. numpy array、torch tensor和Image之间相互转换</h2><h3 id="（1）numpy-array与Image之间互相转换"><a href="#（1）numpy-array与Image之间互相转换" class="headerlink" title="（1）numpy array与Image之间互相转换"></a>（1）numpy array与Image之间互相转换</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image  </span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">im = Image.open(<span class="string">"a.jpg"</span>)</span><br><span class="line"></span><br><span class="line">img = np.array(im)      <span class="comment"># image to numpy array</span></span><br><span class="line">im=Image.fromarray(img) <span class="comment"># numpy array to image</span></span><br></pre></td></tr></table></figure>
 
 <h3 id="（2）numpy-array与torch-tensor之间互相转换"><a href="#（2）numpy-array与torch-tensor之间互相转换" class="headerlink" title="（2）numpy array与torch tensor之间互相转换"></a>（2）numpy array与torch tensor之间互相转换</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">a = torch.ones(<span class="number">5</span>)</span><br><span class="line">b = a.numpy()			<span class="comment"># torch tensor to numpy array</span></span><br><span class="line">a = torch.from_numpy(b)  <span class="comment"># numpy array to torch tensor</span></span><br><span class="line"><span class="comment"># 转换后的tensor与numpy array指向同一地址，对一方值的改变会改变另一方</span></span><br></pre></td></tr></table></figure>
 
 <h3 id="（3）torch-tensor与Image之间互相转换"><a href="#（3）torch-tensor与Image之间互相转换" class="headerlink" title="（3）torch tensor与Image之间互相转换"></a>（3）torch tensor与Image之间互相转换</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"></span><br><span class="line">path_img = <span class="string">"./1.bmp"</span></span><br><span class="line">img_pil = Image.open(path_img).convert(<span class="string">'RGB'</span>)</span><br><span class="line">img_tensor = transforms.Compose([</span><br><span class="line">    <span class="comment"># transforms.Resize((224, 224)),</span></span><br><span class="line">    transforms.ToTensor(),  <span class="comment"># Image to torch tensor</span></span><br><span class="line">    <span class="comment"># transforms.Normalize(norm_mean, norm_std),</span></span><br><span class="line">])(img_pil)</span><br><span class="line"></span><br><span class="line">img = transforms.ToPILImage()(img_tensor)</span><br><span class="line"><span class="comment"># torch tensor to Image</span></span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="2-numpy-array与list之间的转换"><a href="#2-numpy-array与list之间的转换" class="headerlink" title="2. numpy array与list之间的转换"></a>2. numpy array与list之间的转换</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">a = [[<span class="number">1.0</span>, <span class="number">2.0</span>], [<span class="number">2.0</span>, <span class="number">1.0</span>]] <span class="comment"># list a</span></span><br><span class="line">b = np.asarray(a) 			<span class="comment"># list to numpy array</span></span><br><span class="line">c = b.tolist()			    <span class="comment"># numpy array to list</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>numpy array与list的区别：</strong></p>
-<p>存放的数据类型是否需要相同。numpy array存放的数据类型需要相同，list不需要相同。 </p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">a = [<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>,<span class="string">'1'</span>,<span class="string">'2'</span>,<span class="string">'3'</span>]</span><br><span class="line">b = np.array([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>])</span><br></pre></td></tr></table></figure>
-
-
-
-<hr>
-<h2 id="3-numpy的sum-函数"><a href="#3-numpy的sum-函数" class="headerlink" title="3. numpy的sum()函数"></a>3. numpy的sum()函数</h2><p>当sum()不传参数时，表示所有元素的总和。</p>
-<p><strong>axis: 表示相加的不同维度。</strong></p>
-<p>参数axis的值可以选取0、1和2，分别是从最外层向内层剥开计算，减少维度。</p>
-<p>参数axis的值可以选取-3、-2和-1，分别是从最内层向外剥开开计算，减少维度。</p>
-<p>如下图，numpy的sum()函数使用实例。</p>
-<p><img src="/2020/07/13/python-code/1.PNG" alt="image 1"></p>
-<p><strong>keepdims: 表示是否保持矩阵二维特性。</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">array([[<span class="number">1</span>],[<span class="number">2</span>]])</span><br><span class="line">array([<span class="number">1</span>,<span class="number">2</span>])</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="4-np-linalg-norm-函数"><a href="#4-np-linalg-norm-函数" class="headerlink" title="4. np.linalg.norm()函数"></a>4. np.linalg.norm()函数</h2><p><strong>linalg = linear + algebra 线性代数</strong> </p>
-<p><strong>norm 范数</strong></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">x_norm = np.linalg.norm(x, ord=<span class="literal">None</span>, axis=<span class="literal">None</span>, Keepdims=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
-
-<p><strong>x: 表示输入数据。可以为向量或者矩阵。</strong></p>
-<p><strong>ord: 表示范数类型。</strong></p>
-<table>
-<thead>
-<tr>
-<th align="center">ord</th>
-<th align="center">范数类型</th>
-<th align="center">计算公式</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">None</td>
-<td align="center">二范数（默认）</td>
-<td align="center">$\sqrt{x_1^2+x_2^2+…+x_n^2}$</td>
-</tr>
-<tr>
-<td align="center">1</td>
-<td align="center">一范数</td>
-<td align="center">$|x_1|+|x_2|+…+|x_n|$</td>
-</tr>
-<tr>
-<td align="center">2</td>
-<td align="center">二范数</td>
-<td align="center">$\sqrt{x_1^2+x_2^2+…+x_2^2}$</td>
-</tr>
-<tr>
-<td align="center">np.inf</td>
-<td align="center">无穷范数</td>
-<td align="center">$max(|x_i|)$</td>
-</tr>
-</tbody></table>
-<p><strong>axis: 表示从不同维度处理。</strong></p>
-<p><strong>keepdims: 表示是否保持矩阵二维特性。</strong></p>
-<hr>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/07/13/python-code/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -2111,194 +2178,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/18/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%94%E8%AE%B0_Loop/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Peng Zhang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Anred's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/03/18/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%94%E8%AE%B0_Loop/" itemprop="url">汇编语言程序设计笔记_Loop</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-18T10:00:00+08:00">
-                2020-03-18
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" itemprop="url" rel="index">
-                    <span itemprop="name">汇编语言</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2020/03/18/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%94%E8%AE%B0_Loop/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2020/03/18/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%94%E8%AE%B0_Loop/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/2020/03/18/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%94%E8%AE%B0_Loop/" class="leancloud_visitors" data-flag-title="汇编语言程序设计笔记_Loop">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  306
-                </span>
-              
-
-              
-
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="bx-和Loop指令"><a href="#bx-和Loop指令" class="headerlink" title="[bx]和Loop指令"></a>[bx]和Loop指令</h2><p>[bx]是什么？实际指代内存单元中的内容。基址默认是ds中。内存单元大小可以通过上下文判断。</p>
-<p>push ax：(sp)=(sp)-2 ((ss)*16+(sp))=ax</p>
-<p>pop ax：(ax)=((ss)*16+(sp)) (sp)=(sp)+2</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2020/03/18/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%94%E8%AE%B0_Loop/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2351,7 +2230,7 @@
             
               <div class="site-state-item site-state-posts">
                 <a href="/archives">
-                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-count">17</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2373,7 +2252,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-count">28</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -2440,7 +2319,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">11k</span>
+    <span title="Site words total count">12.7k</span>
   
 </div>
 
