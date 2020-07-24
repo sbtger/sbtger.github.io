@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>leetcode总结</title>
+    <url>/2020/07/22/leetcode%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<h1 id="LeetCode"><a href="#LeetCode" class="headerlink" title="LeetCode"></a>LeetCode</h1><h2 id="1-数组"><a href="#1-数组" class="headerlink" title="1. 数组"></a>1. 数组</h2><p>（1）一定要弄清输入值的数据范围。优先考虑极端情况，如输入数组长度为0的情况以及边界的处理情况。</p>
+<p>（2）LeetCode错误：control reaches end of non-void function[werror=return-type]; </p>
+<p>有时我们在一块程序里已经有return，但不是在这块代码的结尾，leetCode也会编译不通过，所以我们也要在函数的代码块结尾也return一下。</p>
+<p>（3）处理大小比较部分的时候，一定记得考虑等于的情形是否满足要求。</p>
+<p>（4）C++中，使用i++还是++i？使用++i更好。原因：因为前置版本的递增运算符避免了不必要的工作，它把值加1后直接返回改变了的运算对象。与之相比，后置版本需要将原始值存储下来以便于返回这个未修改的内容。如果我们不需要修改前的值，那么后置版本的操作就是一种浪费。</p>
+]]></content>
+      <categories>
+        <category>leetcode</category>
+      </categories>
+      <tags>
+        <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>20200721Android安全之组件安全</title>
     <url>/2020/07/21/Android%20%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/</url>
     <content><![CDATA[<h1 id="Android-安全之组件安全"><a href="#Android-安全之组件安全" class="headerlink" title="Android 安全之组件安全"></a>Android 安全之组件安全</h1><h2 id="1-暴露Activity组件"><a href="#1-暴露Activity组件" class="headerlink" title="1. 暴露Activity组件"></a>1. 暴露Activity组件</h2><h3 id="漏洞利用的目的："><a href="#漏洞利用的目的：" class="headerlink" title="漏洞利用的目的："></a>漏洞利用的目的：</h3><p>通过当前已经暴露的组件跳转访问到私有组件界面。</p>
