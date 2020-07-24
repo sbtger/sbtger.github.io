@@ -17,7 +17,7 @@
       </tags>
   </entry>
   <entry>
-    <title>20200721Android安全之组件安全</title>
+    <title>Android安全之组件安全</title>
     <url>/2020/07/21/Android%20%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/</url>
     <content><![CDATA[<h1 id="Android-安全之组件安全"><a href="#Android-安全之组件安全" class="headerlink" title="Android 安全之组件安全"></a>Android 安全之组件安全</h1><h2 id="1-暴露Activity组件"><a href="#1-暴露Activity组件" class="headerlink" title="1. 暴露Activity组件"></a>1. 暴露Activity组件</h2><h3 id="漏洞利用的目的："><a href="#漏洞利用的目的：" class="headerlink" title="漏洞利用的目的："></a>漏洞利用的目的：</h3><p>通过当前已经暴露的组件跳转访问到私有组件界面。</p>
 <h3 id="漏洞利用过程："><a href="#漏洞利用过程：" class="headerlink" title="漏洞利用过程："></a>漏洞利用过程：</h3><p>根据反编译可以看出，触发通过的条件是传入值为1的int变量key和值为“hello”的String变量value。</p>
