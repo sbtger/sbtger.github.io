@@ -292,6 +292,463 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/07/%E5%AE%89%E5%85%A8%E7%B1%BB%E9%94%99%E9%A2%98%E9%9B%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Peng Zhang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Anred's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/08/07/%E5%AE%89%E5%85%A8%E7%B1%BB%E9%94%99%E9%A2%98%E9%9B%86/" itemprop="url">安全类错题集</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-08-07T11:36:33+08:00">
+                2020-08-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index">
+                    <span itemprop="name">基础知识</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2020/08/07/%E5%AE%89%E5%85%A8%E7%B1%BB%E9%94%99%E9%A2%98%E9%9B%86/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2020/08/07/%E5%AE%89%E5%85%A8%E7%B1%BB%E9%94%99%E9%A2%98%E9%9B%86/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2020/08/07/%E5%AE%89%E5%85%A8%E7%B1%BB%E9%94%99%E9%A2%98%E9%9B%86/" class="leancloud_visitors" data-flag-title="安全类错题集">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1.1k
+                </span>
+              
+
+              
+
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="安全类错题集"><a href="#安全类错题集" class="headerlink" title="安全类错题集"></a>安全类错题集</h1><ol>
+<li><p>常用android代码混淆工具：<strong>proguard</strong>。</p>
+</li>
+<li><p><strong>android app</strong>常见的<strong>调试手段</strong>有：重打包apk并设置AndroidManifest.xml的debuggable属性为true；ida或smalidea动态调试；frida hook框架；xposed hook框架。</p>
+</li>
+<li><pre><code class="java"><span class="keyword">int</span> i = s.size() <span class="comment">//错误</span></code></pre>
+<p> String 类取长度的方法为： length() 。</p>
+</li>
+<li><p>在Java多线程中，请用下面哪种方式不会使线程进入阻塞状态：<strong>yield()</strong>。 yield：让步，运行态-&gt;就绪态 。</p>
+</li>
+<li><p><strong>redis</strong>未授权的利用方法 ：写入ssh秘钥；向web目录中写入webshell；向crontab中写入计划任务。</p>
+</li>
+<li><p><strong>HTTP返回码301</strong>代表永久性转移，对于301请求，搜索引擎或者浏览器都可以把跳转后的地址缓存下来，下一次不必发送这个请求。</p>
+</li>
+<li><p><strong>PIE</strong>全称是位置无关的可执行文件，中文解释为地址无关重定向文件，该技术是一个针对的代码段（.text），数据段（.data），未初始化变量变量（.bss）等固定地址的一个防护技术，如果程序开启了PIE保护的话，在每次加载程序时都转换加载地址，从而不能通过ROPgadget等一些工具来帮助解题。</p>
+</li>
+<li><p><strong>端口服务</strong>可能导致命令执行：redis；mysql；rsync。</p>
+</li>
+<li><p>Android应用<strong>Receiver</strong>注册的两种形式是：静态注册和动态注册。</p>
+</li>
+<li><p>爬虫和反爬虫定义：<strong>爬虫</strong>：使用任何技术手段，批量获取网站信息的一种方式。<strong>反爬虫</strong>：使用任何技术手段，阻止别人批量获取自己网站信息的一种方式。</p>
+</li>
+<li><p><strong>notify()方法</strong>只唤醒一个等待线程并使该线程执行，如果有多个线程等待一个对象，这个方法只会唤醒其中一个线程，选择哪个线程取决于操作系统对多线程管理的实现。notifyall()会唤醒所有等待的线程，哪个线程将会第一个处理取决于操作系统的实现。 </p>
+</li>
+<li><p>当线程执行<strong>wait()</strong>方法时，会释放当前的锁，然后让出CPU，进入等待状态，属于Object的成员方法。 </p>
+</li>
+<li><p><strong>sleep()</strong>是一个静态方法，一个线程调用sleep方法后并不会释放他所持有的所有对象锁，但是sleep的运行过程中有可能被其他对象调用它的interrupt()，产生InterruptedException异常，如果程序不捕获这个异常，线程就会异常终止，进入TERMINATED状态，如果程序捕获了这个异常，那么就会继续执行catch语句块以及以后的代码。 </p>
+</li>
+<li><p>数字签名 <strong>elgamal算法</strong>的原理是扩展欧几里得定理。</p>
+</li>
+<li><p><strong>重放攻击</strong>(Replay Attacks)又称重播攻击、回放攻击，是指攻击者发送一个目的主机已接收过的包，来达到欺骗系统的目的，主要用于身份认证过程，破坏认证的正确性。 </p>
+</li>
+<li><p><strong>Smurf攻击</strong>通过使用将回复地址设置成受害网络的广播地址的ICMP应答请求(ping)数据包，来淹没受害主机，最终导致该网络的所有主机都对此ICMP应答请求做出答复，导致网络阻塞。是一种拒绝服务攻击。 </p>
+</li>
+<li><p><strong>ARP欺骗</strong>通过欺骗局域网内访问者PC的网关MAC地址，使访问者PC错以为攻击者更改后的MAC地址是网关的MAC，导致网络不通。此种攻击可让攻击者获取局域网上的数据包甚至可篡改数据包，且可让网络上特定计算机或所有计算机无法正常连线。</p>
+</li>
+<li><p><strong>shell脚本的特殊变量</strong>：$0(当前脚本文件名)、$n(传递给脚本或函数的参数)、$#(传递给脚本或函数的参数个数)、$*(传递给脚本或函数的所有参数，“”包含时会表现为一个整体)、$@(传递给脚本或函数的所有参数)、$?(上个命令的退出状态或函数的返回值)和$$(当前shell的进程ID；对于shell脚本，就是脚本所在进程ID)</p>
+</li>
+<li><p><strong>安卓代码混淆原因</strong>： 优化java的字节码 ； 减小apk文件的大小，在混淆过程中会删除未使用过的类和成员 ； 代码安全，使类、函数、变量名随机变成无意义的代号形如：a,b,c…之类。防止app被反编译之后能够很容易的看懂代码。</p>
+</li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Peng Zhang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/header.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Anred's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/08/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" itemprop="url">操作系统基础知识</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-08-06T10:28:31+08:00">
+                2020-08-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index">
+                    <span itemprop="name">基础知识</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2020/08/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2020/08/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2020/08/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" class="leancloud_visitors" data-flag-title="操作系统基础知识">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.3k
+                </span>
+              
+
+              
+
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="操作系统基础知识"><a href="#操作系统基础知识" class="headerlink" title="操作系统基础知识"></a>操作系统基础知识</h1><h2 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h2><p>进程是正在执行的程序，是操作系统资源分配的基本单位。一般包含指令、数据和PCB。</p>
+<p>孤儿进程是指父进程退出，还在运行的子进程。孤儿进程会被init进程（id为1）收养，不会对系统造成危害。</p>
+<p>僵尸进程是指子进程的进程描述符在退出时不会释放，父进程同时也没有进行wait()或waitpid()操作获取子进程信息，因此子进程的进程描述符还会保存在系统中。由于进程号是有限的，如果产生大量的僵尸进程，将会没有可用的进程号而导致系统不能产生新的进程。解决办法是杀死父进程。使之成为孤儿进程。</p>
+<p>守护进程(daemon)是运行在后台的一种特殊进程，它是独立于控制终端的，并在周期性地执行某些任务。</p>
+<h2 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h2><p>线程是进程内部的不同执行路径，是操作系统独立调度的基本单位。一个进程可以有多个线程，线程共享进程资源。浏览器进程有多个线程，如http请求线程、事件响应线程和渲染线程等等，可并发执行。</p>
+<h3 id="进程与线程的区别"><a href="#进程与线程的区别" class="headerlink" title="进程与线程的区别"></a>进程与线程的区别</h3><p>拥有资源：进程是资源分配的基本单位，但线程不拥有资源，线程可以访问隶属于进程的资源。</p>
+<p>调度：线程是独立调度的基本单位。</p>
+<p>系统开销：创建、撤销和切换进程时的开销大于创建、撤销和切换线程时的开销。由于执行进程的操作时，系统需要分配或回收资源，如内存空间、I/O设备。进程切换时，需要保存当前cpu环境，进行新进程cpu环境的设置；而线程切换时只需要保存和设置少量寄存器内容，开销小。</p>
+<p>通信方面：线程间可以通过直接读写同一进程的数据进行通信，而进程之间需要进行IPC进程间通信。</p>
+<h3 id="线程有哪两种？"><a href="#线程有哪两种？" class="headerlink" title="线程有哪两种？"></a>线程有哪两种？</h3><p>用户级线程：有关线程管理的工作都应用程序完成。用户级线程的好处时非常高效，不需要进入内核空间，但并发效率不高。</p>
+<p>内核级线程：有关线程管理的工作都有内核完成。应用程序调用内核线程的接口来进行线程管理。优点是内核可以将不同线程更好地分配到不同CPU，以实现真正地并行计算。</p>
+<p>现代操作系统往往组合方式实现多线程，线程创建完全在用户空间中完成，并且一个应用程序中的多个用户级线程被映射到一些内核级线程中。</p>
+<h2 id="并发和并行"><a href="#并发和并行" class="headerlink" title="并发和并行"></a>并发和并行</h2><p>并发是一段时间内，多个任务都会被处理；但某一时刻，只有一个任务在执行。单核处理器可以做到并发。</p>
+<p>并行是在同一时刻，有多个任务在执行。需要多核处理器。</p>
+<h2 id="分时系统和实时系统"><a href="#分时系统和实时系统" class="headerlink" title="分时系统和实时系统"></a>分时系统和实时系统</h2><p>分时系统就是系统把CPU时间分成很短的时间片，轮流地分配给多个作业。对多个用户的多个作业都可以保证足够快的响应时间，并且有效提高了资源利用率。</p>
+<p>实时系统是系统对外部输入的信息，能够在规定的时间内处理完毕并做出反应。优点时集中地及时地处理并作出反应，高可靠，安全性。</p>
+<h2 id="进程状态"><a href="#进程状态" class="headerlink" title="进程状态"></a>进程状态</h2><p>创建、就绪、运行、终止和阻塞。</p>
+<p>就绪状态是进程获得除了CPU之外的一切所需资源，一旦得到CPU即可运行。</p>
+<p>阻塞状态为等待某资源或I/O。</p>
+<p>运行态-&gt;阻塞态往往是由于等待外设，等待主存等资源分配或等待人工干预。</p>
+<p>运行态-&gt;就绪态往往是时间片用完或更高优先级的进程抢占处理器。</p>
+<h2 id="进程调度算法"><a href="#进程调度算法" class="headerlink" title="进程调度算法"></a>进程调度算法</h2><p>先来先服务：有利于长作业，不利于短作业。短作业等待时间过长。对I/O密集型进程也不利。</p>
+<p>短作业优先：按估计运行时间最短的顺序进行调度。长作业可能会饿死，一直有短作业到来，长作业就永远得不到调度。</p>
+<p>最短剩余时间优先：短作业优先的抢占版。</p>
+<p>时间片轮转：将所有就绪进程按先来先服务排成队列，每次调度，把CPU时间分配给队首进程，执行一个时间片。时间片用完时，将进程送往就绪队列的末尾，同时继续把CPU时间进行分配。</p>
+<p>时间片太小进程切换的时间花费多。</p>
+<p>时间片过长则实时性就不能保证。</p>
+<p>优先级调度：每个进程分配优先级，抢占式。为防止低优先级得不到调度，可以随着时间的增加，增加等待进程的优先级。</p>
+<p>抢占式：操作系统可以强行将运行的进程暂停，调度器将CPU分配给其他就绪进程。</p>
+<p>非抢占式：调度器一旦把处理机分配给某进程，便可以一直让他运行下去，知道阻塞或完成。</p>
+<h3 id="上下文切换"><a href="#上下文切换" class="headerlink" title="上下文切换"></a>上下文切换</h3><p>是一种将CPU资源从一个进程分配到另一个进程的机制。</p>
+<h2 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h2><p>在两个或多个并发进程中，如果一个进程集合中的每个进程都在等待只能由该进程集合中的其他进程才能引发的事件，那么该进程集合就产生了死锁。</p>
+<p>死锁条件：（1）互斥：每个资源要么已经分配给了一个进程，要么就是可用的。（2）占有和等待：已经得到了某个资源的进程可以再请求新的资源。（3）不可抢占：已经分配给一个进程的资源不能强制性地被抢占，只能被占有进程显式地释放。（4）环路等待：有2个或2个以上的进程组成一条环路，每个进程等待下一个进程所占有的资源。</p>
+<p>解决办法：</p>
+<p>鸵鸟策略：直接忽略死锁。解决死锁代价很高，但死锁影响没那么大，发生概率不高。</p>
+<p>死锁预防：破坏4个必要条件，避免发生死锁。</p>
+<p>死锁避免：允许3个必要条件，但通过算法判断资源请求是否可能导致循环等待的形成并相应决策，来避免死锁点的产生。线程启动拒绝：如果一个线程的请求会引发死锁，则不允许其启动。资源分配拒绝：如果一个线程增加的资源请求会导致死锁，则不允许此申请。</p>
+<p>死锁检测和恢复：维护一个系统的资源分配图，定期进行死锁检测，如果有则解决死锁。</p>
+<h2 id="进程同步"><a href="#进程同步" class="headerlink" title="进程同步"></a>进程同步</h2><p>临界区、互斥量、信号量、管程。</p>
+<p>进程间通信：</p>
+<p>管道：实质为内核缓冲区，可看成循环队列。半双工。</p>
+<p>命名管道：FIFO，提供了一个路径名与之关联，不具有亲缘关系的进程也可以彼此通信。</p>
+<p>消息队列：消息的链表，存放在内存中。存在唯一标识。</p>
+<p>共享内存：多个进程可以直接读写同一块内存空间。</p>
+<p>信号量：控制多个进程对共享资源的访问。</p>
+<p>socket：套接字，不在同一主机的两个进程网络通信。</p>
+<h2 id="磁盘调度算法"><a href="#磁盘调度算法" class="headerlink" title="磁盘调度算法"></a>磁盘调度算法</h2><p>先来先服务：按照磁盘请求顺序调度。优点是公平和简单。但平均寻道时间可能会较长。</p>
+<p>最短寻道时间优先：优先调度与当前磁头最近的磁道。可能会发生饥饿。</p>
+<p>电梯算法scan扫描算法：总是保持一个方向运行，直到该方向没有请求为止。解决了饥饿问题。</p>
+<h2 id="虚拟内存"><a href="#虚拟内存" class="headerlink" title="虚拟内存"></a>虚拟内存</h2><p>物理内存扩充成更大的逻辑内存，从而让程序获得更多的可用内存。使用部分加载的技术，从而能加载更多的进程，看起来内存变大了，磁盘或者硬盘。</p>
+<h2 id="页面替换算法"><a href="#页面替换算法" class="headerlink" title="页面替换算法"></a>页面替换算法</h2><p>最佳算法：选择被换出的页面最长时间内不再被访问，通常可以保证获得最低的缺页率。理论算法。</p>
+<p>先进先出：但也可能会把经常访问的页面换出。</p>
+<p>LRU：根据过去判断。将最近最久未使用的页面换出。维护一个链表。页面访问则将之移动到表头。由于需要更新链表，因此LRU代价很高。</p>
+<p>时钟算法：时钟算法使用环形链表，0则不替换，1则替换。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/22/leetcode%E6%80%BB%E7%BB%93/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -398,7 +855,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  254
+                  287
                 </span>
               
 
@@ -430,6 +887,9 @@
 <p>有时我们在一块程序里已经有return，但不是在这块代码的结尾，leetCode也会编译不通过，所以我们也要在函数的代码块结尾也return一下。</p>
 <p>（3）处理大小比较部分的时候，一定记得考虑等于的情形是否满足要求。</p>
 <p>（4）C++中，使用i++还是++i？使用++i更好。原因：因为前置版本的递增运算符避免了不必要的工作，它把值加1后直接返回改变了的运算对象。与之相比，后置版本需要将原始值存储下来以便于返回这个未修改的内容。如果我们不需要修改前的值，那么后置版本的操作就是一种浪费。</p>
+<p>（5）float数据的正确表示</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> f = <span class="number">1.1</span>;   <span class="comment">//错误 1.1是double类型 java中</span></span><br><span class="line"><span class="keyword">float</span> f = <span class="number">1.1f</span>； <span class="comment">//正确</span></span><br><span class="line"><span class="keyword">double</span> d = <span class="number">34.4</span>; <span class="comment">//正确</span></span><br></pre></td></tr></table></figure>
+
 
           
         
@@ -1794,385 +2254,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/20/%E4%B8%BB%E6%B5%81%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8_Windows/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Peng Zhang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Anred's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/03/20/%E4%B8%BB%E6%B5%81%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8_Windows/" itemprop="url">主流操作系统安全_Windows</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-20T16:30:15+08:00">
-                2020-03-20
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E4%B8%BB%E6%B5%81%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8/" itemprop="url" rel="index">
-                    <span itemprop="name">主流操作系统安全</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2020/03/20/%E4%B8%BB%E6%B5%81%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8_Windows/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2020/03/20/%E4%B8%BB%E6%B5%81%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8_Windows/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/2020/03/20/%E4%B8%BB%E6%B5%81%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8_Windows/" class="leancloud_visitors" data-flag-title="主流操作系统安全_Windows">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  706
-                </span>
-              
-
-              
-
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="Winodws系统结构"><a href="#Winodws系统结构" class="headerlink" title="Winodws系统结构"></a>Winodws系统结构</h2><h3 id="Windows引导过程："><a href="#Windows引导过程：" class="headerlink" title="Windows引导过程："></a>Windows引导过程：</h3><ul>
-<li>BIOS</li>
-<li>MBR</li>
-<li>引导扇区（引导分区的第一个扇区）</li>
-<li>引导扇区后续扇区</li>
-<li>ntldr(实模式部分)：切换至保护模式</li>
-<li>ntldr(保护模式部分：os loader)</li>
-</ul>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2020/03/20/%E4%B8%BB%E6%B5%81%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8_Windows/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/20/%E4%BF%A1%E6%81%AF%E9%87%87%E9%9B%86_%E7%88%AC%E8%99%AB/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Peng Zhang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Anred's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/03/20/%E4%BF%A1%E6%81%AF%E9%87%87%E9%9B%86_%E7%88%AC%E8%99%AB/" itemprop="url">信息采集_爬虫</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-20T00:10:00+08:00">
-                2020-03-20
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E4%BF%A1%E6%81%AF%E5%86%85%E5%AE%B9%E5%AE%89%E5%85%A8/" itemprop="url" rel="index">
-                    <span itemprop="name">信息内容安全</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2020/03/20/%E4%BF%A1%E6%81%AF%E9%87%87%E9%9B%86_%E7%88%AC%E8%99%AB/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2020/03/20/%E4%BF%A1%E6%81%AF%E9%87%87%E9%9B%86_%E7%88%AC%E8%99%AB/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/2020/03/20/%E4%BF%A1%E6%81%AF%E9%87%87%E9%9B%86_%E7%88%AC%E8%99%AB/" class="leancloud_visitors" data-flag-title="信息采集_爬虫">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  181
-                </span>
-              
-
-              
-
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="Scrapy框架："><a href="#Scrapy框架：" class="headerlink" title="Scrapy框架："></a>Scrapy框架：</h2><p>安装Scrapy需要安装lxml、Twisted、scrapy和pypiwin32包。只需要pip install 对应包即可安装。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2020/03/20/%E4%BF%A1%E6%81%AF%E9%87%87%E9%9B%86_%E7%88%AC%E8%99%AB/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2225,7 +2306,7 @@
             
               <div class="site-state-item site-state-posts">
                 <a href="/archives">
-                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-count">20</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -2236,7 +2317,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -2247,7 +2328,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">29</span>
+                  <span class="site-state-item-count">30</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -2314,7 +2395,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">12.9k</span>
+    <span title="Site words total count">16.3k</span>
   
 </div>
 
