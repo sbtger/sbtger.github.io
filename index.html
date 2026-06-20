@@ -263,6 +263,7 @@
     }
 
     .visual-panel {
+      display: none;
       overflow: hidden;
       border: 1px solid rgba(148, 163, 184, 0.22);
       border-radius: 8px;
@@ -825,7 +826,6 @@
     let width = 0;
     let height = 0;
     let stars = [];
-    let basins = [];
     let frame = 0;
 
     function resizeCanvas() {
@@ -842,21 +842,17 @@
         hue: index % 4 === 0 ? '238, 179, 255' : index % 3 === 0 ? '125, 211, 252' : '226, 232, 240',
         phase: index * 0.47
       }));
-      basins = Array.from({ length: 9 }, (_, index) => ({
-        x: 0.24 + ((index * 31) % 56) / 100,
-        y: 0.2 + ((index * 43) % 58) / 100,
-        r: 0.055 + ((index * 13) % 34) / 1000,
-        tilt: -0.65 + ((index * 19) % 42) / 100
-      }));
     }
 
     function draw() {
       ctx.clearRect(0, 0, width, height);
-      const drift = reduceMotion ? 0 : Math.sin(frame * 0.006) * 5;
       const compact = width < 720;
-      const radius = compact ? 148 : Math.min(360, Math.max(286, width * 0.25));
-      const centerX = (compact ? -42 : -radius * 0.56) + drift;
-      const centerY = compact ? 4 : Math.max(156, height * 0.16);
+      const planetRadius = compact ? 210 : Math.min(540, Math.max(420, width * 0.34));
+      const planetX = compact ? width + planetRadius * 0.36 : width - planetRadius * 0.28;
+      const planetY = compact ? 230 : Math.max(310, height * 0.43);
+      const satelliteRadius = compact ? 22 : 50;
+      const satelliteX = compact ? width * 0.72 : width * 0.62;
+      const satelliteY = compact ? 78 : Math.max(124, height * 0.16);
 
       stars.forEach((star) => {
         const alpha = 0.22 + Math.sin(frame * 0.018 + star.phase) * 0.13;
@@ -866,101 +862,144 @@
         ctx.fill();
       });
 
-      const glow = ctx.createRadialGradient(centerX, centerY, radius * 0.28, centerX, centerY, radius * 1.08);
-      glow.addColorStop(0, 'rgba(226, 232, 240, 0.3)');
-      glow.addColorStop(0.52, 'rgba(147, 197, 253, 0.16)');
-      glow.addColorStop(1, 'rgba(147, 197, 253, 0)');
+      const lineY = compact ? 158 : Math.max(250, height * 0.31);
+      const lineStart = compact ? 18 : width * 0.22;
+      const lineEnd = compact ? width * 0.86 : planetX - planetRadius * 0.78;
+      const beam = ctx.createLinearGradient(lineStart, lineY, lineEnd, lineY);
+      beam.addColorStop(0, 'rgba(96, 165, 250, 0.95)');
+      beam.addColorStop(0.55, 'rgba(59, 130, 246, 0.55)');
+      beam.addColorStop(1, 'rgba(59, 130, 246, 0)');
+      ctx.strokeStyle = beam;
+      ctx.lineWidth = compact ? 1 : 1.5;
+      ctx.beginPath();
+      ctx.moveTo(lineStart, lineY);
+      ctx.lineTo(lineEnd, lineY);
+      ctx.stroke();
+      ctx.fillStyle = 'rgba(96, 165, 250, 0.95)';
+      ctx.beginPath();
+      ctx.arc(lineStart, lineY, compact ? 2 : 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      const satelliteGlow = ctx.createRadialGradient(satelliteX, satelliteY, satelliteRadius * 0.25, satelliteX, satelliteY, satelliteRadius * 2.1);
+      satelliteGlow.addColorStop(0, 'rgba(196, 181, 253, 0.88)');
+      satelliteGlow.addColorStop(0.42, 'rgba(167, 139, 250, 0.26)');
+      satelliteGlow.addColorStop(1, 'rgba(167, 139, 250, 0)');
+      ctx.fillStyle = satelliteGlow;
+      ctx.beginPath();
+      ctx.arc(satelliteX, satelliteY, satelliteRadius * 2.1, 0, Math.PI * 2);
+      ctx.fill();
+
+      const satelliteFill = ctx.createRadialGradient(satelliteX - satelliteRadius * 0.28, satelliteY - satelliteRadius * 0.24, 0, satelliteX, satelliteY, satelliteRadius);
+      satelliteFill.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+      satelliteFill.addColorStop(0.24, 'rgba(216, 180, 254, 0.86)');
+      satelliteFill.addColorStop(1, 'rgba(124, 58, 237, 0.68)');
+      ctx.fillStyle = satelliteFill;
+      ctx.beginPath();
+      ctx.arc(satelliteX, satelliteY, satelliteRadius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.72)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(satelliteX, satelliteY, satelliteRadius * 0.82, 0, Math.PI * 2);
+      ctx.clip();
+      for (let i = 0; i < 9; i += 1) {
+        ctx.globalAlpha = 0.22;
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.82)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.ellipse(
+          satelliteX + Math.sin(i * 0.8 + frame * 0.012) * satelliteRadius * 0.12,
+          satelliteY,
+          satelliteRadius * (0.34 + i * 0.035),
+          satelliteRadius * (0.72 + i * 0.02),
+          i * 0.34,
+          0,
+          Math.PI * 2
+        );
+        ctx.stroke();
+      }
+      ctx.restore();
+      ctx.globalAlpha = 1;
+
+      const glow = ctx.createRadialGradient(planetX, planetY, planetRadius * 0.74, planetX, planetY, planetRadius * 1.18);
+      glow.addColorStop(0, 'rgba(226, 232, 240, 0)');
+      glow.addColorStop(0.68, 'rgba(226, 232, 240, 0.14)');
+      glow.addColorStop(1, 'rgba(226, 232, 240, 0)');
       ctx.fillStyle = glow;
       ctx.beginPath();
-      ctx.arc(centerX, centerY, radius * 1.08, 0, Math.PI * 2);
+      ctx.arc(planetX, planetY, planetRadius * 1.18, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.save();
       ctx.beginPath();
-      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+      ctx.arc(planetX, planetY, planetRadius, 0, Math.PI * 2);
       ctx.clip();
 
-      const surface = ctx.createRadialGradient(centerX + radius * 0.38, centerY - radius * 0.28, radius * 0.08, centerX, centerY, radius);
+      const surface = ctx.createRadialGradient(planetX - planetRadius * 0.18, planetY - planetRadius * 0.2, 0, planetX, planetY, planetRadius);
       surface.addColorStop(0, 'rgba(248, 250, 252, 0.92)');
-      surface.addColorStop(0.32, 'rgba(191, 219, 254, 0.62)');
-      surface.addColorStop(0.68, 'rgba(96, 165, 250, 0.34)');
-      surface.addColorStop(1, 'rgba(15, 23, 42, 0.18)');
+      surface.addColorStop(0.24, 'rgba(219, 234, 254, 0.76)');
+      surface.addColorStop(0.58, 'rgba(96, 165, 250, 0.52)');
+      surface.addColorStop(1, 'rgba(29, 78, 216, 0.38)');
       ctx.fillStyle = surface;
       ctx.beginPath();
-      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+      ctx.arc(planetX, planetY, planetRadius, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.lineWidth = 1;
-      for (let i = 0; i < 34; i += 1) {
-        const t = i / 33;
-        const y = centerY - radius * 0.68 + t * radius * 1.36;
-        const wave = reduceMotion ? 0 : Math.sin(frame * 0.012 + i * 0.42) * 8;
-        ctx.globalAlpha = 0.16 + (1 - Math.abs(t - 0.5) * 2) * 0.12;
-        ctx.strokeStyle = 'rgba(248, 250, 252, 0.72)';
+      for (let i = 0; i < 72; i += 1) {
+        const t = i / 71;
+        const y = planetY - planetRadius * 0.72 + t * planetRadius * 1.44;
+        const wave = reduceMotion ? 0 : Math.sin(frame * 0.01 + i * 0.36) * planetRadius * 0.015;
+        ctx.globalAlpha = 0.1 + (1 - Math.abs(t - 0.5) * 2) * 0.1;
+        ctx.strokeStyle = 'rgba(248, 250, 252, 0.9)';
         ctx.beginPath();
-        ctx.moveTo(centerX - radius, y);
-        for (let x = centerX - radius; x <= centerX + radius; x += 18) {
-          const local = (x - centerX) / radius;
-          const curve = Math.sin(local * Math.PI * 2.4 + frame * 0.01 + i * 0.18) * 8;
-          const lift = Math.cos(local * Math.PI) * radius * 0.08;
+        ctx.moveTo(planetX - planetRadius, y);
+        for (let x = planetX - planetRadius; x <= planetX + planetRadius; x += 14) {
+          const local = (x - planetX) / planetRadius;
+          const curve = Math.sin(local * Math.PI * 2.2 + frame * 0.012 + i * 0.16) * planetRadius * 0.018;
+          const lift = Math.cos(local * Math.PI) * planetRadius * 0.04;
           ctx.lineTo(x, y + curve + lift + wave);
         }
         ctx.stroke();
       }
 
-      for (let i = 0; i < 18; i += 1) {
-        const scale = 0.22 + i * 0.026;
-        const wobble = reduceMotion ? 0 : Math.sin(frame * 0.011 + i) * radius * 0.014;
-        ctx.globalAlpha = 0.08 + i / 260;
+      for (let i = 0; i < 46; i += 1) {
+        const scale = 0.18 + i * 0.015;
+        const wobble = reduceMotion ? 0 : Math.sin(frame * 0.012 + i) * planetRadius * 0.01;
+        ctx.globalAlpha = 0.07 + i / 420;
         ctx.strokeStyle = 'rgba(226, 232, 240, 0.95)';
         ctx.beginPath();
         ctx.ellipse(
-          centerX + radius * 0.46 + Math.sin(i * 0.7) * radius * 0.05,
-          centerY + Math.cos(i * 0.55) * radius * 0.08,
-          radius * scale,
-          radius * (scale * 0.58 + 0.02) + wobble,
-          -0.18 + i * 0.018,
+          planetX + Math.sin(i * 0.58) * planetRadius * 0.08,
+          planetY + Math.cos(i * 0.42) * planetRadius * 0.08,
+          planetRadius * scale,
+          planetRadius * (scale * 0.68 + 0.02) + wobble,
+          -0.12 + i * 0.012,
           0,
           Math.PI * 2
         );
         ctx.stroke();
       }
 
-      basins.forEach((basin, index) => {
-        const pulse = reduceMotion ? 0 : Math.sin(frame * 0.014 + index) * 1.6;
-        const x = centerX - radius * 0.08 + radius * basin.x;
-        const y = centerY - radius * 0.56 + radius * 1.12 * basin.y;
-        const r = radius * basin.r + pulse;
-        ctx.globalAlpha = 0.28;
-        ctx.lineWidth = 1.2;
-        ctx.strokeStyle = 'rgba(248, 250, 252, 0.62)';
-        ctx.beginPath();
-        ctx.ellipse(x, y, r * 1.55, r * 0.86, basin.tilt, 0, Math.PI * 2);
-        ctx.stroke();
-
-        ctx.globalAlpha = 0.16;
-        ctx.strokeStyle = 'rgba(15, 23, 42, 0.72)';
-        ctx.beginPath();
-        ctx.ellipse(x + r * 0.16, y + r * 0.08, r * 0.9, r * 0.52, basin.tilt, 0, Math.PI * 2);
-        ctx.stroke();
-      });
-
-      const rim = ctx.createRadialGradient(centerX, centerY, radius * 0.8, centerX, centerY, radius);
+      const rim = ctx.createRadialGradient(planetX, planetY, planetRadius * 0.78, planetX, planetY, planetRadius);
       rim.addColorStop(0, 'rgba(248, 250, 252, 0)');
-      rim.addColorStop(0.82, 'rgba(248, 250, 252, 0.06)');
-      rim.addColorStop(1, 'rgba(248, 250, 252, 0.62)');
+      rim.addColorStop(0.84, 'rgba(248, 250, 252, 0.12)');
+      rim.addColorStop(1, 'rgba(248, 250, 252, 0.88)');
       ctx.globalAlpha = 1;
       ctx.fillStyle = rim;
       ctx.beginPath();
-      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+      ctx.arc(planetX, planetY, planetRadius, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
 
       ctx.globalAlpha = 1;
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = 'rgba(248, 250, 252, 0.42)';
+      ctx.lineWidth = compact ? 2 : 3;
+      ctx.strokeStyle = 'rgba(248, 250, 252, 0.78)';
       ctx.beginPath();
-      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+      ctx.arc(planetX, planetY, planetRadius, 0, Math.PI * 2);
       ctx.stroke();
 
       frame += 1;
