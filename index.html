@@ -1,3044 +1,880 @@
 <!DOCTYPE html>
-
-
-
-  
-
-
-<html class="theme-next gemini use-motion" lang="zh-Hans">
+<html lang="zh-Hans">
 <head>
-  <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-<meta name="theme-color" content="#222">
-
-
-
-
-
-
-
-
-
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
-
-
-
-
-
-
-
-<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
-
-<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
-
-
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
-
-
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
-
-
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
-
-
-  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
-
-
-
-
-
-  <meta name="keywords" content="Hexo, NexT" />
-
-
-
-
-
-
-
-
-
-
-<meta property="og:type" content="website">
-<meta property="og:title" content="Anred&#39;s Blog">
-<meta property="og:url" content="http://yoursite.com/index.html">
-<meta property="og:site_name" content="Anred&#39;s Blog">
-<meta property="article:author" content="Peng Zhang">
-<meta name="twitter:card" content="summary">
-
-
-
-<script type="text/javascript" id="hexo.configurations">
-  var NexT = window.NexT || {};
-  var CONFIG = {
-    root: '/',
-    scheme: 'Gemini',
-    version: '5.1.4',
-    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
-    fancybox: true,
-    tabs: true,
-    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
-    duoshuo: {
-      userId: '0',
-      author: '博主'
-    },
-    algolia: {
-      applicationID: '',
-      apiKey: '',
-      indexName: '',
-      hits: {"per_page":10},
-      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#070a0f">
+  <meta name="description" content="Peng Zhang 的个人技术博客，记录系统、网络安全、Android 安全、数据系统和工程实践。">
+  <meta name="keywords" content="技术博客, 系统, 网络安全, Android, DDIA, Python, Peng Zhang">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Anred Lab | Peng Zhang">
+  <meta property="og:site_name" content="Anred Lab">
+  <meta property="og:description" content="面向系统、安全和数据密集型应用的个人技术博客。">
+  <meta property="og:image" content="/images/header.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="/">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <title>Anred Lab | Peng Zhang</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #070a0f;
+      --panel: rgba(12, 18, 27, 0.78);
+      --panel-solid: #0d131d;
+      --line: rgba(148, 163, 184, 0.2);
+      --text: #e8eef8;
+      --muted: #9eacbd;
+      --soft: #c9d4e3;
+      --cyan: #22d3ee;
+      --green: #7ddc8a;
+      --amber: #f7c873;
+      --red: #f87171;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.38);
+      --max: 1180px;
     }
-  };
-</script>
 
+    * {
+      box-sizing: border-box;
+    }
 
+    html {
+      scroll-behavior: smooth;
+    }
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+    body {
+      margin: 0;
+      min-width: 320px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 20% 0%, rgba(34, 211, 238, 0.12), transparent 28rem),
+        linear-gradient(180deg, #070a0f 0%, #0a0e14 46%, #090b10 100%);
+    }
 
+    body::before {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      content: "";
+      background-image:
+        linear-gradient(rgba(148, 163, 184, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148, 163, 184, 0.055) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: linear-gradient(to bottom, black, rgba(0, 0, 0, 0.4), transparent);
+    }
 
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
 
+    img {
+      display: block;
+      max-width: 100%;
+    }
 
+    .site-shell {
+      position: relative;
+      overflow: hidden;
+    }
 
-  <title>Anred's Blog</title>
-  
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+      background: rgba(7, 10, 15, 0.78);
+      backdrop-filter: blur(18px);
+    }
 
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: calc(100% - 32px);
+      max-width: var(--max);
+      min-height: 68px;
+      margin: 0 auto;
+      gap: 20px;
+    }
 
+    .brand {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
 
+    .brand-mark {
+      display: grid;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      border: 1px solid rgba(34, 211, 238, 0.4);
+      border-radius: 8px;
+      color: var(--cyan);
+      background: rgba(34, 211, 238, 0.1);
+      box-shadow: inset 0 0 20px rgba(34, 211, 238, 0.08);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
 
+    .brand-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
 
+    .nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+    }
 
+    .nav-links a {
+      padding: 9px 11px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 14px;
+      transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
 
+    .nav-links a:hover {
+      border-color: rgba(148, 163, 184, 0.24);
+      color: var(--text);
+      background: rgba(148, 163, 184, 0.08);
+    }
 
-<meta name="generator" content="Hexo 4.2.0"></head>
+    .hero {
+      position: relative;
+      min-height: calc(100vh - 68px);
+      padding: 72px 0 56px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+    }
 
-<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+    #signal-canvas {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      opacity: 0.72;
+    }
 
-  
-  
-    
-  
+    .hero-inner {
+      display: grid;
+      width: calc(100% - 32px);
+      max-width: var(--max);
+      margin: 0 auto;
+      gap: 42px;
+    }
 
-  <div class="container sidebar-position-left 
-  page-home">
-    <div class="headband"></div>
+    .hero-main {
+      display: grid;
+      align-items: center;
+      min-height: 62vh;
+      gap: 34px;
+      grid-template-columns: minmax(0, 1.08fr) minmax(300px, 0.72fr);
+    }
 
-    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-wrapper">
-  <div class="site-meta ">
-    
+    .hero-main > * {
+      min-width: 0;
+    }
 
-    <div class="custom-logo-site-title">
-      <a href="/"  class="brand" rel="start">
-        <span class="logo-line-before"><i></i></span>
-        <span class="site-title">Anred's Blog</span>
-        <span class="logo-line-after"><i></i></span>
-      </a>
-    </div>
-      
-        <p class="site-subtitle"></p>
-      
-  </div>
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      margin-bottom: 18px;
+      padding: 6px 10px;
+      border: 1px solid rgba(125, 220, 138, 0.28);
+      border-radius: 999px;
+      color: var(--green);
+      background: rgba(125, 220, 138, 0.08);
+      font: 700 12px/1.2 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
 
-  <div class="site-nav-toggle">
-    <button>
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-    </button>
-  </div>
-</div>
+    h1 {
+      max-width: 820px;
+      margin: 0;
+      font-size: clamp(48px, 8vw, 108px);
+      line-height: 0.94;
+      letter-spacing: 0;
+      overflow-wrap: break-word;
+    }
 
-<nav class="site-nav">
-  
+    .hero-title-line {
+      display: block;
+    }
 
-  
-    <ul id="menu" class="menu">
-      
-        
-        <li class="menu-item menu-item-home">
-          <a href="/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
-            
-            首页
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-categories">
-          <a href="/categories/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
-            
-            分类
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-tags">
-          <a href="/tags/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
-            
-            标签
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-about">
-          <a href="/about/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
-            
-            关于
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-archives">
-          <a href="/archives/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
-            
-            归档
-          </a>
-        </li>
-      
+    .hero-copy {
+      width: min(100%, 720px);
+      margin: 24px 0 0;
+      color: var(--soft);
+      font-size: clamp(17px, 2vw, 21px);
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
 
-      
-        <li class="menu-item menu-item-search">
-          
-            <a href="javascript:;" class="popup-trigger">
-          
-            
-              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
-            
-            搜索
-          </a>
-        </li>
-      
-    </ul>
-  
+    .hero-copy-line {
+      display: inline;
+    }
 
-  
-    <div class="site-search">
-      
-  <div class="popup search-popup local-search-popup">
-  <div class="local-search-header clearfix">
-    <span class="search-icon">
-      <i class="fa fa-search"></i>
-    </span>
-    <span class="popup-btn-close">
-      <i class="fa fa-times-circle"></i>
-    </span>
-    <div class="local-search-input-wrapper">
-      <input autocomplete="off"
-             placeholder="搜索..." spellcheck="false"
-             type="text" id="local-search-input">
-    </div>
-  </div>
-  <div id="local-search-result"></div>
-</div>
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      margin-top: 34px;
+      gap: 12px;
+    }
 
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0 16px;
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      border-radius: 8px;
+      color: var(--text);
+      background: rgba(148, 163, 184, 0.1);
+      font-weight: 750;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
 
+    .button:hover {
+      transform: translateY(-2px);
+      border-color: rgba(34, 211, 238, 0.46);
+      background: rgba(34, 211, 238, 0.12);
+    }
 
-    </div>
-  
-</nav>
+    .button.primary {
+      border-color: rgba(34, 211, 238, 0.52);
+      color: #021016;
+      background: var(--cyan);
+      box-shadow: 0 16px 42px rgba(34, 211, 238, 0.18);
+    }
 
+    .visual-panel {
+      overflow: hidden;
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 8px;
+      background: rgba(10, 15, 23, 0.78);
+      box-shadow: var(--shadow);
+    }
 
+    .portrait {
+      position: relative;
+      aspect-ratio: 4 / 5;
+      background: #111827;
+    }
 
- </div>
+    .portrait img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: saturate(0.92) contrast(1.04);
+    }
+
+    .portrait::after {
+      position: absolute;
+      inset: 0;
+      content: "";
+      background:
+        linear-gradient(180deg, transparent 50%, rgba(7, 10, 15, 0.8)),
+        repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 6px);
+      pointer-events: none;
+    }
+
+    .terminal {
+      padding: 18px;
+      border-top: 1px solid rgba(148, 163, 184, 0.18);
+      font: 13px/1.7 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    .terminal-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .lights {
+      display: flex;
+      gap: 7px;
+    }
+
+    .lights span {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--red);
+    }
+
+    .lights span:nth-child(2) {
+      background: var(--amber);
+    }
+
+    .lights span:nth-child(3) {
+      background: var(--green);
+    }
+
+    .terminal-line {
+      margin: 4px 0;
+      color: var(--soft);
+    }
+
+    .terminal-line .prompt {
+      color: var(--green);
+    }
+
+    .terminal-line .value {
+      color: var(--cyan);
+    }
+
+    .metric-strip {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .metric {
+      min-height: 104px;
+      padding: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 8px;
+      background: rgba(12, 18, 27, 0.62);
+    }
+
+    .metric strong {
+      display: block;
+      color: var(--text);
+      font-size: 28px;
+      line-height: 1.1;
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .section {
+      width: calc(100% - 32px);
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 82px 0;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    h2 {
+      margin: 0;
+      color: var(--text);
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .section-head p {
+      max-width: 430px;
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .article-grid {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .article-card {
+      display: flex;
+      min-height: 236px;
+      padding: 22px;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.18);
+      flex-direction: column;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .article-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(34, 211, 238, 0.38);
+      background: rgba(14, 22, 33, 0.9);
+    }
+
+    .article-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--muted);
+      font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    .tag {
+      width: fit-content;
+      padding: 4px 8px;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 999px;
+      color: var(--cyan);
+      background: rgba(34, 211, 238, 0.08);
+    }
+
+    .article-card h3 {
+      margin: 24px 0 12px;
+      font-size: 22px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    .article-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .article-card .read-more {
+      margin-top: auto;
+      padding-top: 24px;
+      color: var(--green);
+      font-weight: 750;
+    }
+
+    .systems {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: 0.86fr 1.14fr;
+    }
+
+    .focus-panel,
+    .link-panel {
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 8px;
+      background: rgba(12, 18, 27, 0.7);
+    }
+
+    .focus-panel {
+      padding: 26px;
+    }
+
+    .focus-panel p {
+      margin: 14px 0 0;
+      color: var(--muted);
+    }
+
+    .focus-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .focus-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 13px 0;
+      border-top: 1px solid rgba(148, 163, 184, 0.14);
+      color: var(--soft);
+    }
+
+    .focus-item code {
+      color: var(--amber);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    .link-panel {
+      display: grid;
+      overflow: hidden;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .link-tile {
+      min-height: 142px;
+      padding: 24px;
+      border-right: 1px solid rgba(148, 163, 184, 0.14);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+      transition: background 160ms ease;
+    }
+
+    .link-tile:hover {
+      background: rgba(34, 211, 238, 0.08);
+    }
+
+    .link-tile:nth-child(2n) {
+      border-right: 0;
+    }
+
+    .link-tile h3 {
+      margin: 0 0 8px;
+      font-size: 19px;
+    }
+
+    .link-tile p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .lab-footer {
+      border-top: 1px solid rgba(148, 163, 184, 0.14);
+      background: #06080c;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: calc(100% - 32px);
+      max-width: var(--max);
+      min-height: 112px;
+      margin: 0 auto;
+      gap: 20px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-links a {
+      color: var(--soft);
+    }
+
+    @media (max-width: 960px) {
+      .hero-main,
+      .systems {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-main {
+        min-height: auto;
+      }
+
+      .visual-panel {
+        max-width: 520px;
+      }
+
+      .metric-strip,
+      .article-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .nav-inner {
+        align-items: flex-start;
+        padding: 14px 0;
+        flex-direction: column;
+      }
+
+      .nav-links {
+        width: 100%;
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding-bottom: 2px;
+      }
+
+      .nav-links a {
+        white-space: nowrap;
+      }
+
+      .hero {
+        padding-top: 44px;
+      }
+
+      .hero-actions,
+      .section-head,
+      .footer-inner {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .button {
+        width: 100%;
+      }
+
+      .metric-strip,
+      .article-grid,
+      .link-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .link-tile,
+      .link-tile:nth-child(2n) {
+        border-right: 0;
+      }
+
+      h1 {
+        max-width: 100%;
+        font-size: clamp(40px, 12vw, 48px);
+        line-height: 1.02;
+      }
+
+      .hero-copy-line {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="site-shell">
+    <nav class="nav" aria-label="主导航">
+      <div class="nav-inner">
+        <a class="brand" href="/" aria-label="Anred Lab 首页">
+          <span class="brand-mark">A</span>
+          <span class="brand-text">Anred Lab</span>
+        </a>
+        <div class="nav-links">
+          <a href="#notes">笔记</a>
+          <a href="#systems">方向</a>
+          <a href="/archives/">归档</a>
+          <a href="/categories/">分类</a>
+          <a href="/tags/">标签</a>
+          <a href="/about/">关于</a>
+        </div>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <canvas id="signal-canvas" aria-hidden="true"></canvas>
+      <div class="hero-inner">
+        <div class="hero-main">
+          <div>
+            <span class="eyebrow">SYSTEMS / SECURITY / DATA</span>
+            <h1><span class="hero-title-line">技术札记</span></h1>
+            <p class="hero-copy">
+              <span class="hero-copy-line">我是 Peng Zhang。</span>
+              <span class="hero-copy-line">这里记录系统底层、网络安全、</span>
+              <span class="hero-copy-line">移动安全、数据密集型应用，</span>
+              <span class="hero-copy-line">以及把工程问题拆开重装的过程。</span>
+            </p>
+            <div class="hero-actions">
+              <a class="button primary" href="#notes">阅读精选笔记</a>
+              <a class="button" href="/archives/">进入完整归档</a>
+              <a class="button" href="https://github.com/sbtger" target="_blank" rel="noopener">GitHub</a>
+            </div>
+          </div>
+
+          <aside class="visual-panel" aria-label="作者信息面板">
+            <div class="portrait">
+              <img src="/images/header.jpg" alt="Peng Zhang">
+            </div>
+            <div class="terminal">
+              <div class="terminal-top">
+                <div class="lights" aria-hidden="true"><span></span><span></span><span></span></div>
+                <span>~/anred-lab</span>
+              </div>
+              <p class="terminal-line"><span class="prompt">$</span> whoami <span class="value">peng.zhang</span></p>
+              <p class="terminal-line"><span class="prompt">$</span> focus --now <span class="value">systems security data</span></p>
+              <p class="terminal-line"><span class="prompt">$</span> publish --mode <span class="value">notes-first</span></p>
+            </div>
+          </aside>
+        </div>
+
+        <div class="metric-strip" aria-label="站点统计">
+          <div class="metric"><strong>21</strong><span>技术日志</span></div>
+          <div class="metric"><strong>14</strong><span>主题分类</span></div>
+          <div class="metric"><strong>31</strong><span>知识标签</span></div>
+          <div class="metric"><strong>16.8k</strong><span>历史字数</span></div>
+        </div>
+      </div>
     </header>
 
-    <main id="main" class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          <div id="content" class="content">
-            
-  <section id="posts" class="posts-expand">
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/09/26/DDIA-01%E5%8F%AF%E9%9D%A0%E3%80%81%E5%8F%AF%E6%89%A9%E5%B1%95%E5%92%8C%E5%8F%AF%E7%BB%B4%E6%8A%A4%E5%BA%94%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Peng Zhang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Anred's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2021/09/26/DDIA-01%E5%8F%AF%E9%9D%A0%E3%80%81%E5%8F%AF%E6%89%A9%E5%B1%95%E5%92%8C%E5%8F%AF%E7%BB%B4%E6%8A%A4%E5%BA%94%E7%94%A8/" itemprop="url">DDIA-01.可靠、可扩展、可维护的应用</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-09-26T22:26:07+08:00">
-                2021-09-26
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/DDIA/" itemprop="url" rel="index">
-                    <span itemprop="name">DDIA</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2021/09/26/DDIA-01%E5%8F%AF%E9%9D%A0%E3%80%81%E5%8F%AF%E6%89%A9%E5%B1%95%E5%92%8C%E5%8F%AF%E7%BB%B4%E6%8A%A4%E5%BA%94%E7%94%A8/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2021/09/26/DDIA-01%E5%8F%AF%E9%9D%A0%E3%80%81%E5%8F%AF%E6%89%A9%E5%B1%95%E5%92%8C%E5%8F%AF%E7%BB%B4%E6%8A%A4%E5%BA%94%E7%94%A8/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/2021/09/26/DDIA-01%E5%8F%AF%E9%9D%A0%E3%80%81%E5%8F%AF%E6%89%A9%E5%B1%95%E5%92%8C%E5%8F%AF%E7%BB%B4%E6%8A%A4%E5%BA%94%E7%94%A8/" class="leancloud_visitors" data-flag-title="DDIA-01.可靠、可扩展、可维护的应用">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  448
-                </span>
-              
-
-              
-
-              
-            </div>
-          
-
-          
-
+    <main>
+      <section id="notes" class="section">
+        <div class="section-head">
+          <h2>精选笔记</h2>
+          <p>保留原有文章地址，把旧 Hexo 列表升级成更适合快速扫描的技术索引。</p>
         </div>
-      </header>
-    
 
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="第一部分-数据系统的基础"><a href="#第一部分-数据系统的基础" class="headerlink" title="第一部分 数据系统的基础"></a>第一部分 数据系统的基础</h1><h2 id="1-可靠、可扩展、可维护的应用"><a href="#1-可靠、可扩展、可维护的应用" class="headerlink" title="1.可靠、可扩展、可维护的应用"></a>1.可靠、可扩展、可维护的应用</h2><p>本书主要讲述的内容是数据系统的原理与实践，以及如何构建数据密集型应用。目前的很多应用都是数据密集型，而不是计算密集型。计算性能基本不是大多数应用的限制因素，而是通常大量的数据信息。这些数据信息如何存储为了下次查找（database），加速读取（cache），根据索引查找（index），流处理？，大量增加数据（批处理）。由于不同场景对于性能，数据访问方式，具体实现的要求不同，数据系统有很多。对于数据系统，我们主要关注可靠性、可扩展性和可维护性3点。</p>
-<h2 id="可靠性"><a href="#可靠性" class="headerlink" title="可靠性"></a>可靠性</h2><p>数据系统需要持续正常工作，即使面对多样的问题。</p>
-<p>问题主要包括硬件问题、软件问题以及人的问题。</p>
-<ul>
-<li><p>硬件问题主要需要冗余备份、快速恢复等方法解决。</p>
-</li>
-<li><p>软件问题可能会导致级联的问题。解决方法包括仔细考虑系统的假设与交互、全面测试、进程孤立、允许进程崩溃与重启、评测监控以及分析系统的行为。</p>
-</li>
-<li><p>人的问题的解决方法包括最小化错误产生的可能（交互应当简单），环境解耦（方便沙箱测试），全局测试，快速恢复，设置详细清晰的监控（包括性能、错误率），好的训练。</p>
-</li>
-</ul>
-<p>可靠性的重要性在于我们对用户是有责任的。如果用户存储家庭照片的应用的数据库突然崩溃，他们会怎么想。</p>
-<h2 id="可扩展性"><a href="#可扩展性" class="headerlink" title="可扩展性"></a>可扩展性</h2>
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/07/%E5%AE%89%E5%85%A8%E7%B1%BB%E9%94%99%E9%A2%98%E9%9B%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Peng Zhang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Anred's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/08/07/%E5%AE%89%E5%85%A8%E7%B1%BB%E9%94%99%E9%A2%98%E9%9B%86/" itemprop="url">安全类错题集</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-08-07T11:36:33+08:00">
-                2020-08-07
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index">
-                    <span itemprop="name">基础知识</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2020/08/07/%E5%AE%89%E5%85%A8%E7%B1%BB%E9%94%99%E9%A2%98%E9%9B%86/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2020/08/07/%E5%AE%89%E5%85%A8%E7%B1%BB%E9%94%99%E9%A2%98%E9%9B%86/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/2020/08/07/%E5%AE%89%E5%85%A8%E7%B1%BB%E9%94%99%E9%A2%98%E9%9B%86/" class="leancloud_visitors" data-flag-title="安全类错题集">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  1.1k
-                </span>
-              
-
-              
-
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="安全类错题集"><a href="#安全类错题集" class="headerlink" title="安全类错题集"></a>安全类错题集</h1><ol>
-<li><p>常用android代码混淆工具：<strong>proguard</strong>。</p>
-</li>
-<li><p><strong>android app</strong>常见的<strong>调试手段</strong>有：重打包apk并设置AndroidManifest.xml的debuggable属性为true；ida或smalidea动态调试；frida hook框架；xposed hook框架。</p>
-</li>
-<li><pre><code class="java"><span class="keyword">int</span> i = s.size() <span class="comment">//错误</span></code></pre>
-<p> String 类取长度的方法为： length() 。</p>
-</li>
-<li><p>在Java多线程中，请用下面哪种方式不会使线程进入阻塞状态：<strong>yield()</strong>。 yield：让步，运行态-&gt;就绪态 。</p>
-</li>
-<li><p><strong>redis</strong>未授权的利用方法 ：写入ssh秘钥；向web目录中写入webshell；向crontab中写入计划任务。</p>
-</li>
-<li><p><strong>HTTP返回码301</strong>代表永久性转移，对于301请求，搜索引擎或者浏览器都可以把跳转后的地址缓存下来，下一次不必发送这个请求。</p>
-</li>
-<li><p><strong>PIE</strong>全称是位置无关的可执行文件，中文解释为地址无关重定向文件，该技术是一个针对的代码段（.text），数据段（.data），未初始化变量变量（.bss）等固定地址的一个防护技术，如果程序开启了PIE保护的话，在每次加载程序时都转换加载地址，从而不能通过ROPgadget等一些工具来帮助解题。</p>
-</li>
-<li><p><strong>端口服务</strong>可能导致命令执行：redis；mysql；rsync。</p>
-</li>
-<li><p>Android应用<strong>Receiver</strong>注册的两种形式是：静态注册和动态注册。</p>
-</li>
-<li><p>爬虫和反爬虫定义：<strong>爬虫</strong>：使用任何技术手段，批量获取网站信息的一种方式。<strong>反爬虫</strong>：使用任何技术手段，阻止别人批量获取自己网站信息的一种方式。</p>
-</li>
-<li><p><strong>notify()方法</strong>只唤醒一个等待线程并使该线程执行，如果有多个线程等待一个对象，这个方法只会唤醒其中一个线程，选择哪个线程取决于操作系统对多线程管理的实现。notifyall()会唤醒所有等待的线程，哪个线程将会第一个处理取决于操作系统的实现。 </p>
-</li>
-<li><p>当线程执行<strong>wait()</strong>方法时，会释放当前的锁，然后让出CPU，进入等待状态，属于Object的成员方法。 </p>
-</li>
-<li><p><strong>sleep()</strong>是一个静态方法，一个线程调用sleep方法后并不会释放他所持有的所有对象锁，但是sleep的运行过程中有可能被其他对象调用它的interrupt()，产生InterruptedException异常，如果程序不捕获这个异常，线程就会异常终止，进入TERMINATED状态，如果程序捕获了这个异常，那么就会继续执行catch语句块以及以后的代码。 </p>
-</li>
-<li><p>数字签名 <strong>elgamal算法</strong>的原理是扩展欧几里得定理。</p>
-</li>
-<li><p><strong>重放攻击</strong>(Replay Attacks)又称重播攻击、回放攻击，是指攻击者发送一个目的主机已接收过的包，来达到欺骗系统的目的，主要用于身份认证过程，破坏认证的正确性。 </p>
-</li>
-<li><p><strong>Smurf攻击</strong>通过使用将回复地址设置成受害网络的广播地址的ICMP应答请求(ping)数据包，来淹没受害主机，最终导致该网络的所有主机都对此ICMP应答请求做出答复，导致网络阻塞。是一种拒绝服务攻击。 </p>
-</li>
-<li><p><strong>ARP欺骗</strong>通过欺骗局域网内访问者PC的网关MAC地址，使访问者PC错以为攻击者更改后的MAC地址是网关的MAC，导致网络不通。此种攻击可让攻击者获取局域网上的数据包甚至可篡改数据包，且可让网络上特定计算机或所有计算机无法正常连线。</p>
-</li>
-<li><p><strong>shell脚本的特殊变量</strong>：$0(当前脚本文件名)、$n(传递给脚本或函数的参数)、$#(传递给脚本或函数的参数个数)、$*(传递给脚本或函数的所有参数，“”包含时会表现为一个整体)、$@(传递给脚本或函数的所有参数)、$?(上个命令的退出状态或函数的返回值)和$$(当前shell的进程ID；对于shell脚本，就是脚本所在进程ID)</p>
-</li>
-<li><p><strong>安卓代码混淆原因</strong>： 优化java的字节码 ； 减小apk文件的大小，在混淆过程中会删除未使用过的类和成员 ； 代码安全，使类、函数、变量名随机变成无意义的代号形如：a,b,c…之类。防止app被反编译之后能够很容易的看懂代码。</p>
-</li>
-</ol>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Peng Zhang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Anred's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/08/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" itemprop="url">操作系统基础知识</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-08-06T10:28:31+08:00">
-                2020-08-06
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index">
-                    <span itemprop="name">基础知识</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2020/08/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2020/08/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/2020/08/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" class="leancloud_visitors" data-flag-title="操作系统基础知识">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  2.3k
-                </span>
-              
-
-              
-
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="操作系统基础知识"><a href="#操作系统基础知识" class="headerlink" title="操作系统基础知识"></a>操作系统基础知识</h1><h2 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h2><p>进程是正在执行的程序，是操作系统资源分配的基本单位。一般包含指令、数据和PCB。</p>
-<p>孤儿进程是指父进程退出，还在运行的子进程。孤儿进程会被init进程（id为1）收养，不会对系统造成危害。</p>
-<p>僵尸进程是指子进程的进程描述符在退出时不会释放，父进程同时也没有进行wait()或waitpid()操作获取子进程信息，因此子进程的进程描述符还会保存在系统中。由于进程号是有限的，如果产生大量的僵尸进程，将会没有可用的进程号而导致系统不能产生新的进程。解决办法是杀死父进程。使之成为孤儿进程。</p>
-<p>守护进程(daemon)是运行在后台的一种特殊进程，它是独立于控制终端的，并在周期性地执行某些任务。</p>
-<h2 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h2><p>线程是进程内部的不同执行路径，是操作系统独立调度的基本单位。一个进程可以有多个线程，线程共享进程资源。浏览器进程有多个线程，如http请求线程、事件响应线程和渲染线程等等，可并发执行。</p>
-<h3 id="进程与线程的区别"><a href="#进程与线程的区别" class="headerlink" title="进程与线程的区别"></a>进程与线程的区别</h3><p>拥有资源：进程是资源分配的基本单位，但线程不拥有资源，线程可以访问隶属于进程的资源。</p>
-<p>调度：线程是独立调度的基本单位。</p>
-<p>系统开销：创建、撤销和切换进程时的开销大于创建、撤销和切换线程时的开销。由于执行进程的操作时，系统需要分配或回收资源，如内存空间、I/O设备。进程切换时，需要保存当前cpu环境，进行新进程cpu环境的设置；而线程切换时只需要保存和设置少量寄存器内容，开销小。</p>
-<p>通信方面：线程间可以通过直接读写同一进程的数据进行通信，而进程之间需要进行IPC进程间通信。</p>
-<h3 id="线程有哪两种？"><a href="#线程有哪两种？" class="headerlink" title="线程有哪两种？"></a>线程有哪两种？</h3><p>用户级线程：有关线程管理的工作都应用程序完成。用户级线程的好处时非常高效，不需要进入内核空间，但并发效率不高。</p>
-<p>内核级线程：有关线程管理的工作都有内核完成。应用程序调用内核线程的接口来进行线程管理。优点是内核可以将不同线程更好地分配到不同CPU，以实现真正地并行计算。</p>
-<p>现代操作系统往往组合方式实现多线程，线程创建完全在用户空间中完成，并且一个应用程序中的多个用户级线程被映射到一些内核级线程中。</p>
-<h2 id="并发和并行"><a href="#并发和并行" class="headerlink" title="并发和并行"></a>并发和并行</h2><p>并发是一段时间内，多个任务都会被处理；但某一时刻，只有一个任务在执行。单核处理器可以做到并发。</p>
-<p>并行是在同一时刻，有多个任务在执行。需要多核处理器。</p>
-<h2 id="分时系统和实时系统"><a href="#分时系统和实时系统" class="headerlink" title="分时系统和实时系统"></a>分时系统和实时系统</h2><p>分时系统就是系统把CPU时间分成很短的时间片，轮流地分配给多个作业。对多个用户的多个作业都可以保证足够快的响应时间，并且有效提高了资源利用率。</p>
-<p>实时系统是系统对外部输入的信息，能够在规定的时间内处理完毕并做出反应。优点时集中地及时地处理并作出反应，高可靠，安全性。</p>
-<h2 id="进程状态"><a href="#进程状态" class="headerlink" title="进程状态"></a>进程状态</h2><p>创建、就绪、运行、终止和阻塞。</p>
-<p>就绪状态是进程获得除了CPU之外的一切所需资源，一旦得到CPU即可运行。</p>
-<p>阻塞状态为等待某资源或I/O。</p>
-<p>运行态-&gt;阻塞态往往是由于等待外设，等待主存等资源分配或等待人工干预。</p>
-<p>运行态-&gt;就绪态往往是时间片用完或更高优先级的进程抢占处理器。</p>
-<h2 id="进程调度算法"><a href="#进程调度算法" class="headerlink" title="进程调度算法"></a>进程调度算法</h2><p>先来先服务：有利于长作业，不利于短作业。短作业等待时间过长。对I/O密集型进程也不利。</p>
-<p>短作业优先：按估计运行时间最短的顺序进行调度。长作业可能会饿死，一直有短作业到来，长作业就永远得不到调度。</p>
-<p>最短剩余时间优先：短作业优先的抢占版。</p>
-<p>时间片轮转：将所有就绪进程按先来先服务排成队列，每次调度，把CPU时间分配给队首进程，执行一个时间片。时间片用完时，将进程送往就绪队列的末尾，同时继续把CPU时间进行分配。</p>
-<p>时间片太小进程切换的时间花费多。</p>
-<p>时间片过长则实时性就不能保证。</p>
-<p>优先级调度：每个进程分配优先级，抢占式。为防止低优先级得不到调度，可以随着时间的增加，增加等待进程的优先级。</p>
-<p>抢占式：操作系统可以强行将运行的进程暂停，调度器将CPU分配给其他就绪进程。</p>
-<p>非抢占式：调度器一旦把处理机分配给某进程，便可以一直让他运行下去，知道阻塞或完成。</p>
-<h3 id="上下文切换"><a href="#上下文切换" class="headerlink" title="上下文切换"></a>上下文切换</h3><p>是一种将CPU资源从一个进程分配到另一个进程的机制。</p>
-<h2 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h2><p>在两个或多个并发进程中，如果一个进程集合中的每个进程都在等待只能由该进程集合中的其他进程才能引发的事件，那么该进程集合就产生了死锁。</p>
-<p>死锁条件：（1）互斥：每个资源要么已经分配给了一个进程，要么就是可用的。（2）占有和等待：已经得到了某个资源的进程可以再请求新的资源。（3）不可抢占：已经分配给一个进程的资源不能强制性地被抢占，只能被占有进程显式地释放。（4）环路等待：有2个或2个以上的进程组成一条环路，每个进程等待下一个进程所占有的资源。</p>
-<p>解决办法：</p>
-<p>鸵鸟策略：直接忽略死锁。解决死锁代价很高，但死锁影响没那么大，发生概率不高。</p>
-<p>死锁预防：破坏4个必要条件，避免发生死锁。</p>
-<p>死锁避免：允许3个必要条件，但通过算法判断资源请求是否可能导致循环等待的形成并相应决策，来避免死锁点的产生。线程启动拒绝：如果一个线程的请求会引发死锁，则不允许其启动。资源分配拒绝：如果一个线程增加的资源请求会导致死锁，则不允许此申请。</p>
-<p>死锁检测和恢复：维护一个系统的资源分配图，定期进行死锁检测，如果有则解决死锁。</p>
-<h2 id="进程同步"><a href="#进程同步" class="headerlink" title="进程同步"></a>进程同步</h2><p>临界区、互斥量、信号量、管程。</p>
-<p>进程间通信：</p>
-<p>管道：实质为内核缓冲区，可看成循环队列。半双工。</p>
-<p>命名管道：FIFO，提供了一个路径名与之关联，不具有亲缘关系的进程也可以彼此通信。</p>
-<p>消息队列：消息的链表，存放在内存中。存在唯一标识。</p>
-<p>共享内存：多个进程可以直接读写同一块内存空间。</p>
-<p>信号量：控制多个进程对共享资源的访问。</p>
-<p>socket：套接字，不在同一主机的两个进程网络通信。</p>
-<h2 id="磁盘调度算法"><a href="#磁盘调度算法" class="headerlink" title="磁盘调度算法"></a>磁盘调度算法</h2><p>先来先服务：按照磁盘请求顺序调度。优点是公平和简单。但平均寻道时间可能会较长。</p>
-<p>最短寻道时间优先：优先调度与当前磁头最近的磁道。可能会发生饥饿。</p>
-<p>电梯算法scan扫描算法：总是保持一个方向运行，直到该方向没有请求为止。解决了饥饿问题。</p>
-<h2 id="虚拟内存"><a href="#虚拟内存" class="headerlink" title="虚拟内存"></a>虚拟内存</h2><p>物理内存扩充成更大的逻辑内存，从而让程序获得更多的可用内存。使用部分加载的技术，从而能加载更多的进程，看起来内存变大了，磁盘或者硬盘。</p>
-<h2 id="页面替换算法"><a href="#页面替换算法" class="headerlink" title="页面替换算法"></a>页面替换算法</h2><p>最佳算法：选择被换出的页面最长时间内不再被访问，通常可以保证获得最低的缺页率。理论算法。</p>
-<p>先进先出：但也可能会把经常访问的页面换出。</p>
-<p>LRU：根据过去判断。将最近最久未使用的页面换出。维护一个链表。页面访问则将之移动到表头。由于需要更新链表，因此LRU代价很高。</p>
-<p>时钟算法：时钟算法使用环形链表，0则不替换，1则替换。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/22/leetcode%E6%80%BB%E7%BB%93/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Peng Zhang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Anred's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/07/22/leetcode%E6%80%BB%E7%BB%93/" itemprop="url">leetcode总结</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-22T16:25:07+08:00">
-                2020-07-22
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/leetcode/" itemprop="url" rel="index">
-                    <span itemprop="name">leetcode</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2020/07/22/leetcode%E6%80%BB%E7%BB%93/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2020/07/22/leetcode%E6%80%BB%E7%BB%93/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/2020/07/22/leetcode%E6%80%BB%E7%BB%93/" class="leancloud_visitors" data-flag-title="leetcode总结">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  287
-                </span>
-              
-
-              
-
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="LeetCode"><a href="#LeetCode" class="headerlink" title="LeetCode"></a>LeetCode</h1><h2 id="1-数组"><a href="#1-数组" class="headerlink" title="1. 数组"></a>1. 数组</h2><p>（1）一定要弄清输入值的数据范围。优先考虑极端情况，如输入数组长度为0的情况以及边界的处理情况。</p>
-<p>（2）LeetCode错误：control reaches end of non-void function[werror=return-type]; </p>
-<p>有时我们在一块程序里已经有return，但不是在这块代码的结尾，leetCode也会编译不通过，所以我们也要在函数的代码块结尾也return一下。</p>
-<p>（3）处理大小比较部分的时候，一定记得考虑等于的情形是否满足要求。</p>
-<p>（4）C++中，使用i++还是++i？使用++i更好。原因：因为前置版本的递增运算符避免了不必要的工作，它把值加1后直接返回改变了的运算对象。与之相比，后置版本需要将原始值存储下来以便于返回这个未修改的内容。如果我们不需要修改前的值，那么后置版本的操作就是一种浪费。</p>
-<p>（5）float数据的正确表示</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> f = <span class="number">1.1</span>;   <span class="comment">//错误 1.1是double类型 java中</span></span><br><span class="line"><span class="keyword">float</span> f = <span class="number">1.1f</span>； <span class="comment">//正确</span></span><br><span class="line"><span class="keyword">double</span> d = <span class="number">34.4</span>; <span class="comment">//正确</span></span><br></pre></td></tr></table></figure>
-
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/21/Android%20%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Peng Zhang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Anred's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/07/21/Android%20%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/" itemprop="url">Android安全之组件安全</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-21T00:01:18+08:00">
-                2020-07-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/android-security/" itemprop="url" rel="index">
-                    <span itemprop="name">android security</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2020/07/21/Android%20%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2020/07/21/Android%20%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/2020/07/21/Android%20%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/" class="leancloud_visitors" data-flag-title="Android安全之组件安全">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  1.7k
-                </span>
-              
-
-              
-
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="Android-安全之组件安全"><a href="#Android-安全之组件安全" class="headerlink" title="Android 安全之组件安全"></a>Android 安全之组件安全</h1><h2 id="1-暴露Activity组件"><a href="#1-暴露Activity组件" class="headerlink" title="1. 暴露Activity组件"></a>1. 暴露Activity组件</h2><h3 id="漏洞利用的目的："><a href="#漏洞利用的目的：" class="headerlink" title="漏洞利用的目的："></a>漏洞利用的目的：</h3><p>通过当前已经暴露的组件跳转访问到私有组件界面。</p>
-<h3 id="漏洞利用过程："><a href="#漏洞利用过程：" class="headerlink" title="漏洞利用过程："></a>漏洞利用过程：</h3><p>根据反编译可以看出，触发通过的条件是传入值为1的int变量key和值为“hello”的String变量value。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">a</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Intent intent = getIntent();</span><br><span class="line">    <span class="keyword">if</span> (intent != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">int</span> i = intent.getIntExtra(<span class="string">"key"</span>, <span class="number">0</span>);</span><br><span class="line">        String str = intent.getStringExtra(<span class="string">"value"</span>);</span><br><span class="line">        <span class="keyword">if</span> (i == <span class="number">1</span> &amp;&amp; <span class="string">"hello"</span>.equals(str))</span><br><span class="line">            dosomething(); </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">dosomething</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    startActivity(<span class="keyword">new</span> Intent((Context)<span class="keyword">this</span>, NoExportActivity<span class="class">.<span class="keyword">class</span>))</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>由此，利用adb命令访问activity组件：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb shell am start -n com.example.bughunter/com.example.bughunter.ComponentSecurity.ExportActivity --ei key 1 -e value "hello"</span><br></pre></td></tr></table></figure>
-
-<p>利用start访问activity组件，其中“-n”后面是“包名/类名”，“–ei”表示传入int类型值，“-e”表示传入String值。由此，即可进入私有隐藏界面。</p>
-  <div align="left"> <img src="data:image/png;base64,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" alt="1" style="zoom:60%;"></div>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2020/07/21/Android%20%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/15/Android%20%E5%AE%89%E5%85%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Peng Zhang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Anred's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/07/15/Android%20%E5%AE%89%E5%85%A8/" itemprop="url">android_security</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-15T12:48:15+08:00">
-                2020-07-15
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/android-security/" itemprop="url" rel="index">
-                    <span itemprop="name">android security</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2020/07/15/Android%20%E5%AE%89%E5%85%A8/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2020/07/15/Android%20%E5%AE%89%E5%85%A8/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/2020/07/15/Android%20%E5%AE%89%E5%85%A8/" class="leancloud_visitors" data-flag-title="android_security">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  990
-                </span>
-              
-
-              
-
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="Android-Security"><a href="#Android-Security" class="headerlink" title="Android Security"></a>Android Security</h1><h2 id="1-Android基础知识"><a href="#1-Android基础知识" class="headerlink" title="1.Android基础知识"></a>1.Android基础知识</h2><hr>
-<p>Android系统架构主要分为：应用层（java）、框架层（java）、库文件（C）&amp;Android运行时（运行java代码的虚拟机）和Linux kernel。</p>
-<h3 id="Android四大组件："><a href="#Android四大组件：" class="headerlink" title="Android四大组件："></a>Android四大组件：</h3><p>Activity：窗口界面。Activity之间通过Intent进行通信。android应用的每一个Activity都必须在AndroidManifest.xml配置文件中声明。</p>
-<p>Service：运行于后台，一般不需要与用户交互。一般为其他组件提供后台服务或监控其他组件的运行。有两种工作状态，一种是启动状态，主要用于执行后台计算；另一种是绑定状态，主要用于其他组件和service的交互。配置文件中需要声明全部service。</p>
-<p>Content Provider：存放和获取数据并使这些数据可以被所有应用程序访问。应用程序间共享数据的唯一方法。</p>
-<p>Broadcast Receiver：为了便于进行系统级别的消息推送。本质是一种全局的监听器，可以实现系统中不同组件之间的通信。发送广播用Intent，接收广播用广播接收器BroadcastReceiver。静态注册&amp;动态注册。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2020/07/15/Android%20%E5%AE%89%E5%85%A8/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/13/%E5%B8%B8%E7%94%A8python%E4%BB%A3%E7%A0%81/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Peng Zhang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Anred's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/07/13/%E5%B8%B8%E7%94%A8python%E4%BB%A3%E7%A0%81/" itemprop="url">常用python代码</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-13T09:43:14+08:00">
-                2020-07-13
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/python/" itemprop="url" rel="index">
-                    <span itemprop="name">python</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2020/07/13/%E5%B8%B8%E7%94%A8python%E4%BB%A3%E7%A0%81/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2020/07/13/%E5%B8%B8%E7%94%A8python%E4%BB%A3%E7%A0%81/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/2020/07/13/%E5%B8%B8%E7%94%A8python%E4%BB%A3%E7%A0%81/" class="leancloud_visitors" data-flag-title="常用python代码">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  502
-                </span>
-              
-
-              
-
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="常用python代码"><a href="#常用python代码" class="headerlink" title="常用python代码"></a>常用python代码</h1><hr>
-<h2 id="1-numpy-array、torch-tensor和Image之间相互转换"><a href="#1-numpy-array、torch-tensor和Image之间相互转换" class="headerlink" title="1. numpy array、torch tensor和Image之间相互转换"></a>1. numpy array、torch tensor和Image之间相互转换</h2><h3 id="（1）numpy-array与Image之间互相转换"><a href="#（1）numpy-array与Image之间互相转换" class="headerlink" title="（1）numpy array与Image之间互相转换"></a>（1）numpy array与Image之间互相转换</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image  </span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">im = Image.open(<span class="string">"a.jpg"</span>)</span><br><span class="line"></span><br><span class="line">img = np.array(im)      <span class="comment"># image to numpy array</span></span><br><span class="line">im=Image.fromarray(img) <span class="comment"># numpy array to image</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="（2）numpy-array与torch-tensor之间互相转换"><a href="#（2）numpy-array与torch-tensor之间互相转换" class="headerlink" title="（2）numpy array与torch tensor之间互相转换"></a>（2）numpy array与torch tensor之间互相转换</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">a = torch.ones(<span class="number">5</span>)</span><br><span class="line">b = a.numpy()			<span class="comment"># torch tensor to numpy array</span></span><br><span class="line">a = torch.from_numpy(b)  <span class="comment"># numpy array to torch tensor</span></span><br><span class="line"><span class="comment"># 转换后的tensor与numpy array指向同一地址，对一方值的改变会改变另一方</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="（3）torch-tensor与Image之间互相转换"><a href="#（3）torch-tensor与Image之间互相转换" class="headerlink" title="（3）torch tensor与Image之间互相转换"></a>（3）torch tensor与Image之间互相转换</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"></span><br><span class="line">path_img = <span class="string">"./1.bmp"</span></span><br><span class="line">img_pil = Image.open(path_img).convert(<span class="string">'RGB'</span>)</span><br><span class="line">img_tensor = transforms.Compose([</span><br><span class="line">    <span class="comment"># transforms.Resize((224, 224)),</span></span><br><span class="line">    transforms.ToTensor(),  <span class="comment"># Image to torch tensor</span></span><br><span class="line">    <span class="comment"># transforms.Normalize(norm_mean, norm_std),</span></span><br><span class="line">])(img_pil)</span><br><span class="line"></span><br><span class="line">img = transforms.ToPILImage()(img_tensor)</span><br><span class="line"><span class="comment"># torch tensor to Image</span></span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2020/07/13/%E5%B8%B8%E7%94%A8python%E4%BB%A3%E7%A0%81/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/25/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%94%E8%AE%B0_%E5%AD%98%E5%82%A8%E5%99%A8%E5%AF%BB%E5%9D%80/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Peng Zhang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Anred's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/03/25/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%94%E8%AE%B0_%E5%AD%98%E5%82%A8%E5%99%A8%E5%AF%BB%E5%9D%80/" itemprop="url">汇编语言程序设计笔记_存储器寻址</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-25T10:00:00+08:00">
-                2020-03-25
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" itemprop="url" rel="index">
-                    <span itemprop="name">汇编语言</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2020/03/25/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%94%E8%AE%B0_%E5%AD%98%E5%82%A8%E5%99%A8%E5%AF%BB%E5%9D%80/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2020/03/25/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%94%E8%AE%B0_%E5%AD%98%E5%82%A8%E5%99%A8%E5%AF%BB%E5%9D%80/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/2020/03/25/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%94%E8%AE%B0_%E5%AD%98%E5%82%A8%E5%99%A8%E5%AF%BB%E5%9D%80/" class="leancloud_visitors" data-flag-title="汇编语言程序设计笔记_存储器寻址">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  105
-                </span>
-              
-
-              
-
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="更灵活的定位内存地址的方法"><a href="#更灵活的定位内存地址的方法" class="headerlink" title="更灵活的定位内存地址的方法"></a>更灵活的定位内存地址的方法</h2><h3 id="and和or指令"><a href="#and和or指令" class="headerlink" title="and和or指令"></a>and和or指令</h3><p>and指令可将操作对象的相应位设为0，其他位不变。</p>
-<p>or指令可将操作对象的相应位设为1，其他位不变。</p>
-<h3 id="ASCII-码"><a href="#ASCII-码" class="headerlink" title="ASCII 码"></a>ASCII 码</h3><p>一种编码方案。字符存储在计算机中的是ASCII码转换的二进制。</p>
-<h3 id="大小写转换的问题"><a href="#大小写转换的问题" class="headerlink" title="大小写转换的问题"></a>大小写转换的问题</h3><p>‘A’ ASCII 41H ‘a’ ASCII 61H 小写比大写ASCII码大20H。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/24/%E5%B5%8C%E5%85%A5%E5%BC%8F%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0-%E6%8E%A5%E5%8F%A3%E6%8A%80%E6%9C%AF/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Peng Zhang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Anred's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/03/24/%E5%B5%8C%E5%85%A5%E5%BC%8F%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0-%E6%8E%A5%E5%8F%A3%E6%8A%80%E6%9C%AF/" itemprop="url">嵌入式系统安全笔记_接口技术</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-24T14:06:29+08:00">
-                2020-03-24
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8/" itemprop="url" rel="index">
-                    <span itemprop="name">嵌入式系统安全</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2020/03/24/%E5%B5%8C%E5%85%A5%E5%BC%8F%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0-%E6%8E%A5%E5%8F%A3%E6%8A%80%E6%9C%AF/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2020/03/24/%E5%B5%8C%E5%85%A5%E5%BC%8F%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0-%E6%8E%A5%E5%8F%A3%E6%8A%80%E6%9C%AF/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/2020/03/24/%E5%B5%8C%E5%85%A5%E5%BC%8F%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0-%E6%8E%A5%E5%8F%A3%E6%8A%80%E6%9C%AF/" class="leancloud_visitors" data-flag-title="嵌入式系统安全笔记_接口技术">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  792
-                </span>
-              
-
-              
-
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="嵌入式接口技术——通信"><a href="#嵌入式接口技术——通信" class="headerlink" title="嵌入式接口技术——通信"></a>嵌入式接口技术——通信</h2><p>找例程编译。学会修改例程，提高可靠性。</p>
-<p><strong>硬件：</strong>通信（相互通道）、输入（前向通道）、输出（后向通道）</p>
-<p><strong>部件：</strong>传感器、执行器、人机界面、相互通信、电源</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2020/03/24/%E5%B5%8C%E5%85%A5%E5%BC%8F%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0-%E6%8E%A5%E5%8F%A3%E6%8A%80%E6%9C%AF/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/23/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0_%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Peng Zhang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/header.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Anred's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/03/23/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0_%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA/" itemprop="url">网络安全笔记_缓冲区溢出</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-23T19:00:00+08:00">
-                2020-03-23
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" itemprop="url" rel="index">
-                    <span itemprop="name">网络安全</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2020/03/23/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0_%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2020/03/23/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0_%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/2020/03/23/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0_%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA/" class="leancloud_visitors" data-flag-title="网络安全笔记_缓冲区溢出">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  432
-                </span>
-              
-
-              
-
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="缓冲区溢出"><a href="#缓冲区溢出" class="headerlink" title="缓冲区溢出"></a>缓冲区溢出</h2><h3 id="缓冲区溢出攻击的原理"><a href="#缓冲区溢出攻击的原理" class="headerlink" title="缓冲区溢出攻击的原理"></a>缓冲区溢出攻击的原理</h3><h4 id="1、缓冲区溢出攻击模式："><a href="#1、缓冲区溢出攻击模式：" class="headerlink" title="1、缓冲区溢出攻击模式："></a>1、缓冲区溢出攻击模式：</h4><ul>
-<li>找到可利用的缓冲区溢出隐患</li>
-<li>注入恶意代码</li>
-<li>溢出缓冲区</li>
-<li>重定向到攻击程序</li>
-<li>执行攻击程序</li>
-<li>获得控制权</li>
-<li>任意地执行程序</li>
-</ul>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2020/03/23/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0_%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-  </section>
-
-  
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-hand-o-right" aria-label="accessibility.next_page"></i></a>
-  </nav>
-
-
-
-          </div>
-          
-
-
-          
-
-        </div>
-        
-          
-  
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
-  </div>
-
-  <aside id="sidebar" class="sidebar">
-    
-    <div class="sidebar-inner">
-
-      
-
-      
-
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
-        <div class="site-overview">
-          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-            
-              <img class="site-author-image" itemprop="image"
-                src="/images/header.jpg"
-                alt="Peng Zhang" />
-            
-              <p class="site-author-name" itemprop="name">Peng Zhang</p>
-              <p class="site-description motion-element" itemprop="description"></p>
-          </div>
-
-          <nav class="site-state motion-element">
-
-            
-              <div class="site-state-item site-state-posts">
-                <a href="/archives">
-                  <span class="site-state-item-count">21</span>
-                  <span class="site-state-item-name">日志</span>
-                </a>
-              </div>
-            
-
-            
-              
-              
-              <div class="site-state-item site-state-categories">
-                <a href="/categories/index.html">
-                  <span class="site-state-item-count">14</span>
-                  <span class="site-state-item-name">分类</span>
-                </a>
-              </div>
-            
-
-            
-              
-              
-              <div class="site-state-item site-state-tags">
-                <a href="/tags/index.html">
-                  <span class="site-state-item-count">31</span>
-                  <span class="site-state-item-name">标签</span>
-                </a>
-              </div>
-            
-
-          </nav>
-
-          
-
-          
-            <div class="links-of-author motion-element">
-                
-                  <span class="links-of-author-item">
-                    <a href="https://github.com/sbtger" target="_blank" title="GitHub">
-                      
-                        <i class="fa fa-fw fa-github"></i>GitHub</a>
-                  </span>
-                
-                  <span class="links-of-author-item">
-                    <a href="mailto:zpandy999@163.com" target="_blank" title="E-Mail">
-                      
-                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
-                  </span>
-                
-            </div>
-          
-
-          
-          
-
-          
-          
-
-          
-
+        <div class="article-grid">
+          <a class="article-card" href="/2021/09/26/DDIA-01%E5%8F%AF%E9%9D%A0%E3%80%81%E5%8F%AF%E6%89%A9%E5%B1%95%E5%92%8C%E5%8F%AF%E7%BB%B4%E6%8A%A4%E5%BA%94%E7%94%A8/">
+            <div class="article-meta"><span class="tag">DDIA</span><span>2021-09-26</span></div>
+            <h3>可靠、可扩展、可维护的应用</h3>
+            <p>从数据系统基础出发，讨论可靠性、可扩展性与长期可维护性的工程含义。</p>
+            <span class="read-more">Read note</span>
+          </a>
+
+          <a class="article-card" href="/2020/08/07/%E5%AE%89%E5%85%A8%E7%B1%BB%E9%94%99%E9%A2%98%E9%9B%86/">
+            <div class="article-meta"><span class="tag">Security</span><span>2020-08-07</span></div>
+            <h3>安全类错题集</h3>
+            <p>把 Android、Redis、HTTP、ARP、重放攻击等安全知识点压缩成可复习的清单。</p>
+            <span class="read-more">Read note</span>
+          </a>
+
+          <a class="article-card" href="/2020/08/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
+            <div class="article-meta"><span class="tag">OS</span><span>2020-08-06</span></div>
+            <h3>操作系统基础知识</h3>
+            <p>进程、线程、调度、死锁、虚拟内存和 IPC 的系统化整理。</p>
+            <span class="read-more">Read note</span>
+          </a>
+
+          <a class="article-card" href="/2020/07/22/leetcode%E6%80%BB%E7%BB%93/">
+            <div class="article-meta"><span class="tag">Algorithms</span><span>2020-07-22</span></div>
+            <h3>LeetCode 总结</h3>
+            <p>算法题训练中的模式、边界条件和实现习惯沉淀。</p>
+            <span class="read-more">Read note</span>
+          </a>
+
+          <a class="article-card" href="/2020/07/21/Android%20%E5%AE%89%E5%85%A8%E4%B9%8B%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8/">
+            <div class="article-meta"><span class="tag">Android</span><span>2020-07-21</span></div>
+            <h3>Android 安全之组件安全</h3>
+            <p>围绕 Android 组件暴露面、权限和调用链路整理安全检查思路。</p>
+            <span class="read-more">Read note</span>
+          </a>
+
+          <a class="article-card" href="/2020/03/23/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0_%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA/">
+            <div class="article-meta"><span class="tag">Exploit</span><span>2020-03-23</span></div>
+            <h3>缓冲区溢出笔记</h3>
+            <p>网络安全基础中的经典内存破坏问题和基础防护概念。</p>
+            <span class="read-more">Read note</span>
+          </a>
         </div>
       </section>
 
-      
+      <section id="systems" class="section">
+        <div class="section-head">
+          <h2>研究方向</h2>
+          <p>主页现在承担的是索引层：让访问者先看到主题、能力和入口，再深入旧文章。</p>
+        </div>
 
-      
+        <div class="systems">
+          <div class="focus-panel">
+            <h2>Thinking in layers.</h2>
+            <p>从应用行为一路向下追到协议、内存、系统调用和数据模型。笔记不追求新闻流，而是保留可复用的工程认知。</p>
+            <div class="focus-list">
+              <div class="focus-item"><span>Threat modeling</span><code>security</code></div>
+              <div class="focus-item"><span>Runtime internals</span><code>systems</code></div>
+              <div class="focus-item"><span>Data architecture</span><code>ddia</code></div>
+              <div class="focus-item"><span>Automation scripts</span><code>python</code></div>
+            </div>
+          </div>
 
-    </div>
-  </aside>
-
-
-        
-      </div>
+          <div class="link-panel">
+            <a class="link-tile" href="/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">
+              <h3>网络安全</h3>
+              <p>DDoS、信息采集、缓冲区溢出等安全基础。</p>
+            </a>
+            <a class="link-tile" href="/categories/android-security/">
+              <h3>Android Security</h3>
+              <p>移动端组件、调试和逆向相关笔记。</p>
+            </a>
+            <a class="link-tile" href="/categories/DDIA/">
+              <h3>Data Systems</h3>
+              <p>数据密集型应用设计和系统可靠性。</p>
+            </a>
+            <a class="link-tile" href="/categories/python/">
+              <h3>Python 工具箱</h3>
+              <p>常用脚本、爬虫、图像与数据处理片段。</p>
+            </a>
+            <a class="link-tile" href="/archives/">
+              <h3>全部归档</h3>
+              <p>按时间回看所有历史文章。</p>
+            </a>
+            <a class="link-tile" href="/tags/">
+              <h3>标签地图</h3>
+              <p>从关键词进入更细颗粒度的知识路径。</p>
+            </a>
+          </div>
+        </div>
+      </section>
     </main>
 
-    <footer id="footer" class="footer">
+    <footer class="lab-footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
-  <span class="with-love">
-    <i class="fa fa-user"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">Peng Zhang</span>
-
-  
-    <span class="post-meta-divider">|</span>
-    <span class="post-meta-item-icon">
-      <i class="fa fa-area-chart"></i>
-    </span>
-    
-      <span class="post-meta-item-text">Site words total count&#58;</span>
-    
-    <span title="Site words total count">16.8k</span>
-  
-</div>
-
-
-  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
-
-
-
-  <span class="post-meta-divider">|</span>
-
-
-
-  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
-
-
-
-
-<span id="busuanzi_container_site_pv" class="theme-info">
-&nbsp;&nbsp;|&nbsp;&nbsp;访问量<span id="busuanzi_value_site_pv"></span>
-  </span>
-  <span id="busuanzi_container_site_uv" class="theme-info">
-&nbsp;&nbsp;|&nbsp;&nbsp;访客<span id="busuanzi_value_site_uv"></span>
-  </span>
-
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-        
-
-
-
-
-
-
-        
+        <div>© 2026 Peng Zhang. Built as a static GitHub Pages site.</div>
+        <div class="footer-links">
+          <a href="mailto:zpandy999@163.com">Email</a>
+          <a href="https://github.com/sbtger" target="_blank" rel="noopener">GitHub</a>
+          <a href="/search.xml">Search XML</a>
+        </div>
       </div>
     </footer>
-
-    
-      <div class="back-to-top">
-        <i class="fa fa-arrow-up"></i>
-        
-          <span id="scrollpercent"><span>0</span>%</span>
-        
-      </div>
-    
-
-    
-
   </div>
 
-  
-
-<script type="text/javascript">
-  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
-    window.Promise = null;
-  }
-</script>
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
-  
-
-  
-  
-    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
-  
-
-
-  
-
-
-  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
-
-  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
-
-
-
-  
-  
-
-
-  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
-
-  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
-
-
-
-  
-
-  
-
-
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
-
-
-
-  
-
-
-  
-
-
-
-
-	
-
-
-
-
-
-  
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
-  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
-  
-  <script type="text/javascript">
-    var GUEST = ['nick','mail','link'];
-    var guest = 'nick,mail,link';
-    guest = guest.split(',').filter(item=>{
-      return GUEST.indexOf(item)>-1;
-    });
-    new Valine({
-        el: '#comments' ,
-        verify: false,
-        notify: true,
-        appId: 'uVnlBrG3gVIsFVLuKwa2GqEk-gzGzoHsz',
-        appKey: 'mcV530t0xWmBXhLDzUOPj2qg',
-        placeholder: '请留言~',
-        avatar:'mm',
-        guest_info:guest,
-        pageSize:'10' || 10,
-    });
-  </script>
-
-
-
-  
-
-  <script type="text/javascript">
-    // Popup Window;
-    var isfetched = false;
-    var isXml = true;
-    // Search DB path;
-    var search_path = "search.xml";
-    if (search_path.length === 0) {
-      search_path = "search.xml";
-    } else if (/json$/i.test(search_path)) {
-      isXml = false;
-    }
-    var path = "/" + search_path;
-    // monitor main search box;
-
-    var onPopupClose = function (e) {
-      $('.popup').hide();
-      $('#local-search-input').val('');
-      $('.search-result-list').remove();
-      $('#no-result').remove();
-      $(".local-search-pop-overlay").remove();
-      $('body').css('overflow', '');
-    }
-
-    function proceedsearch() {
-      $("body")
-        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
-        .css('overflow', 'hidden');
-      $('.search-popup-overlay').click(onPopupClose);
-      $('.popup').toggle();
-      var $localSearchInput = $('#local-search-input');
-      $localSearchInput.attr("autocapitalize", "none");
-      $localSearchInput.attr("autocorrect", "off");
-      $localSearchInput.focus();
-    }
-
-    // search function;
-    var searchFunc = function(path, search_id, content_id) {
-      'use strict';
-
-      // start loading animation
-      $("body")
-        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
-          '<div id="search-loading-icon">' +
-          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
-          '</div>' +
-          '</div>')
-        .css('overflow', 'hidden');
-      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
-
-      $.ajax({
-        url: path,
-        dataType: isXml ? "xml" : "json",
-        async: true,
-        success: function(res) {
-          // get the contents from search data
-          isfetched = true;
-          $('.popup').detach().appendTo('.header-inner');
-          var datas = isXml ? $("entry", res).map(function() {
-            return {
-              title: $("title", this).text(),
-              content: $("content",this).text(),
-              url: $("url" , this).text()
-            };
-          }).get() : res;
-          var input = document.getElementById(search_id);
-          var resultContent = document.getElementById(content_id);
-          var inputEventFunction = function() {
-            var searchText = input.value.trim().toLowerCase();
-            var keywords = searchText.split(/[\s\-]+/);
-            if (keywords.length > 1) {
-              keywords.push(searchText);
-            }
-            var resultItems = [];
-            if (searchText.length > 0) {
-              // perform local searching
-              datas.forEach(function(data) {
-                var isMatch = false;
-                var hitCount = 0;
-                var searchTextCount = 0;
-                var title = data.title.trim();
-                var titleInLowerCase = title.toLowerCase();
-                var content = data.content.trim().replace(/<[^>]+>/g,"");
-                var contentInLowerCase = content.toLowerCase();
-                var articleUrl = decodeURIComponent(data.url);
-                var indexOfTitle = [];
-                var indexOfContent = [];
-                // only match articles with not empty titles
-                if(title != '') {
-                  keywords.forEach(function(keyword) {
-                    function getIndexByWord(word, text, caseSensitive) {
-                      var wordLen = word.length;
-                      if (wordLen === 0) {
-                        return [];
-                      }
-                      var startPosition = 0, position = [], index = [];
-                      if (!caseSensitive) {
-                        text = text.toLowerCase();
-                        word = word.toLowerCase();
-                      }
-                      while ((position = text.indexOf(word, startPosition)) > -1) {
-                        index.push({position: position, word: word});
-                        startPosition = position + wordLen;
-                      }
-                      return index;
-                    }
-
-                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
-                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
-                  });
-                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
-                    isMatch = true;
-                    hitCount = indexOfTitle.length + indexOfContent.length;
-                  }
-                }
-
-                // show search results
-
-                if (isMatch) {
-                  // sort index by position of keyword
-
-                  [indexOfTitle, indexOfContent].forEach(function (index) {
-                    index.sort(function (itemLeft, itemRight) {
-                      if (itemRight.position !== itemLeft.position) {
-                        return itemRight.position - itemLeft.position;
-                      } else {
-                        return itemLeft.word.length - itemRight.word.length;
-                      }
-                    });
-                  });
-
-                  // merge hits into slices
-
-                  function mergeIntoSlice(text, start, end, index) {
-                    var item = index[index.length - 1];
-                    var position = item.position;
-                    var word = item.word;
-                    var hits = [];
-                    var searchTextCountInSlice = 0;
-                    while (position + word.length <= end && index.length != 0) {
-                      if (word === searchText) {
-                        searchTextCountInSlice++;
-                      }
-                      hits.push({position: position, length: word.length});
-                      var wordEnd = position + word.length;
-
-                      // move to next position of hit
-
-                      index.pop();
-                      while (index.length != 0) {
-                        item = index[index.length - 1];
-                        position = item.position;
-                        word = item.word;
-                        if (wordEnd > position) {
-                          index.pop();
-                        } else {
-                          break;
-                        }
-                      }
-                    }
-                    searchTextCount += searchTextCountInSlice;
-                    return {
-                      hits: hits,
-                      start: start,
-                      end: end,
-                      searchTextCount: searchTextCountInSlice
-                    };
-                  }
-
-                  var slicesOfTitle = [];
-                  if (indexOfTitle.length != 0) {
-                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
-                  }
-
-                  var slicesOfContent = [];
-                  while (indexOfContent.length != 0) {
-                    var item = indexOfContent[indexOfContent.length - 1];
-                    var position = item.position;
-                    var word = item.word;
-                    // cut out 100 characters
-                    var start = position - 20;
-                    var end = position + 80;
-                    if(start < 0){
-                      start = 0;
-                    }
-                    if (end < position + word.length) {
-                      end = position + word.length;
-                    }
-                    if(end > content.length){
-                      end = content.length;
-                    }
-                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
-                  }
-
-                  // sort slices in content by search text's count and hits' count
-
-                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
-                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
-                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
-                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
-                      return sliceRight.hits.length - sliceLeft.hits.length;
-                    } else {
-                      return sliceLeft.start - sliceRight.start;
-                    }
-                  });
-
-                  // select top N slices in content
-
-                  var upperBound = parseInt('1');
-                  if (upperBound >= 0) {
-                    slicesOfContent = slicesOfContent.slice(0, upperBound);
-                  }
-
-                  // highlight title and content
-
-                  function highlightKeyword(text, slice) {
-                    var result = '';
-                    var prevEnd = slice.start;
-                    slice.hits.forEach(function (hit) {
-                      result += text.substring(prevEnd, hit.position);
-                      var end = hit.position + hit.length;
-                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
-                      prevEnd = end;
-                    });
-                    result += text.substring(prevEnd, slice.end);
-                    return result;
-                  }
-
-                  var resultItem = '';
-
-                  if (slicesOfTitle.length != 0) {
-                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
-                  } else {
-                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
-                  }
-
-                  slicesOfContent.forEach(function (slice) {
-                    resultItem += "<a href='" + articleUrl + "'>" +
-                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
-                      "...</p>" + "</a>";
-                  });
-
-                  resultItem += "</li>";
-                  resultItems.push({
-                    item: resultItem,
-                    searchTextCount: searchTextCount,
-                    hitCount: hitCount,
-                    id: resultItems.length
-                  });
-                }
-              })
-            };
-            if (keywords.length === 1 && keywords[0] === "") {
-              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
-            } else if (resultItems.length === 0) {
-              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
-            } else {
-              resultItems.sort(function (resultLeft, resultRight) {
-                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
-                  return resultRight.searchTextCount - resultLeft.searchTextCount;
-                } else if (resultLeft.hitCount !== resultRight.hitCount) {
-                  return resultRight.hitCount - resultLeft.hitCount;
-                } else {
-                  return resultRight.id - resultLeft.id;
-                }
-              });
-              var searchResultList = '<ul class=\"search-result-list\">';
-              resultItems.forEach(function (result) {
-                searchResultList += result.item;
-              })
-              searchResultList += "</ul>";
-              resultContent.innerHTML = searchResultList;
-            }
-          }
-
-          if ('auto' === 'auto') {
-            input.addEventListener('input', inputEventFunction);
-          } else {
-            $('.search-icon').click(inputEventFunction);
-            input.addEventListener('keypress', function (event) {
-              if (event.keyCode === 13) {
-                inputEventFunction();
-              }
-            });
-          }
-
-          // remove loading animation
-          $(".local-search-pop-overlay").remove();
-          $('body').css('overflow', '');
-
-          proceedsearch();
-        }
-      });
-    }
-
-    // handle and trigger popup window;
-    $('.popup-trigger').click(function(e) {
-      e.stopPropagation();
-      if (isfetched === false) {
-        searchFunc(path, 'local-search-input', 'local-search-result');
-      } else {
-        proceedsearch();
-      };
-    });
-
-    $('.popup-btn-close').click(onPopupClose);
-    $('.popup').click(function(e){
-      e.stopPropagation();
-    });
-    $(document).on('keyup', function (event) {
-      var shouldDismissSearchPopup = event.which === 27 &&
-        $('.search-popup').is(':visible');
-      if (shouldDismissSearchPopup) {
-        onPopupClose();
-      }
-    });
-  </script>
-
-
-
-
-
-  
-  
   <script>
-    
-    function showTime(Counter) {
-      var entries = [];
-      var $visitors = $('.leancloud_visitors');
+    const canvas = document.getElementById('signal-canvas');
+    const ctx = canvas.getContext('2d');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let width = 0;
+    let height = 0;
+    let points = [];
 
-      $visitors.each(function() {
-        entries.push( $(this).attr('id').trim() );
-      });
-
-      Counter('get', '/classes/Counter', { where: JSON.stringify({ url: { '$in': entries } }) })
-        .done(function({ results }) {
-          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
-
-          if (results.length === 0) {
-            $visitors.find(COUNT_CONTAINER_REF).text(0);
-            return;
-          }
-
-          for (var i = 0; i < results.length; i++) {
-            var item = results[i];
-            var url = item.url;
-            var time = item.time;
-            var element = document.getElementById(url);
-
-            $(element).find(COUNT_CONTAINER_REF).text(time);
-          }
-          for (var i = 0; i < entries.length; i++) {
-            var url = entries[i];
-            var element = document.getElementById(url);
-            var countSpan = $(element).find(COUNT_CONTAINER_REF);
-            if (countSpan.text() == '') {
-              countSpan.text(0);
-            }
-          }
-        })
-        .fail(function ({ responseJSON }) {
-          console.log('LeanCloud Counter Error: ' + responseJSON.code + ' ' + responseJSON.error);
-        });
+    function resizeCanvas() {
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      width = canvas.offsetWidth;
+      height = canvas.offsetHeight;
+      canvas.width = Math.floor(width * ratio);
+      canvas.height = Math.floor(height * ratio);
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      points = Array.from({ length: Math.max(24, Math.floor(width / 32)) }, (_, index) => ({
+        x: (index * 71) % Math.max(width, 1),
+        y: (index * 113) % Math.max(height, 1),
+        vx: ((index % 5) - 2) * 0.12,
+        vy: (((index + 2) % 5) - 2) * 0.1
+      }));
     }
-    
 
-    $(function() {
-      $.get('https://app-router.leancloud.cn/2/route?appId=' + 'uVnlBrG3gVIsFVLuKwa2GqEk-gzGzoHsz')
-        .done(function({ api_server }) {
-          var Counter = function(method, url, data) {
-            return $.ajax({
-              method: method,
-              url: 'https://' + api_server + '/1.1' + url,
-              headers: {
-                'X-LC-Id': 'uVnlBrG3gVIsFVLuKwa2GqEk-gzGzoHsz',
-                'X-LC-Key': 'mcV530t0xWmBXhLDzUOPj2qg',
-                'Content-Type': 'application/json',
-              },
-              data: data
-            });
-          };
-          
-            if ($('.post-title-link').length >= 1) {
-              showTime(Counter);
-            }
-          
-        });
-    });
+    function draw() {
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = 'rgba(34, 211, 238, 0.75)';
+      ctx.strokeStyle = 'rgba(34, 211, 238, 0.16)';
+      ctx.lineWidth = 1;
+
+      for (let i = 0; i < points.length; i += 1) {
+        const point = points[i];
+        if (!reduceMotion) {
+          point.x += point.vx;
+          point.y += point.vy;
+          if (point.x < 0 || point.x > width) point.vx *= -1;
+          if (point.y < 0 || point.y > height) point.vy *= -1;
+        }
+
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, 1.6, 0, Math.PI * 2);
+        ctx.fill();
+
+        for (let j = i + 1; j < points.length; j += 1) {
+          const other = points[j];
+          const distance = Math.hypot(point.x - other.x, point.y - other.y);
+          if (distance < 145) {
+            ctx.globalAlpha = 1 - distance / 145;
+            ctx.beginPath();
+            ctx.moveTo(point.x, point.y);
+            ctx.lineTo(other.x, other.y);
+            ctx.stroke();
+          }
+        }
+        ctx.globalAlpha = 1;
+      }
+
+      if (!reduceMotion) requestAnimationFrame(draw);
+    }
+
+    window.addEventListener('resize', resizeCanvas, { passive: true });
+    resizeCanvas();
+    draw();
   </script>
-
-
-
-
-  
-
-  
-<script>
-(function(){
-    var bp = document.createElement('script');
-    var curProtocol = window.location.protocol.split(':')[0];
-    if (curProtocol === 'https') {
-        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
-    }
-    else {
-        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
-    }
-    var s = document.getElementsByTagName("script")[0];
-    s.parentNode.insertBefore(bp, s);
-})();
-</script>
-
-
-  
-  
-
-  
-  
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        tex2jax: {
-          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
-          processEscapes: true,
-          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-        }
-      });
-    </script>
-
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for (i=0; i < all.length; i += 1) {
-          all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-      });
-    </script>
-    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-  
-
-
-  
-
-  
-
 </body>
 </html>
