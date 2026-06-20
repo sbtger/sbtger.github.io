@@ -82,11 +82,15 @@ a {
   width: 38px;
   height: 38px;
   place-items: center;
-  border: 1px solid rgba(34, 211, 238, 0.4);
-  border-radius: 8px;
-  color: var(--cyan);
-  background: rgba(34, 211, 238, 0.1);
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.08);
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.brand-mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .brand-text {
