@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Peng Zhang 的技术札记。记录操作系统、移动安全、数据系统和工程实践。">
+  <title>主流操作系统安全_Windows · Anred Lab</title>
+  <link rel="canonical" href="https://anred.space/articles/windows-internals.html">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+  <main class="shell">
+    <article class="frame reader">
+      <h1 class="page-title">主流操作系统安全_Windows</h1>
+      <header class="byline"><a class="author" href="../index.html"><img src="../images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-03-20">2020-03-20</time></header>
+      <div class="prose"><h2 id="Winodws系统结构">Winodws系统结构</h2><h3 id="Windows引导过程：">Windows引导过程：</h3><ul>
+<li>BIOS</li>
+<li>MBR</li>
+<li>引导扇区（引导分区的第一个扇区）</li>
+<li>引导扇区后续扇区</li>
+<li>ntldr(实模式部分)：切换至保护模式</li>
+<li>ntldr(保护模式部分：os loader)</li>
+</ul>
+
+
+<p><strong>ntldr的工作：</strong></p>
+<p>构造内存描述符数组；映射页面，设置页目录寄存器，打开内存页面映射机制；处理boot.ini；执行ntdetect.com；加载内核模块ntoskrnl.exe、hal.dll和SYSTEM储巢；加载引导驱动程序和必要的文件系统驱动程序；构造LOADER_PARAMETER_BLOCK参数块；将控制交给内核模块ntoskrnl.exe的入口函数</p>
+<h3 id="内核初始化：">内核初始化：</h3><ul>
+<li>0阶段初始化：在进程中进行。初始化CPU和一部分kernel的数据机构。</li>
+<li>1阶段初始化：在线程中进行，可并发。初始化绝大多数的模块。</li>
+</ul>
+<h2 id="操作系统内核与驱动开发">操作系统内核与驱动开发</h2><h3 id="内核与驱动的关系">内核与驱动的关系</h3><p><strong>功能</strong>角度，驱动在内核的下层。硬件=&gt;驱动=&gt;内核=&gt;应用。<strong>代码</strong>角度，驱动和内核开发实际融为一体。</p>
+<p>驱动开发需要考虑<strong>问题</strong>：同步异步/共享独占/缓冲区管理/设备状态管理。</p>
+<p>驱动属于IO系统的一部分，向下是HAL或硬件。</p>
+<h3 id="驱动开发">驱动开发</h3><p><strong>什么是驱动程序？</strong></p>
+<p><strong>驱动程序</strong>是一个<strong>软件</strong>组件，可让<strong>操作系统</strong>和<strong>设备</strong>彼此通信。 例如，假设<strong>应用程序</strong>需要从<strong>设备</strong>中读取某些<strong>数据</strong>。 应用程序会调用由<strong>操作系统</strong>实现的函数，操作系统会调用由<strong>驱动程序</strong>实现的函数。</p>
+<p>并非所有驱动程序都直接与设备通信。堆栈中直接与设备通信的一个驱动程序称为“<strong>函数驱动程序</strong>” ；执行辅助处理的驱动程序称为“<strong>筛选器驱动程序</strong>” 。</p>
+<p><strong>软件驱动程序：</strong>未与设备关联的驱动程序 。可以访问核心操作系统数据结构。</p>
+<p><strong>扩展定义：</strong>驱动程序是观察或参与操作系统和设备之间通信的任何软件组件。</p>
+<p><strong>Windows驱动开发模型：</strong></p>
+<p><strong>DDK</strong>(Driver Developer Kit)=&gt;<strong>WDK</strong>(Windows Driver Kit)</p>
+<p>操作系统与驱动程序之间遵循<strong>容器</strong>与<strong>插件</strong>模型。Driver是一种<strong>被动</strong>的软件模块。驱动程序是一个<strong>回调函数</strong>的集合体，类似于DLL程序。</p>
+<p>驱动程序可以调用<strong>Windows内核API</strong>、WDK运行时间库和其他驱动程序。不能调用用户模式API和ISO规定的C/C++标准函数库。</p>
+<p><strong>驱动对象与设备对象：</strong></p>
+<p>一个驱动对象下可能有多个设备对象，一个设备对象只能对应一个驱动对象。</p>
+<p><strong>IRP(I/O Request Package)：</strong></p>
+<p>上层应用程序与下层设备进行IO时，利用IRP进行通信。</p>
+<p><img src="../images/windows-internals-1.png" alt="1" loading="lazy"></p></div>
+      <nav class="page-links" aria-label="相关索引"><a href="../index.html#archive">返回文章列表</a> <a href="../categories.html#categories-9">主流操作系统安全</a> <a href="../tags.html#tags-3">操作系统</a> <a href="../tags.html#tags-18">Windows</a> <a href="../tags.html#tags-19">驱动</a></nav>
+    </article>
+  </main>
+</body>
+</html>

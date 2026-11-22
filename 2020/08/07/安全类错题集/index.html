@@ -1,104 +1,14 @@
-<!DOCTYPE html>
-<html lang="zh-Hans">
+<!doctype html>
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#070a0f">
-  <meta name="description" content="安全类错题集 | Anred Lab 技术博客。">
-  <meta property="og:type" content="article">
-  <meta property="og:title" content="安全类错题集">
-  <meta property="og:site_name" content="Anred Lab">
-  <meta property="article:author" content="Peng Zhang">
-  <meta property="article:published_time" content="2020-08-07T11:36:33+08:00">
-  <link rel="canonical" href="/2020/08/07/%E5%AE%89%E5%85%A8%E7%B1%BB%E9%94%99%E9%A2%98%E9%9B%86/">
-  <link rel="stylesheet" href="/css/anred-lab.css?v=20260620">
-  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <title>安全类错题集 | Anred Lab</title>
+  <title>安全类错题集 · Anred Lab</title>
+  <link rel="canonical" href="https://anred.space/articles/security-notes.html">
+  <script>location.replace("/articles/security-notes.html" + location.search + location.hash);</script>
+  <noscript><meta http-equiv="refresh" content="0; url=/articles/security-notes.html"></noscript>
 </head>
 <body>
-  <nav class="nav" aria-label="主导航">
-    <div class="nav-inner">
-      <a class="brand" href="/"><span class="brand-mark">A</span><span class="brand-text">Anred Lab</span></a>
-      <div class="nav-links">
-        <a href="/">首页</a>
-        <a href="/categories/">分类</a>
-        <a href="/tags/">标签</a>
-        <a href="/archives/">归档</a>
-        <a href="/about/">关于</a>
-      </div>
-    </div>
-  </nav>
-
-  <main class="article-shell">
-    <article>
-      <header class="article-hero">
-        <span class="eyebrow">NOTE</span>
-        <h1>安全类错题集</h1>
-        <div class="article-meta">
-          <time datetime="2020-08-07T11:36:33+08:00">2020-08-07</time>
-          <span>/</span>
-          <span><a href="/categories/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">基础知识</a></span>
-        </div>
-      </header>
-
-      <div class="article-content">
-<h1 id="安全类错题集"><a href="#安全类错题集" class="headerlink" title="安全类错题集"></a>安全类错题集</h1><ol>
-<li><p>常用android代码混淆工具：<strong>proguard</strong>。</p>
-</li>
-<li><p><strong>android app</strong>常见的<strong>调试手段</strong>有：重打包apk并设置AndroidManifest.xml的debuggable属性为true；ida或smalidea动态调试；frida hook框架；xposed hook框架。</p>
-</li>
-<li><pre><code class="java"><span class="keyword">int</span> i = s.size() <span class="comment">//错误</span></code></pre>
-<p> String 类取长度的方法为： length() 。</p>
-</li>
-<li><p>在Java多线程中，请用下面哪种方式不会使线程进入阻塞状态：<strong>yield()</strong>。 yield：让步，运行态-&gt;就绪态 。</p>
-</li>
-<li><p><strong>redis</strong>未授权的利用方法 ：写入ssh秘钥；向web目录中写入webshell；向crontab中写入计划任务。</p>
-</li>
-<li><p><strong>HTTP返回码301</strong>代表永久性转移，对于301请求，搜索引擎或者浏览器都可以把跳转后的地址缓存下来，下一次不必发送这个请求。</p>
-</li>
-<li><p><strong>PIE</strong>全称是位置无关的可执行文件，中文解释为地址无关重定向文件，该技术是一个针对的代码段（.text），数据段（.data），未初始化变量变量（.bss）等固定地址的一个防护技术，如果程序开启了PIE保护的话，在每次加载程序时都转换加载地址，从而不能通过ROPgadget等一些工具来帮助解题。</p>
-</li>
-<li><p><strong>端口服务</strong>可能导致命令执行：redis；mysql；rsync。</p>
-</li>
-<li><p>Android应用<strong>Receiver</strong>注册的两种形式是：静态注册和动态注册。</p>
-</li>
-<li><p>爬虫和反爬虫定义：<strong>爬虫</strong>：使用任何技术手段，批量获取网站信息的一种方式。<strong>反爬虫</strong>：使用任何技术手段，阻止别人批量获取自己网站信息的一种方式。</p>
-</li>
-<li><p><strong>notify()方法</strong>只唤醒一个等待线程并使该线程执行，如果有多个线程等待一个对象，这个方法只会唤醒其中一个线程，选择哪个线程取决于操作系统对多线程管理的实现。notifyall()会唤醒所有等待的线程，哪个线程将会第一个处理取决于操作系统的实现。 </p>
-</li>
-<li><p>当线程执行<strong>wait()</strong>方法时，会释放当前的锁，然后让出CPU，进入等待状态，属于Object的成员方法。 </p>
-</li>
-<li><p><strong>sleep()</strong>是一个静态方法，一个线程调用sleep方法后并不会释放他所持有的所有对象锁，但是sleep的运行过程中有可能被其他对象调用它的interrupt()，产生InterruptedException异常，如果程序不捕获这个异常，线程就会异常终止，进入TERMINATED状态，如果程序捕获了这个异常，那么就会继续执行catch语句块以及以后的代码。 </p>
-</li>
-<li><p>数字签名 <strong>elgamal算法</strong>的原理是扩展欧几里得定理。</p>
-</li>
-<li><p><strong>重放攻击</strong>(Replay Attacks)又称重播攻击、回放攻击，是指攻击者发送一个目的主机已接收过的包，来达到欺骗系统的目的，主要用于身份认证过程，破坏认证的正确性。 </p>
-</li>
-<li><p><strong>Smurf攻击</strong>通过使用将回复地址设置成受害网络的广播地址的ICMP应答请求(ping)数据包，来淹没受害主机，最终导致该网络的所有主机都对此ICMP应答请求做出答复，导致网络阻塞。是一种拒绝服务攻击。 </p>
-</li>
-<li><p><strong>ARP欺骗</strong>通过欺骗局域网内访问者PC的网关MAC地址，使访问者PC错以为攻击者更改后的MAC地址是网关的MAC，导致网络不通。此种攻击可让攻击者获取局域网上的数据包甚至可篡改数据包，且可让网络上特定计算机或所有计算机无法正常连线。</p>
-</li>
-<li><p><strong>shell脚本的特殊变量</strong>：$0(当前脚本文件名)、$n(传递给脚本或函数的参数)、$#(传递给脚本或函数的参数个数)、$*(传递给脚本或函数的所有参数，“”包含时会表现为一个整体)、$@(传递给脚本或函数的所有参数)、$?(上个命令的退出状态或函数的返回值)和$$(当前shell的进程ID；对于shell脚本，就是脚本所在进程ID)</p>
-</li>
-<li><p><strong>安卓代码混淆原因</strong>： 优化java的字节码 ； 减小apk文件的大小，在混淆过程中会删除未使用过的类和成员 ； 代码安全，使类、函数、变量名随机变成无意义的代号形如：a,b,c…之类。防止app被反编译之后能够很容易的看懂代码。</p>
-</li>
-</ol>
-      </div>
-      <div class="article-tags"><a href="/tags/%E5%AE%89%E5%85%A8/"># 安全</a></div>
-      <nav class="article-nav" aria-label="文章导航">
-        <a href="/2020/08/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/"><span class="card-kicker">Older</span><br>操作系统基础知识</a>
-        <a href="/2021/09/26/DDIA-01%E5%8F%AF%E9%9D%A0%E3%80%81%E5%8F%AF%E6%89%A9%E5%B1%95%E5%92%8C%E5%8F%AF%E7%BB%B4%E6%8A%A4%E5%BA%94%E7%94%A8/"><span class="card-kicker">Newer</span><br>DDIA-01.可靠、可扩展、可维护的应用</a>
-      </nav>
-    </article>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-inner">
-      <div>© 2026 Peng Zhang. Static site on anred.space.</div>
-      <div class="footer-links"><a href="/archives/">Archives</a><a href="/categories/">Categories</a><a href="/tags/">Tags</a></div>
-    </div>
-  </footer>
+  <p>此文已迁移至 <a href="/articles/security-notes.html">安全类错题集</a>。</p>
 </body>
 </html>

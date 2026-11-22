@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Anred Lab · 双星</title>
+  <style>
+    html, body, canvas { width: 100%; height: 100%; margin: 0; }
+    body { overflow: hidden; background: #000; }
+    .embedded body { background: transparent; }
+    canvas { display: block; }
+    #globes { position: absolute; inset: 0; pointer-events: none; }
+    #globes[hidden] { display: none; }
+  </style>
+</head>
+<body>
+  <canvas role="img" aria-label="冰蓝色主星的细密等高线与白色薄纱纹缓缓转动，淡紫色的小卫星随页面滚动沿弧线绕行，背景星点迎面而来。"></canvas>
+  <canvas id="globes" aria-hidden="true"></canvas>
+  <script src="planet.js"></script>
+  <script src="planet-material.js"></script>
+  <script src="planet-gl.js"></script>
+  <script>
+    const canvas = document.querySelector('canvas');
+    const embedded = new URLSearchParams(location.search).get('scene') === 'home';
+    document.documentElement.classList.toggle('embedded', embedded);
+    const ctx = canvas.getContext('2d', { alpha: embedded });
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+    const far = 40;
+    const near = 0.6;
+    const speed = 1.2;
+    const lens = 1 / Math.tan(75 * Math.PI / 360);
+
+    // Cache the little glow sprites once. Only perspective and position change per frame.
+    function makeGlow(blend) {
+      const tile = document.createElement('canvas');
+      tile.width = tile.height = 80;
+      const pen = tile.getContext('2d');
+      const red = Math.round(48 + 195 * blend);
+      const green = Math.round(104 - 25 * blend);
+      const blue = Math.round(255 - 107 * blend);
+      const tint = [red, green, blue].join(',');
+      const glow = pen.createRadialGradient(40, 40, 0, 40, 40, 39);
+      glow.addColorStop(0, '#fff');
+      glow.addColorStop(.10, '#fcfbff');
+      glow.addColorStop(.23, 'rgba(' + tint + ',.86)');
+      glow.addColorStop(.46, 'rgba(' + tint + ',.30)');
+      glow.addColorStop(.72, 'rgba(' + tint + ',.07)');
+      glow.addColorStop(1, 'rgba(' + tint + ',0)');
+      pen.fillStyle = glow;
+      pen.fillRect(0, 0, 80, 80);
+      return tile;
+    }
+
+    const palette = Array.from({ length: 12 }, (_, index) => makeGlow(index / 11));
+    const stars = Array.from({ length: 560 }, () => ({
+      x: Math.random() * 2 - 1,
+      y: Math.random() * 2 - 1,
+      depth: near + Math.random() * (far - near),
+      size: .07 + Math.random() * .065,
+      strength: .66 + Math.random() * .34,
+      glow: palette[Math.floor(Math.random() * palette.length)]
+    }));
+
+    let width = 0;
+    let height = 0;
+    let distance = 0;
+    let inView = false;
+    let request = 0;
+    let previousTime = 0;
+
+    let rotationSeconds = 0;
+    let layout;
+    let targetProgress = 0;
+    let orbitProgress = 0;
+
+    window.addEventListener('message', ({ source, origin, data }) => {
+      if (!embedded || source !== parent || origin !== location.origin) return;
+      if (data?.type === 'anred:orbit' && Number.isFinite(data.progress)) {
+        targetProgress = Math.max(0, Math.min(1, data.progress));
+      }
+    });
+
+    function arrangeScene(w, h) {
+      if (embedded) {
+        const diameter = Math.min(.86 * w, .87 * h);
+        return { diameter, x: w - .35 * diameter, y: .54 * h };
+      }
+      const span = Math.min(w, h);
+      return { diameter: .86 * span, x: w / 2 + .105 * span, y: h / 2 + .045 * span };
+    }
+    const materials = [
+      { imageURL: '../images/azure-surface.jpg', tint: [137, 181, 241], period: 116, tilt: -21 },
+      { imageURL: '../images/violet-surface.jpg', tint: [164, 134, 252], period: 78, tilt: 16 }
+    ];
+    const globeCanvas = document.getElementById('globes');
+    let planetRenderer = createGlPlanets(globeCanvas, materials, useCanvasPlanets);
+
+    function useCanvasPlanets() {
+      globeCanvas.hidden = true;
+      const planets = materials.map(material => createPlanet(material, paint));
+      planetRenderer = {
+        begin() {},
+        draw(index, x, y, diameter, seconds) { planets[index](ctx, x, y, diameter, seconds); }
+      };
+      if (layout) resize();
+    }
+    if (!planetRenderer) useCanvasPlanets();
+
+    function paint() {
+      if (embedded) {
+        ctx.clearRect(0, 0, width, height);
+      } else {
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, width, height);
+      }
+      const focalLength = height * .5 * lens;
+      const halfWidth = width * .5;
+      const halfHeight = height * .5;
+      const depthRange = far - near;
+      for (const star of stars) {
+        const z = near + (star.depth - near - distance + depthRange) % depthRange;
+        const scale = focalLength / z;
+        const x = halfWidth + star.x * halfWidth * far / z;
+        const y = halfHeight + star.y * halfHeight * far / z;
+        const radius = scale * star.size;
+        if (x < -radius || x > width + radius || y < -radius || y > height + radius) continue;
+        // Fade in at the back plane and fade out at the lens before wrapping.
+        ctx.globalAlpha = star.strength * Math.min(1, (far - z) / 2, (z - near) / 1.3);
+        ctx.drawImage(star.glow, x - radius, y - radius, radius * 2, radius * 2);
+      }
+      ctx.globalAlpha = 1;
+      planetRenderer.begin(width, height);
+      planetRenderer.draw(0, layout.x, layout.y, layout.diameter, rotationSeconds);
+      // Only the visible arc is traversed, so the moon stays in the right-hand scene.
+      const angle = -2.43 - 1.61 * orbitProgress;
+      const moonX = layout.x + .64 * layout.diameter * Math.cos(angle);
+      const moonY = layout.y + .61 * layout.diameter * Math.sin(angle);
+      planetRenderer.draw(1, moonX, moonY, layout.diameter / 6, rotationSeconds);
+    }
+
+    function frame(now) {
+      if (reducedMotion.matches) {
+        previousTime = 0;
+        return;
+      }
+      if (previousTime) {
+        const elapsed = Math.min(.1, (now - previousTime) / 1000);
+        orbitProgress += (targetProgress - orbitProgress) * (1 - Math.exp(-elapsed * 7));
+        rotationSeconds += elapsed;
+        distance = (distance + elapsed * speed) % (far - near);
+      }
+      previousTime = now;
+      paint();
+      request = requestAnimationFrame(frame);
+    }
+
+    function updatePlayback() {
+      cancelAnimationFrame(request);
+      previousTime = 0;
+      if (inView && !document.hidden && !reducedMotion.matches) {
+        request = requestAnimationFrame(frame);
+      }
+    }
+
+    function resize() {
+      width = canvas.clientWidth;
+      height = canvas.clientHeight;
+      layout = arrangeScene(width, height);
+      const nativeScale = Math.min(devicePixelRatio || 1, Math.sqrt(16777216 / Math.max(1, width * height)));
+      const starScale = globeCanvas.hidden ? nativeScale : Math.min(nativeScale, 2);
+      for (const [layer, scale] of [[canvas, starScale], [globeCanvas, nativeScale]]) {
+        if (layer.hidden) continue;
+        const w = Math.max(1, Math.round(width * scale));
+        const h = Math.max(1, Math.round(height * scale));
+        if (layer.width !== w) layer.width = w;
+        if (layer.height !== h) layer.height = h;
+      }
+      ctx.setTransform(starScale, 0, 0, starScale, 0, 0);
+      paint();
+    }
+
+    resize();
+    new ResizeObserver(resize).observe(canvas);
+    window.addEventListener('resize', resize);
+    function watchPixelDensity() {
+      const density = matchMedia(`(resolution: ${devicePixelRatio}dppx)`);
+      density.addEventListener('change', () => { resize(); watchPixelDensity(); }, { once: true });
+    }
+    watchPixelDensity();
+    new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
+      updatePlayback();
+    }).observe(canvas);
+    document.addEventListener('visibilitychange', updatePlayback);
+    reducedMotion.addEventListener('change', updatePlayback);
+  </script>
+</body>
+</html>

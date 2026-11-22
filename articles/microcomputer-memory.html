@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Peng Zhang 的技术札记。记录操作系统、移动安全、数据系统和工程实践。">
+  <title>微机接口笔记_存储器 · Anred Lab</title>
+  <link rel="canonical" href="https://anred.space/articles/microcomputer-memory.html">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+  <main class="shell">
+    <article class="frame reader">
+      <h1 class="page-title">微机接口笔记_存储器</h1>
+      <header class="byline"><a class="author" href="../index.html"><img src="../images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-03-19">2020-03-19</time></header>
+      <div class="prose"><h2 id="存储器与CPU的连接">存储器与CPU的连接</h2><h3 id="1-设计接口应考虑的问题">1. 设计接口应考虑的问题</h3><ul>
+<li>CPU总线的负载能力：总线直接驱动负载能力超过后，应在总线和负载间接缓冲器或驱动器，否则会影响信号逻辑电平。</li>
+<li>CPU时序与存储器存取速度间的配合</li>
+<li>存储器的地址分配和片选</li>
+<li>控制信号的连接</li>
+</ul>
+
+
+<h3 id="2-存储器接口设计">2. 存储器接口设计</h3><h4 id="地址译码器：">地址译码器：</h4><p><strong>片选操作。</strong>  74LS138译码器是常用的8取1的译码器。</p>
+<p><strong>38译码器功能：</strong>（1）根据片选输入选择对应芯片进行I/O访问。（2）通过38译码器控制存储器的工作。</p>
+<h4 id="存储空间的扩展：">存储空间的扩展：</h4><p><strong>位扩展：</strong>芯片层叠。</p>
+<p><strong>字扩展：</strong>芯片并排。</p>
+<p><strong>字位扩展：</strong>芯片层叠加并排。先考虑位扩展再考虑字扩展。</p>
+<h4 id="形成片选信号的三种方法：">形成片选信号的三种方法：</h4><p><strong>线选法：</strong>线路简单，但空间浪费、地址重叠、地址不连续。</p>
+<p><strong>全译码：</strong>全部高位地址都参与译码。没有用到的地址信号可以固定到译码器上。</p>
+<p><strong>部分译码：</strong>只对高位地址中的某几位译码，生成片选信号。如果有高位地址没有使用，则会出现地址重叠。</p></div>
+      <nav class="page-links" aria-label="相关索引"><a href="../index.html#archive">返回文章列表</a> <a href="../categories.html#categories-11">微机接口</a> <a href="../tags.html#tags-24">微机接口</a> <a href="../tags.html#tags-25">存储器</a></nav>
+    </article>
+  </main>
+</body>
+</html>

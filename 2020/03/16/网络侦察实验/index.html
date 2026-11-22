@@ -1,90 +1,14 @@
-<!DOCTYPE html>
-<html lang="zh-Hans">
+<!doctype html>
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#070a0f">
-  <meta name="description" content="网络侦察实验 | Anred Lab 技术博客。">
-  <meta property="og:type" content="article">
-  <meta property="og:title" content="网络侦察实验">
-  <meta property="og:site_name" content="Anred Lab">
-  <meta property="article:author" content="Peng Zhang">
-  <meta property="article:published_time" content="2020-03-16T15:23:37+08:00">
-  <link rel="canonical" href="/2020/03/16/%E7%BD%91%E7%BB%9C%E4%BE%A6%E5%AF%9F%E5%AE%9E%E9%AA%8C/">
-  <link rel="stylesheet" href="/css/anred-lab.css?v=20260620">
-  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <title>网络侦察实验 | Anred Lab</title>
+  <title>网络侦察实验 · Anred Lab</title>
+  <link rel="canonical" href="https://anred.space/articles/network-lab.html">
+  <script>location.replace("/articles/network-lab.html" + location.search + location.hash);</script>
+  <noscript><meta http-equiv="refresh" content="0; url=/articles/network-lab.html"></noscript>
 </head>
 <body>
-  <nav class="nav" aria-label="主导航">
-    <div class="nav-inner">
-      <a class="brand" href="/"><span class="brand-mark">A</span><span class="brand-text">Anred Lab</span></a>
-      <div class="nav-links">
-        <a href="/">首页</a>
-        <a href="/categories/">分类</a>
-        <a href="/tags/">标签</a>
-        <a href="/archives/">归档</a>
-        <a href="/about/">关于</a>
-      </div>
-    </div>
-  </nav>
-
-  <main class="article-shell">
-    <article>
-      <header class="article-hero">
-        <span class="eyebrow">NOTE</span>
-        <h1>网络侦察实验</h1>
-        <div class="article-meta">
-          <time datetime="2020-03-16T15:23:37+08:00">2020-03-16</time>
-          <span>/</span>
-          <span><a href="/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">网络安全</a></span>
-        </div>
-      </header>
-
-      <div class="article-content">
-<h2 id="任务四-获取目标网站的webshell权限，控制目标机，获得敏感信息"><a href="#任务四-获取目标网站的webshell权限，控制目标机，获得敏感信息" class="headerlink" title="任务四 获取目标网站的webshell权限，控制目标机，获得敏感信息"></a>任务四 获取目标网站的webshell权限，控制目标机，获得敏感信息</h2><h3 id="1-准备工作"><a href="#1-准备工作" class="headerlink" title="1. 准备工作"></a>1. 准备工作</h3><p>Linux指令：从命令行界面进入图形界面（下面两个指令都可）</p>
-<pre class="code-block"><code>$ startx 
-$ init 5</code></pre>
-<a id="more"></a>
-
-<p>Linux指令：从图形界面进入命令行界面</p>
-<pre class="code-block"><code>$ init 3</code></pre>
-
-<p>PS：实际操作中，在远程的网络安全实验平台上，使用startx一切正常，但是使用另外2条指令会出现问题。先留个坑~。</p>
-<h3 id="2-创建HTML文件上传表单"><a href="#2-创建HTML文件上传表单" class="headerlink" title="2. 创建HTML文件上传表单"></a>2. 创建HTML文件上传表单</h3><p>基本知识：</p>
-<p>（1） 必需的 action 属性规定当提交表单时，向何处发送表单数据。 </p>
-<pre class="code-block"><code>&lt;form action="value"&gt;</code></pre>
-
-<p>（2） enctype 属性规定在发送到服务器之前应该如何对表单数据进行编码。  在使用包含文件上传控件的表单时，必须使用 multipart/form-data 。</p>
-<pre class="code-block"><code>&lt;form enctype="value"&gt;</code></pre>
-
-<p>创建一个上传表单的简单HTML文件。</p>
-<pre class="code-block"><code>&lt;html&gt;
-    &lt;body&gt;
-        &lt;form action="对应提交网址处" method="post" enctype="multipart/form-data"&gt;
-            &lt;label for="file"&gt;filename: &lt;/label&gt;
-            &lt;input type="file" name="attach" id="file" /&gt;
-            &lt;br /&gt;
-            &lt;input type="submit" name="submit" value="submit" /&gt;
-        &lt;/form&gt;
-   &lt;/body&gt;
-&lt;/html&gt;</code></pre>
-      </div>
-      <div class="article-tags"><a href="/tags/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/"># 网络安全</a></div>
-      <nav class="article-nav" aria-label="文章导航">
-        <a href="/2020/03/15/%E5%85%B3%E4%BA%8EGPU%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%B8%80%E7%82%B9%E5%B0%8F%E7%BB%8F%E9%AA%8C/"><span class="card-kicker">Older</span><br>关于GPU服务器的一点小经验</a>
-        <a href="/2020/03/16/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0_DDoS%E6%94%BB%E5%87%BB/"><span class="card-kicker">Newer</span><br>网络安全笔记_DDoS攻击</a>
-      </nav>
-    </article>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-inner">
-      <div>© 2026 Peng Zhang. Static site on anred.space.</div>
-      <div class="footer-links"><a href="/archives/">Archives</a><a href="/categories/">Categories</a><a href="/tags/">Tags</a></div>
-    </div>
-  </footer>
+  <p>此文已迁移至 <a href="/articles/network-lab.html">网络侦察实验</a>。</p>
 </body>
 </html>

@@ -1,96 +1,14 @@
-<!DOCTYPE html>
-<html lang="zh-Hans">
+<!doctype html>
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#070a0f">
-  <meta name="description" content="主流操作系统安全_Windows | Anred Lab 技术博客。">
-  <meta property="og:type" content="article">
-  <meta property="og:title" content="主流操作系统安全_Windows">
-  <meta property="og:site_name" content="Anred Lab">
-  <meta property="article:author" content="Peng Zhang">
-  <meta property="article:published_time" content="2020-03-20T16:30:15+08:00">
-  <link rel="canonical" href="/2020/03/20/%E4%B8%BB%E6%B5%81%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8_Windows/">
-  <link rel="stylesheet" href="/css/anred-lab.css?v=20260620">
-  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <title>主流操作系统安全_Windows | Anred Lab</title>
+  <title>主流操作系统安全_Windows · Anred Lab</title>
+  <link rel="canonical" href="https://anred.space/articles/windows-internals.html">
+  <script>location.replace("/articles/windows-internals.html" + location.search + location.hash);</script>
+  <noscript><meta http-equiv="refresh" content="0; url=/articles/windows-internals.html"></noscript>
 </head>
 <body>
-  <nav class="nav" aria-label="主导航">
-    <div class="nav-inner">
-      <a class="brand" href="/"><span class="brand-mark">A</span><span class="brand-text">Anred Lab</span></a>
-      <div class="nav-links">
-        <a href="/">首页</a>
-        <a href="/categories/">分类</a>
-        <a href="/tags/">标签</a>
-        <a href="/archives/">归档</a>
-        <a href="/about/">关于</a>
-      </div>
-    </div>
-  </nav>
-
-  <main class="article-shell">
-    <article>
-      <header class="article-hero">
-        <span class="eyebrow">NOTE</span>
-        <h1>主流操作系统安全_Windows</h1>
-        <div class="article-meta">
-          <time datetime="2020-03-20T16:30:15+08:00">2020-03-20</time>
-          <span>/</span>
-          <span><a href="/categories/%E4%B8%BB%E6%B5%81%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8/">主流操作系统安全</a></span>
-        </div>
-      </header>
-
-      <div class="article-content">
-<h2 id="Winodws系统结构"><a href="#Winodws系统结构" class="headerlink" title="Winodws系统结构"></a>Winodws系统结构</h2><h3 id="Windows引导过程："><a href="#Windows引导过程：" class="headerlink" title="Windows引导过程："></a>Windows引导过程：</h3><ul>
-<li>BIOS</li>
-<li>MBR</li>
-<li>引导扇区（引导分区的第一个扇区）</li>
-<li>引导扇区后续扇区</li>
-<li>ntldr(实模式部分)：切换至保护模式</li>
-<li>ntldr(保护模式部分：os loader)</li>
-</ul>
-<a id="more"></a>
-
-<p><strong>ntldr的工作：</strong></p>
-<p>构造内存描述符数组；映射页面，设置页目录寄存器，打开内存页面映射机制；处理boot.ini；执行ntdetect.com；加载内核模块ntoskrnl.exe、hal.dll和SYSTEM储巢；加载引导驱动程序和必要的文件系统驱动程序；构造LOADER_PARAMETER_BLOCK参数块；将控制交给内核模块ntoskrnl.exe的入口函数</p>
-<h3 id="内核初始化："><a href="#内核初始化：" class="headerlink" title="内核初始化："></a>内核初始化：</h3><ul>
-<li>0阶段初始化：在进程中进行。初始化CPU和一部分kernel的数据机构。</li>
-<li>1阶段初始化：在线程中进行，可并发。初始化绝大多数的模块。</li>
-</ul>
-<h2 id="操作系统内核与驱动开发"><a href="#操作系统内核与驱动开发" class="headerlink" title="操作系统内核与驱动开发"></a>操作系统内核与驱动开发</h2><h3 id="内核与驱动的关系"><a href="#内核与驱动的关系" class="headerlink" title="内核与驱动的关系"></a>内核与驱动的关系</h3><p><strong>功能</strong>角度，驱动在内核的下层。硬件=&gt;驱动=&gt;内核=&gt;应用。<strong>代码</strong>角度，驱动和内核开发实际融为一体。</p>
-<p>驱动开发需要考虑<strong>问题</strong>：同步异步/共享独占/缓冲区管理/设备状态管理。</p>
-<p>驱动属于IO系统的一部分，向下是HAL或硬件。</p>
-<h3 id="驱动开发"><a href="#驱动开发" class="headerlink" title="驱动开发"></a>驱动开发</h3><p><strong>什么是驱动程序？</strong></p>
-<p><strong>驱动程序</strong>是一个<strong>软件</strong>组件，可让<strong>操作系统</strong>和<strong>设备</strong>彼此通信。 例如，假设<strong>应用程序</strong>需要从<strong>设备</strong>中读取某些<strong>数据</strong>。 应用程序会调用由<strong>操作系统</strong>实现的函数，操作系统会调用由<strong>驱动程序</strong>实现的函数。</p>
-<p>并非所有驱动程序都直接与设备通信。堆栈中直接与设备通信的一个驱动程序称为“<strong>函数驱动程序</strong>” ；执行辅助处理的驱动程序称为“<strong>筛选器驱动程序</strong>” 。</p>
-<p><strong>软件驱动程序：</strong>未与设备关联的驱动程序 。可以访问核心操作系统数据结构。</p>
-<p><strong>扩展定义：</strong>驱动程序是观察或参与操作系统和设备之间通信的任何软件组件。</p>
-<p><strong>Windows驱动开发模型：</strong></p>
-<p><strong>DDK</strong>(Driver Developer Kit)=&gt;<strong>WDK</strong>(Windows Driver Kit)</p>
-<p>操作系统与驱动程序之间遵循<strong>容器</strong>与<strong>插件</strong>模型。Driver是一种<strong>被动</strong>的软件模块。驱动程序是一个<strong>回调函数</strong>的集合体，类似于DLL程序。</p>
-<p>驱动程序可以调用<strong>Windows内核API</strong>、WDK运行时间库和其他驱动程序。不能调用用户模式API和ISO规定的C/C++标准函数库。</p>
-<p><strong>驱动对象与设备对象：</strong></p>
-<p>一个驱动对象下可能有多个设备对象，一个设备对象只能对应一个驱动对象。</p>
-<p><strong>IRP(I/O Request Package)：</strong></p>
-<p>上层应用程序与下层设备进行IO时，利用IRP进行通信。</p>
-<p><img src="/2020/03/20/%E4%B8%BB%E6%B5%81%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8_Windows/1.png" alt="1"></p>
-      </div>
-      <div class="article-tags"><a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"># 操作系统</a><a href="/tags/Windows/"># Windows</a><a href="/tags/%E9%A9%B1%E5%8A%A8/"># 驱动</a></div>
-      <nav class="article-nav" aria-label="文章导航">
-        <a href="/2020/03/19/%E5%BE%AE%E6%9C%BA%E6%8E%A5%E5%8F%A3%E7%AC%94%E8%AE%B0_%E5%AD%98%E5%82%A8%E5%99%A8/"><span class="card-kicker">Older</span><br>微机接口笔记_存储器</a>
-        <a href="/2020/03/20/%E4%BF%A1%E6%81%AF%E9%87%87%E9%9B%86_%E7%88%AC%E8%99%AB/"><span class="card-kicker">Newer</span><br>信息采集_爬虫</a>
-      </nav>
-    </article>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-inner">
-      <div>© 2026 Peng Zhang. Static site on anred.space.</div>
-      <div class="footer-links"><a href="/archives/">Archives</a><a href="/categories/">Categories</a><a href="/tags/">Tags</a></div>
-    </div>
-  </footer>
+  <p>此文已迁移至 <a href="/articles/windows-internals.html">主流操作系统安全_Windows</a>。</p>
 </body>
 </html>

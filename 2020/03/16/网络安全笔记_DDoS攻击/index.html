@@ -1,116 +1,14 @@
-<!DOCTYPE html>
-<html lang="zh-Hans">
+<!doctype html>
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#070a0f">
-  <meta name="description" content="网络安全笔记_DDoS攻击 | Anred Lab 技术博客。">
-  <meta property="og:type" content="article">
-  <meta property="og:title" content="网络安全笔记_DDoS攻击">
-  <meta property="og:site_name" content="Anred Lab">
-  <meta property="article:author" content="Peng Zhang">
-  <meta property="article:published_time" content="2020-03-16T15:23:37+08:00">
-  <link rel="canonical" href="/2020/03/16/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0_DDoS%E6%94%BB%E5%87%BB/">
-  <link rel="stylesheet" href="/css/anred-lab.css?v=20260620">
-  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <title>网络安全笔记_DDoS攻击 | Anred Lab</title>
+  <title>网络安全笔记_DDoS攻击 · Anred Lab</title>
+  <link rel="canonical" href="https://anred.space/articles/ddos.html">
+  <script>location.replace("/articles/ddos.html" + location.search + location.hash);</script>
+  <noscript><meta http-equiv="refresh" content="0; url=/articles/ddos.html"></noscript>
 </head>
 <body>
-  <nav class="nav" aria-label="主导航">
-    <div class="nav-inner">
-      <a class="brand" href="/"><span class="brand-mark">A</span><span class="brand-text">Anred Lab</span></a>
-      <div class="nav-links">
-        <a href="/">首页</a>
-        <a href="/categories/">分类</a>
-        <a href="/tags/">标签</a>
-        <a href="/archives/">归档</a>
-        <a href="/about/">关于</a>
-      </div>
-    </div>
-  </nav>
-
-  <main class="article-shell">
-    <article>
-      <header class="article-hero">
-        <span class="eyebrow">NOTE</span>
-        <h1>网络安全笔记_DDoS攻击</h1>
-        <div class="article-meta">
-          <time datetime="2020-03-16T15:23:37+08:00">2020-03-16</time>
-          <span>/</span>
-          <span><a href="/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">网络安全</a></span>
-        </div>
-      </header>
-
-      <div class="article-content">
-<h2 id="网络侦察"><a href="#网络侦察" class="headerlink" title="网络侦察"></a>网络侦察</h2><h3 id="交换式网络环境的监听："><a href="#交换式网络环境的监听：" class="headerlink" title="交换式网络环境的监听："></a>交换式网络环境的监听：</h3><p>（1）ARP欺骗（<strong>ARP spoofing</strong>）：网关的MAC和IP地址与自己的地址绑定。</p>
-<p>（2）在交换机上做端口镜像，把交换机上的数据拷贝到其他端口上。</p>
-<a id="more"></a>
-
-<h3 id="口令猜测："><a href="#口令猜测：" class="headerlink" title="口令猜测："></a>口令猜测：</h3><p>（1）字典攻击。（2）基于概率的口令猜测。概率大小决定测试先后次序。</p>
-<h2 id="拒绝服务攻击DoS（Denial-of-Service）"><a href="#拒绝服务攻击DoS（Denial-of-Service）" class="headerlink" title="拒绝服务攻击DoS（Denial of Service）"></a>拒绝服务攻击DoS（Denial of Service）</h2><h3 id="定义："><a href="#定义：" class="headerlink" title="定义："></a>定义：</h3><p>阻止或拒绝合法使用者存取网络服务器。</p>
-<h3 id="特点："><a href="#特点：" class="headerlink" title="特点："></a>特点：</h3><p>往往是针对TCP/IP协议中的某个弱点。从某种程度上，DoS攻击永远不会消失。（资源有限，但访问存取是无限的，跟承载能力有关）从技术上，没有根本的解决办法。一个解决思路：网络基础设施上溯源。</p>
-<h3 id="攻击模式："><a href="#攻击模式：" class="headerlink" title="攻击模式："></a>攻击模式：</h3><p>（1）消耗资源：针对流量的攻击、消耗磁盘空间、消耗CPU（CPU 多核 开多线程 跑死循环）和内存资源（申请内存 malloc new 递归）。未及时free易造成内存泄露的问题。</p>
-<p>PS：<strong>内存泄漏（Memory Leak）：</strong>指程序中己动态分配的堆内存由于某种原因程序未释放或无法释放，造成系统内存的浪费，导致程序运行速度减慢甚至系统崩溃等严重后果。</p>
-<p>（2）破坏或更改配置信息。</p>
-<p>（3）物理破坏或改变网络部件。防御：加强管理。</p>
-<h3 id="常见DoS攻击："><a href="#常见DoS攻击：" class="headerlink" title="常见DoS攻击："></a>常见DoS攻击：</h3><p><strong>SYN Flooding：</strong></p>
-<p>利用TCP连接的常见服务端口攻击。</p>
-<p>表现：短时间大量SYN包。</p>
-<p>TCP连接的三次握手，存储接收到的数据，进行缓存，缓存充满使服务终止。连接请求超过超时的处理，即可最终充满。客户端利用假IP，不发送第三次响应包。</p>
-<p>特点：</p>
-<ul>
-<li>利用TCP/IP协议的薄弱环节进行攻击</li>
-<li>利用较少数据流量就可</li>
-<li>攻击来源无法定位</li>
-<li>在服务端无法区分TCP连接请求的合法性.</li>
-</ul>
-<p>应对：（1）优化系统配置（缓冲区扩大和超时时间减小）（2）优化路由器配置</p>
-<p><strong>Smurf攻击：</strong></p>
-<p>结合使用IP欺骗和ICMP回复的攻击。</p>
-<p><strong>Ping of Death攻击</strong></p>
-<p><strong>Teardrop攻击</strong></p>
-<p><strong>Land攻击：</strong>设置IP为127.0.0.1，向自己发响应包。</p>
-<p><strong>电子邮件轰炸</strong>：SMTP端口（25）：早期未授权访问，发送地址可以自己设定。</p>
-<p>目前为ESMTP服务。hello过程之后，会有自己邮件地址和口令的认证。</p>
-<p>应对：配置路由器和防火墙，识别源头。</p>
-<h3 id="分布式拒绝服务攻击DDoS："><a href="#分布式拒绝服务攻击DDoS：" class="headerlink" title="分布式拒绝服务攻击DDoS："></a>分布式拒绝服务攻击DDoS：</h3><p>相比传统的DoS攻击：（1）网络资源的限制减小（2）隐蔽性高</p>
-<p>DDoS的三级控制结构。客户端（Client）、中间机（Handler）和代理机（Agent）。</p>
-<p>应对：</p>
-<ul>
-<li>在数据流中搜寻特征字符串</li>
-<li>利用数据包的某些特征</li>
-<li>监视本地主机端口的使用</li>
-<li>对通信数据量进行统计</li>
-</ul>
-<h2 id="缓冲区溢出攻击"><a href="#缓冲区溢出攻击" class="headerlink" title="缓冲区溢出攻击"></a>缓冲区溢出攻击</h2><h3 id="缓冲区定义："><a href="#缓冲区定义：" class="headerlink" title="缓冲区定义："></a>缓冲区定义：</h3><p>一段连续的存储空间。（堆或栈的空间）</p>
-<pre class="code-block"><code>int i;</code></pre>
-
-<p>三重含义：（1）在内存存储创建的位置（2）存储空间大小（3）数据存储格式。例如int与double不同。</p>
-<h3 id="缓冲区溢出定义："><a href="#缓冲区溢出定义：" class="headerlink" title="缓冲区溢出定义："></a>缓冲区溢出定义：</h3><p>指写入缓冲区的数据量超过了该缓冲区的最大限度，造成溢出数据改写了缓冲区相邻的原始数据。</p>
-<h3 id="缓冲区溢出危害："><a href="#缓冲区溢出危害：" class="headerlink" title="缓冲区溢出危害："></a>缓冲区溢出危害：</h3><ul>
-<li>实现任意执行代码</li>
-<li>进行DoS攻击</li>
-<li>破坏关键数据，使系统的稳定性和有效性受到影响</li>
-<li>进行蠕虫攻击 Morris</li>
-</ul>
-<h3 id="缓冲区溢出的根本原因："><a href="#缓冲区溢出的根本原因：" class="headerlink" title="缓冲区溢出的根本原因："></a>缓冲区溢出的根本原因：</h3><p>代码操作缓冲区时，没有对缓冲区边界检查，导致溢出数据改写缓冲区相邻单元的数据。</p>
-<pre class="code-block"><code>while((*d++=*s++)!='\0');      //strcpy函数实现</code></pre>
-      </div>
-      <div class="article-tags"><a href="/tags/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/"># 网络安全</a><a href="/tags/DoS/"># DoS</a><a href="/tags/%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA/"># 缓冲区溢出</a></div>
-      <nav class="article-nav" aria-label="文章导航">
-        <a href="/2020/03/16/%E7%BD%91%E7%BB%9C%E4%BE%A6%E5%AF%9F%E5%AE%9E%E9%AA%8C/"><span class="card-kicker">Older</span><br>网络侦察实验</a>
-        <a href="/2020/03/17/%E5%B5%8C%E5%85%A5%E5%BC%8F%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0_ARM/"><span class="card-kicker">Newer</span><br>嵌入式系统安全笔记_ARM</a>
-      </nav>
-    </article>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-inner">
-      <div>© 2026 Peng Zhang. Static site on anred.space.</div>
-      <div class="footer-links"><a href="/archives/">Archives</a><a href="/categories/">Categories</a><a href="/tags/">Tags</a></div>
-    </div>
-  </footer>
+  <p>此文已迁移至 <a href="/articles/ddos.html">网络安全笔记_DDoS攻击</a>。</p>
 </body>
 </html>
