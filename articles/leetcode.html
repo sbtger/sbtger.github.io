@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Peng Zhang 的技术札记。记录操作系统、移动安全、数据系统和工程实践。">
+  <title>leetcode总结 · Anred Lab</title>
+  <link rel="canonical" href="https://anred.space/articles/leetcode.html">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+  <main class="shell">
+    <article class="frame reader">
+      <h1 class="page-title">leetcode总结</h1>
+      <header class="byline"><a class="author" href="../index.html"><img src="../images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-07-22">2020-07-22</time></header>
+      <div class="prose"><h2 id="LeetCode">LeetCode</h2><h2 id="1-数组">1. 数组</h2><p>（1）一定要弄清输入值的数据范围。优先考虑极端情况，如输入数组长度为0的情况以及边界的处理情况。</p>
+<p>（2）LeetCode错误：control reaches end of non-void function[werror=return-type]; </p>
+<p>有时我们在一块程序里已经有return，但不是在这块代码的结尾，leetCode也会编译不通过，所以我们也要在函数的代码块结尾也return一下。</p>
+<p>（3）处理大小比较部分的时候，一定记得考虑等于的情形是否满足要求。</p>
+<p>（4）C++中，使用i++还是++i？使用++i更好。原因：因为前置版本的递增运算符避免了不必要的工作，它把值加1后直接返回改变了的运算对象。与之相比，后置版本需要将原始值存储下来以便于返回这个未修改的内容。如果我们不需要修改前的值，那么后置版本的操作就是一种浪费。</p>
+<p>（5）float数据的正确表示</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">float</span> f = <span class="number">1.1</span>;   <span class="comment">//错误 1.1是double类型 java中</span></span><br><span class="line"><span class="keyword">float</span> f = <span class="number">1.1f</span>； <span class="comment">//正确</span></span><br><span class="line"><span class="keyword">double</span> d = <span class="number">34.4</span>; <span class="comment">//正确</span></span><br></pre></td></tr></table></figure></div>
+      <nav class="page-links" aria-label="相关索引"><a href="../index.html#archive">返回文章列表</a> <a href="../categories.html#categories-3">leetcode</a> <a href="../tags.html#tags-4">leetcode</a></nav>
+    </article>
+  </main>
+</body>
+</html>

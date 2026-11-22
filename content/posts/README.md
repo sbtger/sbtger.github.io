@@ -1,12 +1,6 @@
-# Writing Notes
+# 发布文章
 
-Create a new Markdown file in this directory, then run:
-
-```bash
-npm run build
-```
-
-Example:
+在本目录新增一个 Markdown 文件，例如 `new-note.md`。
 
 ```markdown
 ---
@@ -18,7 +12,7 @@ categories:
 tags:
   - JavaScript
   - 静态站点
-summary: 这是一段会显示在首页、分类页和标签页里的摘要。
+summary: 文章摘要。
 featured: true
 ---
 
@@ -27,8 +21,6 @@ featured: true
 正文内容。
 ```
 
-Notes:
+在仓库根目录运行 `npm run build`，再把 Markdown 源文件与生成的 HTML 一起提交到发布分支。文章地址为 `/articles/new-note.html`。已发布的文章建议沿用原来的 `slug`，方便读者继续使用收藏的链接。
 
-- `slug` controls the final URL: `/YYYY/MM/DD/slug/`.
-- Set `featured: true` to let the note appear in the homepage selected notes.
-- Drafts can be kept with `draft: true`; they will not be published.
+构建会按日期更新首页文章列表、分类页和标签页。`featured: true` 的文章按日期进入首页精选，最多显示六篇。保留 `draft: true` 的文章只保留 Markdown 源文件，不生成正文，也不会列入索引。仓库是公开的，提交后的草稿源文件也可在 GitHub 上查看。

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Peng Zhang 的技术札记。记录操作系统、移动安全、数据系统和工程实践。">
+  <title>DDIA-01.可靠、可扩展、可维护的应用 · Anred Lab</title>
+  <link rel="canonical" href="https://anred.space/articles/ddia-reliability.html">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+  <main class="shell">
+    <article class="frame reader">
+      <h1 class="page-title">DDIA-01.可靠、可扩展、可维护的应用</h1>
+      <header class="byline"><a class="author" href="../index.html"><img src="../images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2021-09-26">2021-09-26</time></header>
+      <div class="prose"><h2 id="第一部分-数据系统的基础">第一部分 数据系统的基础</h2><h2 id="1-可靠、可扩展、可维护的应用">1.可靠、可扩展、可维护的应用</h2><p>本书主要讲述的内容是数据系统的原理与实践，以及如何构建数据密集型应用。目前的很多应用都是数据密集型，而不是计算密集型。计算性能基本不是大多数应用的限制因素，而是通常大量的数据信息。这些数据信息如何存储为了下次查找（database），加速读取（cache），根据索引查找（index），流处理？，大量增加数据（批处理）。由于不同场景对于性能，数据访问方式，具体实现的要求不同，数据系统有很多。对于数据系统，我们主要关注可靠性、可扩展性和可维护性3点。</p>
+<h2 id="可靠性">可靠性</h2><p>数据系统需要持续正常工作，即使面对多样的问题。</p>
+<p>问题主要包括硬件问题、软件问题以及人的问题。</p>
+<ul>
+<li><p>硬件问题主要需要冗余备份、快速恢复等方法解决。</p>
+</li>
+<li><p>软件问题可能会导致级联的问题。解决方法包括仔细考虑系统的假设与交互、全面测试、进程孤立、允许进程崩溃与重启、评测监控以及分析系统的行为。</p>
+</li>
+<li><p>人的问题的解决方法包括最小化错误产生的可能（交互应当简单），环境解耦（方便沙箱测试），全局测试，快速恢复，设置详细清晰的监控（包括性能、错误率），好的训练。</p>
+</li>
+</ul>
+<p>可靠性的重要性在于我们对用户是有责任的。如果用户存储家庭照片的应用的数据库突然崩溃，他们会怎么想。</p>
+<h2 id="可扩展性">可扩展性</h2></div>
+      <nav class="page-links" aria-label="相关索引"><a href="../index.html#archive">返回文章列表</a> <a href="../categories.html#categories-1">DDIA</a> <a href="../tags.html#tags-1">DDIA 可靠性 可扩展性 可维护性</a></nav>
+    </article>
+  </main>
+</body>
+</html>

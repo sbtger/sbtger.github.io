@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Peng Zhang 的技术札记。记录操作系统、移动安全、数据系统和工程实践。">
+  <title>嵌入式系统安全笔记_接口技术 · Anred Lab</title>
+  <link rel="canonical" href="https://anred.space/articles/embedded-interfaces.html">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+  <main class="shell">
+    <article class="frame reader">
+      <h1 class="page-title">嵌入式系统安全笔记_接口技术</h1>
+      <header class="byline"><a class="author" href="../index.html"><img src="../images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-03-24">2020-03-24</time></header>
+      <div class="prose"><h2 id="嵌入式接口技术——通信">嵌入式接口技术——通信</h2><p>找例程编译。学会修改例程，提高可靠性。</p>
+<p><strong>硬件：</strong>通信（相互通道）、输入（前向通道）、输出（后向通道）</p>
+<p><strong>部件：</strong>传感器、执行器、人机界面、相互通信、电源</p>
+
+
+<p>硬件-通信（相互通道）外围部件的扩展是利用这些通道进行的。</p>
+<p><strong>串行通信UART：</strong>在一根通信线上传输数据信息与联络信息。区分这2类信息的约定即通信协议。</p>
+<ul>
+<li>单工通信</li>
+<li>半双工通信</li>
+<li>全双工通信</li>
+</ul>
+<p>串行通信方式：异步通信与同步通信（需要时钟）</p>
+<p>异步协议一般用在数据速率较低的场合。高速传输时，一般采用同步协议。</p>
+<p>异步通信是按字符帧传输：1个起始位（‘0’）、5-8个数据位、1个奇偶校验位（不一定需要）与1-2个停止位（‘1’）。</p>
+<p><strong>停止位：</strong>接收方的保护时间，使接收方有足够的时间处理收到的数据。</p>
+<p>异步通信对字符的格式、波特率、校验位有确定的要求。</p>
+<p>异步串行通信性能：发送和接收缓冲器的数量。</p>
+<p>发送时检查：发送缓冲区是否满；移位寄存器有没有发送完。</p>
+<p>常见错误：奇偶校验错；帧出错；溢出错（接收字符未读，后续字符则覆盖）。</p>
+<p><strong>RS-232C：</strong>点对点的。</p>
+<p>串行接口标准：把0和1的距离拉开，为了传得更远。</p>
+<p>逻辑1=-3<del>-15V 逻辑0=+3</del>+15V （反向放大）数据发送与接收</p>
+<p>信号有效+3<del>+15V  信号无效-3</del>-15V 控制与状态信号</p>
+<p>TTL与EIA-RS-232C转换：</p>
+<p>利用MC1488/1489来连接TTL与RS-232C，且外接电源。</p>
+<p>现在是MAX232转换，按电源（5V与3.3V）或电容分类（电解电容、瓷片电容、无电容）。</p>
+<p>RS-232C易损坏接口电路的芯片。</p>
+<p><strong>RS-485：</strong>多对多的。</p>
+<p>逻辑“1” +2<del>+6V 逻辑“0” -2</del>-6V 不易损坏接口芯片。</p>
+<p>有抑制共模干扰的能力。为了传输更长的距离，需要加485中继器，可加多个节点。工程上是分组的处理。</p>
+<p>注意事项：极性、最远端端匹配电阻、T型线长度、线路保护。</p>
+<p><strong>串行通信协议应用注意事项：</strong></p>
+<ul>
+<li>接收与死机（<strong>超时处理、重新初始化、接收缓冲区防溢出</strong>）</li>
+<li>停止位（<strong>又叫数据保护时间</strong>，1.5个二进制位的时间）位数与可靠通信（有效通信速率、保障接收方的数据处理时间）</li>
+<li>波特率精度（<strong>±2.5%，外置振荡器、配置选择与通信精度</strong>）与可靠通信</li>
+<li>通信协议、帧格式、收发切换时间及校验</li>
+<li>帧间隔（<strong>字符帧、通信协议帧</strong>）、帧长度</li>
+<li>波特率与通信距离</li>
+</ul>
+<p><strong>I2C总线：</strong>简单与有效。</p>
+<p>数据线SDA与时钟线SCL。两根信号线必须OC并接上拉电阻。各种设备均并联在这条总线上，每个设备都有唯一的地址。</p>
+<p>可以有多次启动信号。终止信号P最高级别的中断。</p>
+<p>SPI</p>
+<p>1-WRIE(单总线)</p></div>
+      <nav class="page-links" aria-label="相关索引"><a href="../index.html#archive">返回文章列表</a> <a href="../categories.html#categories-7">嵌入式系统安全</a> <a href="../tags.html#tags-13">嵌入式系统安全</a> <a href="../tags.html#tags-14">接口</a></nav>
+    </article>
+  </main>
+</body>
+</html>

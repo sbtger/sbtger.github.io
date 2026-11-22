@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Peng Zhang 的技术札记。记录操作系统、移动安全、数据系统和工程实践。">
+  <title>android_security · Anred Lab</title>
+  <link rel="canonical" href="https://anred.space/articles/android-security.html">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+  <main class="shell">
+    <article class="frame reader">
+      <h1 class="page-title">android_security</h1>
+      <header class="byline"><a class="author" href="../index.html"><img src="../images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-07-15">2020-07-15</time> · 防护笔记整理</header>
+      <div class="prose"><h2>Android 的分层结构</h2><table><thead><tr><th scope="col">层次</th><th scope="col">职责</th></tr></thead><tbody><tr><td>应用层</td><td>应用提供界面和具体功能，通过框架 API 请求系统服务。</td></tr><tr><td>应用框架</td><td>组织组件生命周期、窗口、资源和系统服务。</td></tr><tr><td>运行时与原生库</td><td>运行时处理应用字节码，原生库提供图形、媒体与其他底层能力。APK 中的 DEX 文件承载字节码。</td></tr><tr><td>Linux 内核</td><td>承担进程管理、内存、文件系统和设备驱动等工作。</td></tr></tbody></table>
+<h2>组件与进程边界</h2><p>Activity 提供界面，Service 提供可启动或绑定的服务，BroadcastReceiver 接收事件，ContentProvider 提供结构化数据接口。Service 默认也在应用的主线程运行，长时间任务仍需安排合适的执行环境。</p>
+<h2>应用沙箱与权限</h2><p>系统通常为应用分配独立的 Linux UID，文件权限和进程隔离形成基本的应用沙箱。需要共享数据时，可以通过带权限控制的 ContentProvider 只开放必要的资源。普通权限、危险权限与签名权限的授予条件不同。危险权限的授权流程需要结合 Android 版本和应用目标版本理解。</p>
+<h2>Intent 与 WebView</h2><p>Intent 可以跨应用携带数据，敏感值应仅传给预期接收方。PendingIntent 把一项未来可执行的操作交给其他组件，应限定操作范围。WebView 接收外部链接时，需要明确允许的来源、协议与本地文件访问范围。</p>
+<h2>审查应用</h2><p>先阅读应用清单中的权限与组件声明，再核对实际使用的系统服务、进程间通信和数据共享接口。结合自有应用的运行日志检查敏感数据是否意外写入文件或日志。设备侧还要区分 USB 调试、蓝牙、Wi-Fi 与 NFC 各自的连接和授权边界。</p></div>
+      <nav class="page-links" aria-label="相关索引"><a href="../index.html#archive">返回文章列表</a> <a href="../categories.html#categories-4">android security</a> <a href="../tags.html#tags-5">android</a> <a href="../tags.html#tags-6">security</a></nav>
+    </article>
+  </main>
+</body>
+</html>

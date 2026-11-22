@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Peng Zhang 的技术札记。记录操作系统、移动安全、数据系统和工程实践。">
+  <title>汇编语言程序设计笔记_Loop · Anred Lab</title>
+  <link rel="canonical" href="https://anred.space/articles/assembly-loop.html">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+  <main class="shell">
+    <article class="frame reader">
+      <h1 class="page-title">汇编语言程序设计笔记_Loop</h1>
+      <header class="byline"><a class="author" href="../index.html"><img src="../images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-03-18">2020-03-18</time></header>
+      <div class="prose"><h2 id="bx-和Loop指令">[bx]和Loop指令</h2><p>[bx]是什么？实际指代内存单元中的内容。基址默认是ds中。内存单元大小可以通过上下文判断。</p>
+<p>push ax：(sp)=(sp)-2 ((ss)*16+(sp))=ax</p>
+<p>pop ax：(ax)=((ss)*16+(sp)) (sp)=(sp)+2</p>
+
+
+<h3 id="Loop指令：">Loop指令：</h3><p><strong>执行步骤：</strong></p>
+<ul>
+<li>(cx)=(cx)-1</li>
+<li>判断cx中的值，不为0则转至标号处执行程序，如果为0则向下执行。</li>
+</ul>
+<p><strong>要点：</strong></p>
+<ul>
+<li>(cx)为实际执行循环次数。</li>
+<li>loop指令中的标号所标识的地址要在前面。</li>
+<li>要循环执行的程序段，要写在标号和loop指令之间。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">assume cs:code</span><br><span class="line">code segment</span><br><span class="line">	mov bx,0</span><br><span class="line">	mov cx,12</span><br><span class="line">    mov ax,0ffffh</span><br><span class="line">    mov ds,ax</span><br><span class="line">    mov ax,0020h</span><br><span class="line">    mov es,ax</span><br><span class="line"> s: mov al,[bx]</span><br><span class="line">    mov es:[bx],al</span><br><span class="line">    inc bx</span><br><span class="line">    loop s</span><br><span class="line">    </span><br><span class="line">	mov ax,4c00h</span><br><span class="line">	int 21h</span><br><span class="line">code ends</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<p><strong>汇编编译器的小问题</strong>：</p>
+<p>汇编编译器中，数据不能以字母开头，所以FFFFH需要改为0FFFFH。</p>
+<p>有些汇编编译器不能识别[数字]，故一般使用[bx].</p>
+<p><strong>Loop和[bx]的联合使用：</strong></p>
+<p>为了类型的匹配和结果的不超界，可以使用Loop和[bx]联合的方法。</p>
+<p><strong>一段安全的内存空间：</strong></p>
+<p>DOS和其他合法程序一般都不会使用<strong>0:200~0:2ff</strong>的256个字节的空间。</p></div>
+      <nav class="page-links" aria-label="相关索引"><a href="../index.html#archive">返回文章列表</a> <a href="../categories.html#categories-6">汇编语言</a> <a href="../tags.html#tags-12">汇编语言</a></nav>
+    </article>
+  </main>
+</body>
+</html>

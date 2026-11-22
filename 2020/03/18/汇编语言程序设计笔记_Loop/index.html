@@ -1,104 +1,14 @@
-<!DOCTYPE html>
-<html lang="zh-Hans">
+<!doctype html>
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#070a0f">
-  <meta name="description" content="汇编语言程序设计笔记_Loop | Anred Lab 技术博客。">
-  <meta property="og:type" content="article">
-  <meta property="og:title" content="汇编语言程序设计笔记_Loop">
-  <meta property="og:site_name" content="Anred Lab">
-  <meta property="article:author" content="Peng Zhang">
-  <meta property="article:published_time" content="2020-03-18T10:00:00+08:00">
-  <link rel="canonical" href="/2020/03/18/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%94%E8%AE%B0_Loop/">
-  <link rel="stylesheet" href="/css/anred-lab.css?v=20260620">
-  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <title>汇编语言程序设计笔记_Loop | Anred Lab</title>
+  <title>汇编语言程序设计笔记_Loop · Anred Lab</title>
+  <link rel="canonical" href="https://anred.space/articles/assembly-loop.html">
+  <script>location.replace("/articles/assembly-loop.html" + location.search + location.hash);</script>
+  <noscript><meta http-equiv="refresh" content="0; url=/articles/assembly-loop.html"></noscript>
 </head>
 <body>
-  <nav class="nav" aria-label="主导航">
-    <div class="nav-inner">
-      <a class="brand" href="/"><span class="brand-mark">A</span><span class="brand-text">Anred Lab</span></a>
-      <div class="nav-links">
-        <a href="/">首页</a>
-        <a href="/categories/">分类</a>
-        <a href="/tags/">标签</a>
-        <a href="/archives/">归档</a>
-        <a href="/about/">关于</a>
-      </div>
-    </div>
-  </nav>
-
-  <main class="article-shell">
-    <article>
-      <header class="article-hero">
-        <span class="eyebrow">NOTE</span>
-        <h1>汇编语言程序设计笔记_Loop</h1>
-        <div class="article-meta">
-          <time datetime="2020-03-18T10:00:00+08:00">2020-03-18</time>
-          <span>/</span>
-          <span><a href="/categories/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">汇编语言</a></span>
-        </div>
-      </header>
-
-      <div class="article-content">
-<h2 id="bx-和Loop指令"><a href="#bx-和Loop指令" class="headerlink" title="[bx]和Loop指令"></a>[bx]和Loop指令</h2><p>[bx]是什么？实际指代内存单元中的内容。基址默认是ds中。内存单元大小可以通过上下文判断。</p>
-<p>push ax：(sp)=(sp)-2 ((ss)*16+(sp))=ax</p>
-<p>pop ax：(ax)=((ss)*16+(sp)) (sp)=(sp)+2</p>
-<a id="more"></a>
-
-<h3 id="Loop指令："><a href="#Loop指令：" class="headerlink" title="Loop指令："></a>Loop指令：</h3><p><strong>执行步骤：</strong></p>
-<ul>
-<li>(cx)=(cx)-1</li>
-<li>判断cx中的值，不为0则转至标号处执行程序，如果为0则向下执行。</li>
-</ul>
-<p><strong>要点：</strong></p>
-<ul>
-<li>(cx)为实际执行循环次数。</li>
-<li>loop指令中的标号所标识的地址要在前面。</li>
-<li>要循环执行的程序段，要写在标号和loop指令之间。</li>
-</ul>
-<pre class="code-block"><code>assume cs:code
-code segment
-	mov bx,0
-	mov cx,12
-    mov ax,0ffffh
-    mov ds,ax
-    mov ax,0020h
-    mov es,ax
- s: mov al,[bx]
-    mov es:[bx],al
-    inc bx
-    loop s
-    
-	mov ax,4c00h
-	int 21h
-code ends
-end</code></pre>
-
-<p><strong>汇编编译器的小问题</strong>：</p>
-<p>汇编编译器中，数据不能以字母开头，所以FFFFH需要改为0FFFFH。</p>
-<p>有些汇编编译器不能识别[数字]，故一般使用[bx].</p>
-<p><strong>Loop和[bx]的联合使用：</strong></p>
-<p>为了类型的匹配和结果的不超界，可以使用Loop和[bx]联合的方法。</p>
-<p><strong>一段安全的内存空间：</strong></p>
-<p>DOS和其他合法程序一般都不会使用<strong>0:200~0:2ff</strong>的256个字节的空间。</p>
-      </div>
-      <div class="article-tags"><a href="/tags/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/"># 汇编语言</a></div>
-      <nav class="article-nav" aria-label="文章导航">
-        <a href="/2020/03/17/%E5%B5%8C%E5%85%A5%E5%BC%8F%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0_ARM/"><span class="card-kicker">Older</span><br>嵌入式系统安全笔记_ARM</a>
-        <a href="/2020/03/19/%E5%BE%AE%E6%9C%BA%E6%8E%A5%E5%8F%A3%E7%AC%94%E8%AE%B0_%E5%AD%98%E5%82%A8%E5%99%A8/"><span class="card-kicker">Newer</span><br>微机接口笔记_存储器</a>
-      </nav>
-    </article>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-inner">
-      <div>© 2026 Peng Zhang. Static site on anred.space.</div>
-      <div class="footer-links"><a href="/archives/">Archives</a><a href="/categories/">Categories</a><a href="/tags/">Tags</a></div>
-    </div>
-  </footer>
+  <p>此文已迁移至 <a href="/articles/assembly-loop.html">汇编语言程序设计笔记_Loop</a>。</p>
 </body>
 </html>

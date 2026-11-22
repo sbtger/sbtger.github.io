@@ -1,75 +1,14 @@
-<!DOCTYPE html>
-<html lang="zh-Hans">
+<!doctype html>
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#070a0f">
-  <meta name="description" content="信息采集_爬虫 | Anred Lab 技术博客。">
-  <meta property="og:type" content="article">
-  <meta property="og:title" content="信息采集_爬虫">
-  <meta property="og:site_name" content="Anred Lab">
-  <meta property="article:author" content="Peng Zhang">
-  <meta property="article:published_time" content="2020-03-20T00:10:00+08:00">
-  <link rel="canonical" href="/2020/03/20/%E4%BF%A1%E6%81%AF%E9%87%87%E9%9B%86_%E7%88%AC%E8%99%AB/">
-  <link rel="stylesheet" href="/css/anred-lab.css?v=20260620">
-  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <title>信息采集_爬虫 | Anred Lab</title>
+  <title>信息采集_爬虫 · Anred Lab</title>
+  <link rel="canonical" href="https://anred.space/articles/scrapy.html">
+  <script>location.replace("/articles/scrapy.html" + location.search + location.hash);</script>
+  <noscript><meta http-equiv="refresh" content="0; url=/articles/scrapy.html"></noscript>
 </head>
 <body>
-  <nav class="nav" aria-label="主导航">
-    <div class="nav-inner">
-      <a class="brand" href="/"><span class="brand-mark">A</span><span class="brand-text">Anred Lab</span></a>
-      <div class="nav-links">
-        <a href="/">首页</a>
-        <a href="/categories/">分类</a>
-        <a href="/tags/">标签</a>
-        <a href="/archives/">归档</a>
-        <a href="/about/">关于</a>
-      </div>
-    </div>
-  </nav>
-
-  <main class="article-shell">
-    <article>
-      <header class="article-hero">
-        <span class="eyebrow">NOTE</span>
-        <h1>信息采集_爬虫</h1>
-        <div class="article-meta">
-          <time datetime="2020-03-20T00:10:00+08:00">2020-03-20</time>
-          <span>/</span>
-          <span><a href="/categories/%E4%BF%A1%E6%81%AF%E5%86%85%E5%AE%B9%E5%AE%89%E5%85%A8/">信息内容安全</a></span>
-        </div>
-      </header>
-
-      <div class="article-content">
-<h2 id="Scrapy框架："><a href="#Scrapy框架：" class="headerlink" title="Scrapy框架："></a>Scrapy框架：</h2><p>安装Scrapy需要安装lxml、Twisted、scrapy和pypiwin32包。只需要pip install 对应包即可安装。</p>
-<a id="more"></a>
-
-<p><strong>如何查找与本机符合的whl文件的版本？</strong></p>
-<p>有些时候，我们需要利用whl文件安装python的包。whl文件本质上是一个压缩包，里面包含了py文件和经过编译的pyd文件。使得可以在不具备编译环境的情况下进行安装。</p>
-<p>利用pip工具取查询本机对应的安装标签，在命令行中打开python，输入如下代码，即可得到对应安装的标签（如cp37-cp37m-win_amd64）。</p>
-<pre class="code-block"><code>import pip._internal.pep425tags
-print(pip._internal.pep425tags.get_supported())</code></pre>
-
-<p>如果是32位系统，则输入如下指令</p>
-<pre class="code-block"><code>import pip.pep425tags
-print(pip.pep425tags.get_supported())</code></pre>
-      </div>
-      <div class="article-tags"><a href="/tags/%E4%BF%A1%E6%81%AF%E5%86%85%E5%AE%B9%E5%AE%89%E5%85%A8/"># 信息内容安全</a><a href="/tags/%E7%88%AC%E8%99%AB/"># 爬虫</a><a href="/tags/%E4%BF%A1%E6%81%AF%E9%87%87%E9%9B%86/"># 信息采集</a><a href="/tags/Scrapy/"># Scrapy</a></div>
-      <nav class="article-nav" aria-label="文章导航">
-        <a href="/2020/03/20/%E4%B8%BB%E6%B5%81%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8_Windows/"><span class="card-kicker">Older</span><br>主流操作系统安全_Windows</a>
-        <a href="/2020/03/22/checksec/"><span class="card-kicker">Newer</span><br>checksec</a>
-      </nav>
-    </article>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-inner">
-      <div>© 2026 Peng Zhang. Static site on anred.space.</div>
-      <div class="footer-links"><a href="/archives/">Archives</a><a href="/categories/">Categories</a><a href="/tags/">Tags</a></div>
-    </div>
-  </footer>
+  <p>此文已迁移至 <a href="/articles/scrapy.html">信息采集_爬虫</a>。</p>
 </body>
 </html>

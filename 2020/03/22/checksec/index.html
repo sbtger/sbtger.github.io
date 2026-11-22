@@ -1,94 +1,14 @@
-<!DOCTYPE html>
-<html lang="zh-Hans">
+<!doctype html>
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#070a0f">
-  <meta name="description" content="checksec | Anred Lab 技术博客。">
-  <meta property="og:type" content="article">
-  <meta property="og:title" content="checksec">
-  <meta property="og:site_name" content="Anred Lab">
-  <meta property="article:author" content="Peng Zhang">
-  <meta property="article:published_time" content="2020-03-22T23:04:38+08:00">
-  <link rel="canonical" href="/2020/03/22/checksec/">
-  <link rel="stylesheet" href="/css/anred-lab.css?v=20260620">
-  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <title>checksec | Anred Lab</title>
+  <title>checksec · Anred Lab</title>
+  <link rel="canonical" href="https://anred.space/articles/checksec.html">
+  <script>location.replace("/articles/checksec.html" + location.search + location.hash);</script>
+  <noscript><meta http-equiv="refresh" content="0; url=/articles/checksec.html"></noscript>
 </head>
 <body>
-  <nav class="nav" aria-label="主导航">
-    <div class="nav-inner">
-      <a class="brand" href="/"><span class="brand-mark">A</span><span class="brand-text">Anred Lab</span></a>
-      <div class="nav-links">
-        <a href="/">首页</a>
-        <a href="/categories/">分类</a>
-        <a href="/tags/">标签</a>
-        <a href="/archives/">归档</a>
-        <a href="/about/">关于</a>
-      </div>
-    </div>
-  </nav>
-
-  <main class="article-shell">
-    <article>
-      <header class="article-hero">
-        <span class="eyebrow">NOTE</span>
-        <h1>checksec</h1>
-        <div class="article-meta">
-          <time datetime="2020-03-22T23:04:38+08:00">2020-03-22</time>
-          <span>/</span>
-          <span><a href="/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">网络安全</a></span>
-        </div>
-      </header>
-
-      <div class="article-content">
-<h2 id="checksec"><a href="#checksec" class="headerlink" title="checksec"></a>checksec</h2><p>Checksec.sh是一个bash脚本，用于检查一些可执行的属性，例如（PIE，RELRO，PaX，Canaries，ASLR，Fortify Source）。它最初是由Tobias Klein编写的，其原始资源可以在这里找到：<a href="http://www.trapkit.de/tools/checksec.html" target="_blank" rel="noopener">checksec</a>。</p>
-<a id="more"></a>
-
-<p><img src="/2020/03/22/checksec/1.PNG" alt="1"></p>
-<ul>
-<li><p><strong>PIE：</strong>地址随机化。如果程序开启了地址随机化选项（PIE enabled），意味着程序每次运行地址都会变化。如果程序没有开启地址随机化选项（No PIE），则程序的基地址为 (0x400000)。</p>
-</li>
-<li><p><strong>RELRO：</strong>RELRO有Partial RELRO和FULL RELRO。如果开启FULL RELRO，意味着我们无法修改GOT表。</p>
-</li>
-<li><p><strong>Stack：</strong>金丝雀机制。如果栈中开启Canary机制（Canary found），那么就不能直接用溢出的方法覆盖栈中返回地址，而且要通过改写指针与局部变量、leak canary、overwrite canary等方法来绕过。</p>
-</li>
-<li><p><strong>NX：</strong>栈不可执行。如果开启NX保护，则栈中数据没有执行权限。call esp或jmp esp的方法无法使用，但可以利用rop的方法绕过。</p>
-</li>
-<li><p><strong>FORTIFY：</strong>格式化字符串保护。FORTIFY_SOURCE机制对格式化字符串有两个限制：（1）包含%n的格式化字符串不能位于程序内存中的可写地址。（2）当使用位置参数时，必须使用范围内的所有参数。所以如果要使用%7$x，你必须同时使用参数1、2、3、4、5和6。</p>
-</li>
-</ul>
-<h2 id="Linux常见的保护机制"><a href="#Linux常见的保护机制" class="headerlink" title="Linux常见的保护机制"></a>Linux常见的保护机制</h2><h3 id="1-NX（Windows中的DEP）"><a href="#1-NX（Windows中的DEP）" class="headerlink" title="1. NX（Windows中的DEP）"></a>1. NX（Windows中的DEP）</h3><p><strong>NX：</strong>No-eXecute</p>
-<p><strong>DEP：</strong>Data Execute Prevention</p>
-<p>数据不可执行。<br>gcc编译选项（默认开启与关闭NX）：</p>
-<pre class="code-block"><code>gcc -o test test.c
-gcc -z execstack -o test test.c</code></pre>
-
-<h3 id="2-PIE（ASLR）"><a href="#2-PIE（ASLR）" class="headerlink" title="2. PIE（ASLR）"></a>2. PIE（ASLR）</h3><p> <strong>PIE</strong>：Position-Independent Excutable</p>
-<p><strong>ASLR</strong>：Address Space Layout Randomization</p>
-<p> 开启PIE选项编译可执行文件，可以使得elf文件拥有共享库属性。ASLR负责栈、库、堆等段的地址随机化。<br>关闭ASLR的bash命令：</p>
-<pre class="code-block"><code>sudo sh -c "echo 0 &gt; /proc/sys/kernel/randomize_va_space"</code></pre>
-
-<h3 id="3-Canary（栈保护）"><a href="#3-Canary（栈保护）" class="headerlink" title="3. Canary（栈保护）"></a>3. Canary（栈保护）</h3><p> 金丝雀（Canary）机制：函数每一次执行时，在栈上随机产生一个置于缓冲区和控制数据之间的Canary值。之后当函数执行结束返回时，检测Canary值，若不一致系统则报出异常。例如当发生缓冲区溢出时，该值则会被覆写。<br>gcc编译选项（默认关闭、禁用与启用栈保护）：</p>
-<pre class="code-block"><code>gcc -o test test.c
-gcc -fno-stack-protector -o test test.c
-gcc -fstack-protector-all -o test test.c</code></pre>
-      </div>
-      <div class="article-tags"><a href="/tags/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/"># 网络安全</a><a href="/tags/Linux/"># Linux</a></div>
-      <nav class="article-nav" aria-label="文章导航">
-        <a href="/2020/03/20/%E4%BF%A1%E6%81%AF%E9%87%87%E9%9B%86_%E7%88%AC%E8%99%AB/"><span class="card-kicker">Older</span><br>信息采集_爬虫</a>
-        <a href="/2020/03/23/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0_%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA/"><span class="card-kicker">Newer</span><br>网络安全笔记_缓冲区溢出</a>
-      </nav>
-    </article>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-inner">
-      <div>© 2026 Peng Zhang. Static site on anred.space.</div>
-      <div class="footer-links"><a href="/archives/">Archives</a><a href="/categories/">Categories</a><a href="/tags/">Tags</a></div>
-    </div>
-  </footer>
+  <p>此文已迁移至 <a href="/articles/checksec.html">checksec</a>。</p>
 </body>
 </html>

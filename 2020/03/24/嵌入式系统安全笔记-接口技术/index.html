@@ -1,109 +1,14 @@
-<!DOCTYPE html>
-<html lang="zh-Hans">
+<!doctype html>
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#070a0f">
-  <meta name="description" content="嵌入式系统安全笔记_接口技术 | Anred Lab 技术博客。">
-  <meta property="og:type" content="article">
-  <meta property="og:title" content="嵌入式系统安全笔记_接口技术">
-  <meta property="og:site_name" content="Anred Lab">
-  <meta property="article:author" content="Peng Zhang">
-  <meta property="article:published_time" content="2020-03-24T14:06:29+08:00">
-  <link rel="canonical" href="/2020/03/24/%E5%B5%8C%E5%85%A5%E5%BC%8F%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0-%E6%8E%A5%E5%8F%A3%E6%8A%80%E6%9C%AF/">
-  <link rel="stylesheet" href="/css/anred-lab.css?v=20260620">
-  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <title>嵌入式系统安全笔记_接口技术 | Anred Lab</title>
+  <title>嵌入式系统安全笔记_接口技术 · Anred Lab</title>
+  <link rel="canonical" href="https://anred.space/articles/embedded-interfaces.html">
+  <script>location.replace("/articles/embedded-interfaces.html" + location.search + location.hash);</script>
+  <noscript><meta http-equiv="refresh" content="0; url=/articles/embedded-interfaces.html"></noscript>
 </head>
 <body>
-  <nav class="nav" aria-label="主导航">
-    <div class="nav-inner">
-      <a class="brand" href="/"><span class="brand-mark">A</span><span class="brand-text">Anred Lab</span></a>
-      <div class="nav-links">
-        <a href="/">首页</a>
-        <a href="/categories/">分类</a>
-        <a href="/tags/">标签</a>
-        <a href="/archives/">归档</a>
-        <a href="/about/">关于</a>
-      </div>
-    </div>
-  </nav>
-
-  <main class="article-shell">
-    <article>
-      <header class="article-hero">
-        <span class="eyebrow">NOTE</span>
-        <h1>嵌入式系统安全笔记_接口技术</h1>
-        <div class="article-meta">
-          <time datetime="2020-03-24T14:06:29+08:00">2020-03-24</time>
-          <span>/</span>
-          <span><a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8/">嵌入式系统安全</a></span>
-        </div>
-      </header>
-
-      <div class="article-content">
-<h2 id="嵌入式接口技术——通信"><a href="#嵌入式接口技术——通信" class="headerlink" title="嵌入式接口技术——通信"></a>嵌入式接口技术——通信</h2><p>找例程编译。学会修改例程，提高可靠性。</p>
-<p><strong>硬件：</strong>通信（相互通道）、输入（前向通道）、输出（后向通道）</p>
-<p><strong>部件：</strong>传感器、执行器、人机界面、相互通信、电源</p>
-<a id="more"></a>
-
-<p>硬件-通信（相互通道）外围部件的扩展是利用这些通道进行的。</p>
-<p><strong>串行通信UART：</strong>在一根通信线上传输数据信息与联络信息。区分这2类信息的约定即通信协议。</p>
-<ul>
-<li>单工通信</li>
-<li>半双工通信</li>
-<li>全双工通信</li>
-</ul>
-<p>串行通信方式：异步通信与同步通信（需要时钟）</p>
-<p>异步协议一般用在数据速率较低的场合。高速传输时，一般采用同步协议。</p>
-<p>异步通信是按字符帧传输：1个起始位（‘0’）、5-8个数据位、1个奇偶校验位（不一定需要）与1-2个停止位（‘1’）。</p>
-<p><strong>停止位：</strong>接收方的保护时间，使接收方有足够的时间处理收到的数据。</p>
-<p>异步通信对字符的格式、波特率、校验位有确定的要求。</p>
-<p>异步串行通信性能：发送和接收缓冲器的数量。</p>
-<p>发送时检查：发送缓冲区是否满；移位寄存器有没有发送完。</p>
-<p>常见错误：奇偶校验错；帧出错；溢出错（接收字符未读，后续字符则覆盖）。</p>
-<p><strong>RS-232C：</strong>点对点的。</p>
-<p>串行接口标准：把0和1的距离拉开，为了传得更远。</p>
-<p>逻辑1=-3<del>-15V 逻辑0=+3</del>+15V （反向放大）数据发送与接收</p>
-<p>信号有效+3<del>+15V  信号无效-3</del>-15V 控制与状态信号</p>
-<p>TTL与EIA-RS-232C转换：</p>
-<p>利用MC1488/1489来连接TTL与RS-232C，且外接电源。</p>
-<p>现在是MAX232转换，按电源（5V与3.3V）或电容分类（电解电容、瓷片电容、无电容）。</p>
-<p>RS-232C易损坏接口电路的芯片。</p>
-<p><strong>RS-485：</strong>多对多的。</p>
-<p>逻辑“1” +2<del>+6V 逻辑“0” -2</del>-6V 不易损坏接口芯片。</p>
-<p>有抑制共模干扰的能力。为了传输更长的距离，需要加485中继器，可加多个节点。工程上是分组的处理。</p>
-<p>注意事项：极性、最远端端匹配电阻、T型线长度、线路保护。</p>
-<p><strong>串行通信协议应用注意事项：</strong></p>
-<ul>
-<li>接收与死机（<strong>超时处理、重新初始化、接收缓冲区防溢出</strong>）</li>
-<li>停止位（<strong>又叫数据保护时间</strong>，1.5个二进制位的时间）位数与可靠通信（有效通信速率、保障接收方的数据处理时间）</li>
-<li>波特率精度（<strong>±2.5%，外置振荡器、配置选择与通信精度</strong>）与可靠通信</li>
-<li>通信协议、帧格式、收发切换时间及校验</li>
-<li>帧间隔（<strong>字符帧、通信协议帧</strong>）、帧长度</li>
-<li>波特率与通信距离</li>
-</ul>
-<p><strong>I2C总线：</strong>简单与有效。</p>
-<p>数据线SDA与时钟线SCL。两根信号线必须OC并接上拉电阻。各种设备均并联在这条总线上，每个设备都有唯一的地址。</p>
-<p>可以有多次启动信号。终止信号P最高级别的中断。</p>
-<p>SPI</p>
-<p>1-WRIE(单总线)</p>
-      </div>
-      <div class="article-tags"><a href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8/"># 嵌入式系统安全</a><a href="/tags/%E6%8E%A5%E5%8F%A3/"># 接口</a></div>
-      <nav class="article-nav" aria-label="文章导航">
-        <a href="/2020/03/23/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0_%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA/"><span class="card-kicker">Older</span><br>网络安全笔记_缓冲区溢出</a>
-        <a href="/2020/03/25/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%E7%AC%94%E8%AE%B0_%E5%AD%98%E5%82%A8%E5%99%A8%E5%AF%BB%E5%9D%80/"><span class="card-kicker">Newer</span><br>汇编语言程序设计笔记_存储器寻址</a>
-      </nav>
-    </article>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-inner">
-      <div>© 2026 Peng Zhang. Static site on anred.space.</div>
-      <div class="footer-links"><a href="/archives/">Archives</a><a href="/categories/">Categories</a><a href="/tags/">Tags</a></div>
-    </div>
-  </footer>
+  <p>此文已迁移至 <a href="/articles/embedded-interfaces.html">嵌入式系统安全笔记_接口技术</a>。</p>
 </body>
 </html>

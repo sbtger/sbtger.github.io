@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Peng Zhang 的技术札记。记录操作系统、移动安全、数据系统和工程实践。">
+  <title>信息采集_爬虫 · Anred Lab</title>
+  <link rel="canonical" href="https://anred.space/articles/scrapy.html">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+  <main class="shell">
+    <article class="frame reader">
+      <h1 class="page-title">信息采集_爬虫</h1>
+      <header class="byline"><a class="author" href="../index.html"><img src="../images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-03-19">2020-03-19</time></header>
+      <div class="prose"><h2 id="Scrapy框架：">Scrapy框架：</h2><p>安装Scrapy需要安装lxml、Twisted、scrapy和pypiwin32包。只需要pip install 对应包即可安装。</p>
+
+
+<p><strong>如何查找与本机符合的whl文件的版本？</strong></p>
+<p>有些时候，我们需要利用whl文件安装python的包。whl文件本质上是一个压缩包，里面包含了py文件和经过编译的pyd文件。使得可以在不具备编译环境的情况下进行安装。</p>
+<p>利用pip工具取查询本机对应的安装标签，在命令行中打开python，输入如下代码，即可得到对应安装的标签（如cp37-cp37m-win_amd64）。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> pip._internal.pep425tags</span><br><span class="line">print(pip._internal.pep425tags.get_supported())</span><br></pre></td></tr></table></figure>
+
+<p>如果是32位系统，则输入如下指令</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> pip.pep425tags</span><br><span class="line">print(pip.pep425tags.get_supported())</span><br></pre></td></tr></table></figure></div>
+      <nav class="page-links" aria-label="相关索引"><a href="../index.html#archive">返回文章列表</a> <a href="../categories.html#categories-10">信息内容安全</a> <a href="../tags.html#tags-20">信息内容安全</a> <a href="../tags.html#tags-21">爬虫</a> <a href="../tags.html#tags-22">信息采集</a> <a href="../tags.html#tags-23">Scrapy</a></nav>
+    </article>
+  </main>
+</body>
+</html>

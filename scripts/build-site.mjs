@@ -1,73 +1,20 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { writeArchivePeriods } from './legacy-navigation.mjs';
+import { writeSearchIndex } from './search-index.mjs';
 
 const root = process.cwd();
-const siteName = 'Anred Lab';
-const author = 'Peng Zhang';
-const cssHref = '/css/anred-lab.css?v=20260620';
 const contentDir = path.join(root, 'content/posts');
+const articlesDir = path.join(root, 'articles');
 const generatedBy = '<!-- generated-by: scripts/build-site.mjs -->';
-
-const topicCopy = new Map([
-  ['网络安全', 'DDoS、侦察、缓冲区溢出和基础安全实验。'],
-  ['android-security', '移动端调试、组件安全和应用攻击面。'],
-  ['基础知识', '操作系统、安全错题和长期复习材料。'],
-  ['嵌入式系统安全', 'ARM、接口技术和底层系统安全基础。'],
-  ['汇编语言', 'Loop、存储器寻址和底层执行模型。'],
-  ['DDIA', '可靠、可扩展和可维护的数据系统笔记。'],
-  ['python', '常用代码、脚本工具和数据处理片段。'],
-  ['leetcode', '算法题训练中的模式和边界条件。'],
-  ['操作系统', '进程、线程、调度、内存和 IPC。'],
-  ['微机接口', '存储器、接口和硬件抽象。'],
-  ['主流操作系统安全', 'Windows 相关安全基础。'],
-  ['信息内容安全', '信息采集和爬虫相关笔记。'],
-  ['机器学习', '机器学习工具与实践记录。'],
-  ['Hexo', '旧博客系统初始化和站点记录。']
-]);
 
 function escapeHtml(value = '') {
   return String(value)
     .replaceAll('&', '&amp;')
     .replaceAll('<', '&lt;')
     .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;');
-}
-
-function stripHtml(value = '') {
-  return decodeEntities(value
-    .replace(/<script[\s\S]*?<\/script>/gi, '')
-    .replace(/<style[\s\S]*?<\/style>/gi, '')
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim());
-}
-
-function decodeEntities(value = '') {
-  return value
-    .replaceAll('&amp;', '&')
-    .replaceAll('&lt;', '<')
-    .replaceAll('&gt;', '>')
-    .replaceAll('&quot;', '"')
-    .replaceAll('&#39;', "'");
-}
-
-function excerpt(value = '', length = 86) {
-  const text = stripHtml(value);
-  return text.length > length ? `${text.slice(0, length)}...` : text;
-}
-
-function formatDate(date) {
-  return date.toISOString().slice(0, 10);
-}
-
-function dateParts(date) {
-  const iso = formatDate(date);
-  const [year, month, day] = iso.split('-');
-  return { year, month, day };
-}
-
-function hrefForDir(...segments) {
-  return `/${segments.map((segment) => encodeURIComponent(segment).replace(/%2F/g, '/')).join('/')}/`;
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#x27;');
 }
 
 function slugify(value) {
@@ -87,10 +34,10 @@ function parseScalar(value) {
 }
 
 function parseFrontmatter(source, file) {
-  const match = source.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
+  const match = source.replace(/\r\n/g, '\n').match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
   if (!match) throw new Error(`${file} is missing YAML frontmatter`);
 
-  const data = {};
+  const data = Object.create(null);
   let currentKey = null;
   for (const line of match[1].split('\n')) {
     if (!line.trim()) continue;
@@ -190,431 +137,184 @@ function markdownToHtml(markdown) {
   return html.join('\n');
 }
 
-async function walk(dir) {
-  const entries = await fs.readdir(dir, { withFileTypes: true }).catch(() => []);
+async function markdownFiles(dir) {
   const files = [];
-  for (const entry of entries) {
-    const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) files.push(...await walk(full));
-    else files.push(full);
+  for (const entry of await fs.readdir(dir, { withFileTypes: true })) {
+    const file = path.join(dir, entry.name);
+    if (entry.isDirectory()) files.push(...await markdownFiles(file));
+    else if (entry.isFile() && entry.name.endsWith('.md') && entry.name !== 'README.md') files.push(file);
   }
-  return files;
+  return files.sort();
 }
 
-async function readExistingPosts() {
-  const files = (await walk(root))
-    .filter((file) => /\/20\d{2}\/\d{2}\/\d{2}\/.+\/index\.html$/.test(file))
-    .filter((file) => !file.includes('/node_modules/'));
-  const posts = [];
-
-  for (const file of files) {
-    const html = await fs.readFile(file, 'utf8');
-    if (html.includes(generatedBy)) continue;
-    const relDir = path.dirname(path.relative(root, file));
-    const url = `/${relDir.split(path.sep).map(encodeURIComponent).join('/')}/`;
-    const title = stripHtml(html.match(/<meta property="og:title" content="([^"]+)"/)?.[1] || html.match(/<title>(.*?)\s*\|/)?.[1] || path.basename(relDir));
-    const datetime = html.match(/<time datetime="([^"]+)"/)?.[1] || `${relDir.split(path.sep).slice(0, 3).join('-')}T00:00:00+08:00`;
-    const categories = [...html.matchAll(/href="\/categories\/([^"]+)\/"/g)].map((match) => decodeURIComponent(match[1]));
-    const tags = [...html.matchAll(/href="\/tags\/([^"]+)\/"/g)].map((match) => decodeURIComponent(match[1]));
-    const firstParagraph = html.match(/<div class="article-content">[\s\S]*?<p>([\s\S]*?)<\/p>/)?.[1] || '';
-    const summary = excerpt(firstParagraph);
-    posts.push({
-      source: 'html',
-      title,
-      date: new Date(datetime),
-      datetime,
-      url,
-      categories: [...new Set(categories)],
-      tags: [...new Set(tags)],
-      summary,
-      featured: false
-    });
-  }
-  return posts;
+function topicNames(value) {
+  const items = Array.isArray(value) ? value : [value];
+  return [...new Set(items.filter(Boolean).map(item => String(item).trim()).filter(Boolean))];
 }
 
 async function readMarkdownPosts() {
-  const files = (await walk(contentDir)).filter((file) => file.endsWith('.md') && path.basename(file) !== 'README.md');
   const posts = [];
-  for (const file of files) {
-    const source = await fs.readFile(file, 'utf8');
-    const { data, body } = parseFrontmatter(source, path.relative(root, file));
-    if (data.draft) continue;
-    if (!data.title || !data.date) throw new Error(`${file} requires title and date`);
-    const date = new Date(data.date);
-    const { year, month, day } = dateParts(date);
-    const slug = slugify(data.slug || data.title);
-    const url = hrefForDir(year, month, day, slug);
-    const html = markdownToHtml(body);
+  for (const file of await markdownFiles(contentDir)) {
+    const { data, body } = parseFrontmatter(await fs.readFile(file, 'utf8'), file);
+    if (data.draft === true) continue;
+    if (!data.title || typeof data.title !== 'string' || !/^\d{4}-\d{2}-\d{2}/.test(data.date)
+        || !Number.isFinite(Date.parse(data.date))) {
+      throw new Error(`${file} requires a title and an ISO date`);
+    }
+    const slug = slugify(data.slug || data.title).normalize('NFC');
+    if (slug.startsWith('.') || /[\u0000-\u001f]/u.test(slug)) throw new Error(`Invalid slug in ${file}`);
     posts.push({
-      source: 'markdown',
-      file,
-      title: data.title,
-      date,
-      datetime: data.date,
-      url,
-      outputDir: path.join(root, year, month, day, slug),
-      categories: Array.isArray(data.categories) ? data.categories : [data.categories || '未分类'],
-      tags: Array.isArray(data.tags) ? data.tags : [],
-      summary: data.summary || excerpt(html),
-      featured: Boolean(data.featured),
-      html
+      slug, title: data.title, date: data.date.slice(0, 10), featured: data.featured === true,
+      categories: topicNames(data.categories || '未分类'), tags: topicNames(data.tags),
+      description: data.summary || data.title, html: markdownToHtml(body)
     });
   }
   return posts;
 }
 
-function nav(active = '') {
-  const item = (href, label, key) => `<a${active === key ? ' class="active"' : ''} href="${href}">${label}</a>`;
-  return `<nav class="nav" aria-label="主导航">
-    <div class="nav-inner">
-      <a class="brand" href="/"><span class="brand-mark"><img src="/images/favicon.svg" alt=""></span><span class="brand-text">${siteName}</span></a>
-      <div class="nav-links">
-        ${item('/', '首页', 'home')}
-        ${item('/categories/', '分类', 'categories')}
-        ${item('/tags/', '标签', 'tags')}
-        ${item('/archives/', '归档', 'archives')}
-        ${item('/about/', '关于', 'about')}
-      </div>
-    </div>
-  </nav>`;
+function articleUrl(post) {
+  return `articles/${encodeURIComponent(post.slug)}.html`;
 }
 
-function pageShell({ title, description, canonical, active, body }) {
-  return `${generatedBy}
-<!DOCTYPE html>
-<html lang="zh-Hans">
+function postRow(post) {
+  const [year, month, day] = post.date.split('-').map(Number);
+  return `<a href="${articleUrl(post)}"><span>${escapeHtml(post.title)}</span><time datetime="${post.date}">${year}年${month}月${day}日</time></a>`;
+}
+
+function postRows(posts) {
+  return posts.map(post => '          ' + postRow(post)).join('\n');
+}
+
+function topicGroups(kind, legacy, posts) {
+  const groups = new Map();
+  // Existing articles link to these fixed numeric IDs. New topics get permanent
+  // IDs derived from their names so adding or removing a note cannot shift them.
+  for (const post of legacy) {
+    for (const name of post[kind]) {
+      if (!groups.has(name)) groups.set(name, { id: `${kind}-${groups.size + 1}`, posts: [] });
+    }
+  }
+  for (const post of posts) {
+    for (const name of post[kind]) {
+      if (!groups.has(name)) {
+        groups.set(name, { id: `${kind}-t-${Buffer.from(name).toString('base64url')}`, posts: [] });
+      }
+      groups.get(name).posts.push(post);
+    }
+  }
+  return groups;
+}
+
+function readerPage({ title, description, canonical, parent = '', body, generatedArticle = false }) {
+  return `<!doctype html>
+${generatedArticle ? generatedBy + '\n' : ''}<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#070a0f">
   <meta name="description" content="${escapeHtml(description)}">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="${escapeHtml(title)} | ${siteName}">
-  <meta property="og:site_name" content="${siteName}">
-  <link rel="canonical" href="${canonical}">
-  <link rel="stylesheet" href="${cssHref}">
-  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <title>${escapeHtml(title)} | ${siteName}</title>
+  <title>${escapeHtml(title)} · Anred Lab</title>
+  <link rel="canonical" href="https://anred.space/${canonical}">
+  <link rel="stylesheet" href="${parent}assets/site.css">
 </head>
 <body>
-  ${nav(active)}
+  <main class="shell">
+    <article class="frame reader">
 ${body}
-  <footer class="footer"><div class="footer-inner"><div>© 2026 ${author}. Static site on anred.space.</div><div class="footer-links"><a href="/">Home</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a></div></div></footer>
-</body>
-</html>
-`;
-}
-
-function articleShell(post, older, newer) {
-  const categoryLinks = post.categories.map((category) => `<a href="/categories/${encodeURIComponent(category)}/">${escapeHtml(category)}</a>`).join(', ');
-  const tagLinks = post.tags.map((tag) => `<a href="/tags/${encodeURIComponent(tag)}/"># ${escapeHtml(tag)}</a>`).join('');
-  const navLinks = `<nav class="article-nav" aria-label="文章导航">
-        ${older ? `<a href="${older.url}"><span class="card-kicker">Older</span><br>${escapeHtml(older.title)}</a>` : '<span></span>'}
-        ${newer ? `<a href="${newer.url}"><span class="card-kicker">Newer</span><br>${escapeHtml(newer.title)}</a>` : '<span></span>'}
-      </nav>`;
-  return `${generatedBy}
-<!DOCTYPE html>
-<html lang="zh-Hans">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#070a0f">
-  <meta name="description" content="${escapeHtml(post.summary)}">
-  <meta property="og:type" content="article">
-  <meta property="og:title" content="${escapeHtml(post.title)}">
-  <meta property="og:site_name" content="${siteName}">
-  <meta property="article:author" content="${author}">
-  <meta property="article:published_time" content="${escapeHtml(post.datetime)}">
-  <link rel="canonical" href="${post.url}">
-  <link rel="stylesheet" href="${cssHref}">
-  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <title>${escapeHtml(post.title)} | ${siteName}</title>
-</head>
-<body>
-  ${nav()}
-  <main class="article-shell">
-    <article>
-      <header class="article-hero">
-        <span class="eyebrow">NOTE</span>
-        <h1>${escapeHtml(post.title)}</h1>
-        <div class="article-meta">
-          <time datetime="${escapeHtml(post.datetime)}">${formatDate(post.date)}</time>
-          <span>/</span>
-          <span>${categoryLinks}</span>
-        </div>
-      </header>
-      <div class="article-content">
-${post.html}
-      </div>
-      ${tagLinks ? `<div class="article-tags">${tagLinks}</div>` : ''}
-      ${navLinks}
     </article>
   </main>
-  <footer class="footer"><div class="footer-inner"><div>© 2026 ${author}. Static site on anred.space.</div><div class="footer-links"><a href="/archives/">Archives</a><a href="/categories/">Categories</a><a href="/tags/">Tags</a></div></div></footer>
 </body>
 </html>
 `;
 }
 
-function noteCards(posts) {
-  return posts.map((post) => `<a class="article-card" href="${post.url}">
-            <div class="article-meta"><span class="tag">${escapeHtml(post.categories[0] || 'Note')}</span><span>${formatDate(post.date)}</span></div>
-            <h3>${escapeHtml(post.title)}</h3>
-            <p>${escapeHtml(post.summary)}</p>
-            <span class="read-more">Read note</span>
-          </a>`).join('\n\n          ');
+function taxonomyPage(kind, groups) {
+  const title = kind === 'tags' ? '标签' : '分类';
+  const links = [], sections = [];
+  for (const [name, group] of groups) {
+    const label = escapeHtml(name);
+    links.push(`<li><a href="#${group.id}">${label}</a></li>`);
+    sections.push(`<section><h2 id="${group.id}">${label}</h2><div class="post-list">\n${postRows(group.posts)}\n        </div></section>`);
+  }
+  const body = `      <a class="back" href="index.html">返回首页</a>
+      <h1 class="page-title">${title}</h1>
+      <ul class="notes">${links.join('')}</ul>
+      <div class="writing">${sections.join('')}</div>`;
+  return readerPage({ title, description: `按${title}浏览 Anred Lab 的技术笔记。`, canonical: `${kind}.html`, body });
 }
 
-async function updateHome(posts) {
-  const file = path.join(root, 'index.html');
-  let html = await fs.readFile(file, 'utf8');
-  const categories = groupBy(posts, (post) => post.categories).size;
-  const tags = groupBy(posts, (post) => post.tags).size;
-  const words = Math.max(1, Math.round(posts.reduce((sum, post) => sum + (post.summary?.length || 0) * 18, 0) / 1000));
-  const metrics = `<div class="metric-strip" aria-label="站点统计">
-          <div class="metric"><strong>${posts.length}</strong><span>技术日志</span></div>
-          <div class="metric"><strong>${categories}</strong><span>主题分类</span></div>
-          <div class="metric"><strong>${tags}</strong><span>知识标签</span></div>
-          <div class="metric"><strong>${words}k</strong><span>估算字数</span></div>
-        </div>`;
-  html = html.replace(/<div class="metric-strip" aria-label="站点统计">[\s\S]*?<\/div>\s*<\/div>\s*<\/header>/, `${metrics}\n      </div>\n    </header>`);
-
-  const featured = posts.filter((post) => post.featured).length
-    ? posts.filter((post) => post.featured).slice(0, 6)
-    : posts.slice(0, 6);
-  html = html.replace(/<div class="article-grid">[\s\S]*?<\/div>\s*<\/section>\s*<section id="systems"/, `<div class="article-grid">\n          ${noteCards(featured)}\n        </div>\n      </section>\n\n      <section id="systems"`);
-  await fs.writeFile(file, html);
-}
-
-function groupBy(posts, selector) {
-  const map = new Map();
-  for (const post of posts) {
-    const keys = selector(post).filter(Boolean);
-    for (const key of keys) {
-      if (!map.has(key)) map.set(key, []);
-      map.get(key).push(post);
+function articlePage(post, groups) {
+  const links = ['<a href="../index.html#archive">返回文章列表</a>'];
+  for (const kind of ['categories', 'tags']) {
+    for (const name of post[kind]) {
+      links.push(`<a href="../${kind}.html#${groups[kind].get(name).id}">${escapeHtml(name)}</a>`);
     }
   }
-  return map;
+  const body = `      <h1 class="page-title">${escapeHtml(post.title)}</h1>
+      <header class="byline"><a class="author" href="../index.html"><img src="../images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="${post.date}">${post.date}</time></header>
+      <div class="prose">${post.html}</div>
+      <nav class="page-links" aria-label="相关索引">${links.join(' ')}</nav>`;
+  return readerPage({ title: post.title, description: post.description, canonical: articleUrl(post),
+    parent: '../', body, generatedArticle: true });
 }
 
-function cardsForPosts(posts) {
-  return posts.map((post) => `<a class="card" href="${post.url}"><span class="card-kicker">${formatDate(post.date)}</span><h3>${escapeHtml(post.title)}</h3><p>${escapeHtml(post.summary || [post.categories.join(', '), post.tags.join(', ')].filter(Boolean).join(' / '))}</p><strong>Read note</strong></a>`).join('\n');
-}
-
-async function writeCategories(posts) {
-  const grouped = groupBy(posts, (post) => post.categories);
-  const entries = [...grouped.entries()].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
-  await cleanupGeneratedDirs(path.join(root, 'categories'), new Set(entries.map(([category]) => category)));
-  const cards = entries.map(([category, items]) => `<a class="card" href="/categories/${encodeURIComponent(category)}/"><span class="card-kicker">${String(items.length).padStart(2, '0')} ${items.length === 1 ? 'note' : 'notes'}</span><h3>${escapeHtml(category)}</h3><p>${escapeHtml(topicCopy.get(category) || `${category} 相关笔记。`)}</p><strong>Open</strong></a>`).join('\n');
-  await writePage('categories/index.html', pageShell({
-    title: '分类',
-    description: `${siteName} 技术博客分类索引。`,
-    canonical: '/categories/',
-    active: 'categories',
-    body: `  <header class="page-hero"><span class="eyebrow">CATEGORY MAP</span><h1>按问题域进入笔记。</h1><p class="hero-copy">从系统、安全、移动端、数据系统和脚本工具几个方向切入，比时间线更适合快速回到某个知识块。</p></header>
-  <main class="section"><div class="section-head"><h2>${entries.length} 个分类</h2><p>运行 <code>npm run build</code> 后自动更新。</p></div><div class="grid cols-3">${cards}</div></main>`
-  }));
-  for (const [category, items] of entries) {
-    const sorted = [...items].sort((a, b) => b.date - a.date);
-    await writePage(`categories/${category}/index.html`, pageShell({
-      title: `分类: ${category}`,
-      description: `${category} 分类下的文章。`,
-      canonical: `/categories/${encodeURIComponent(category)}/`,
-      active: 'categories',
-      body: `  <header class="page-hero"><span class="eyebrow">CATEGORY</span><h1>分类：${escapeHtml(category)}</h1><p class="hero-copy">共 ${sorted.length} 篇笔记，按发布时间倒序排列。</p></header>
-  <main class="section"><div class="section-head"><h2>${sorted.length} 篇文章</h2><p><a class="button" href="/categories/">返回分类地图</a></p></div><div class="grid cols-3">${cardsForPosts(sorted)}</div></main>`
-    }));
-  }
-}
-
-async function writeTags(posts) {
-  const grouped = groupBy(posts, (post) => post.tags);
-  const entries = [...grouped.entries()].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
-  await cleanupGeneratedDirs(path.join(root, 'tags'), new Set(entries.map(([tag]) => tag)));
-  const cards = entries.map(([tag, items]) => `<a class="card compact" href="/tags/${encodeURIComponent(tag)}/"><span class="card-kicker">${items.length} ${items.length === 1 ? 'note' : 'notes'}</span><h3># ${escapeHtml(tag)}</h3><strong>Open</strong></a>`).join('\n');
-  const index = pageShell({
-    title: '标签',
-    description: `${siteName} 技术博客标签索引。`,
-    canonical: '/tags/',
-    active: 'tags',
-    body: `  <header class="page-hero"><span class="eyebrow">TAG CLOUD</span><h1>按关键词回到现场。</h1><p class="hero-copy">标签适合快速定位技术点、工具、平台和问题类型。</p></header>
-  <main class="section"><div class="section-head"><h2>${entries.length} 个标签</h2><p>运行 <code>npm run build</code> 后自动更新。</p></div><div class="grid cols-3">${cards}</div></main>`
-  });
-  await writePage('tags/index.html', index);
-  await writePage('tags/index-1.html', index);
-  for (const [tag, items] of entries) {
-    const sorted = [...items].sort((a, b) => b.date - a.date);
-    await writePage(`tags/${tag}/index.html`, pageShell({
-      title: `标签: ${tag}`,
-      description: `${tag} 标签下的文章。`,
-      canonical: `/tags/${encodeURIComponent(tag)}/`,
-      active: 'tags',
-      body: `  <header class="page-hero"><span class="eyebrow">TAG</span><h1>标签：${escapeHtml(tag)}</h1><p class="hero-copy">共 ${sorted.length} 篇笔记，按发布时间倒序排列。</p></header>
-  <main class="section"><div class="section-head"><h2>${sorted.length} 篇文章</h2><p><a class="button" href="/tags/">返回标签地图</a></p></div><div class="grid cols-3">${cardsForPosts(sorted)}</div></main>`
-    }));
-  }
-}
-
-async function writeArchives(posts) {
-  const byYear = new Map();
-  for (const post of posts) {
-    const { year } = dateParts(post.date);
-    if (!byYear.has(year)) byYear.set(year, []);
-    byYear.get(year).push(post);
-  }
-  const timeline = [...byYear.entries()].sort((a, b) => b[0].localeCompare(a[0])).map(([year, items]) => `<section class="year-block">
-        <h2>${year}</h2>
-        ${items.sort((a, b) => b.date - a.date).map((post) => `<div class="post-row"><time>${formatDate(post.date).slice(5)}</time><a href="${post.url}">${escapeHtml(post.title)}</a></div>`).join('\n        ')}
-      </section>`).join('\n');
-  const archivePage = pageShell({
-    title: '归档',
-    description: `${siteName} 技术博客文章归档。`,
-    canonical: '/archives/',
-    active: 'archives',
-    body: `  <header class="page-hero"><span class="eyebrow">ARCHIVE STREAM</span><h1>所有笔记，<br>按时间回放。</h1><p class="hero-copy">完整历史文章入口，按年份排列。</p></header>
-  <main class="section"><div class="section-head"><h2>${posts.length} 篇文章</h2><p>运行 <code>npm run build</code> 后自动更新。</p></div><div class="timeline">${timeline}</div></main>`
-  });
-  await writePage('archives/index.html', archivePage);
-
-  const byMonth = new Map();
-  for (const post of posts) {
-    const { year, month } = dateParts(post.date);
-    const key = `${year}/${month}`;
-    if (!byMonth.has(key)) byMonth.set(key, []);
-    byMonth.get(key).push(post);
-  }
-  await cleanupGeneratedArchives(new Set([
-    ...byYear.keys(),
-    ...byMonth.keys()
-  ]));
-  for (const [year, items] of byYear) {
-    await writePage(`archives/${year}/index.html`, archiveListPage(`归档: ${year}`, `/archives/${year}/`, items));
-  }
-  for (const [key, items] of byMonth) {
-    await writePage(`archives/${key}/index.html`, archiveListPage(`归档: ${key}`, `/archives/${key}/`, items));
-  }
-  await writeLegacyArchiveAliases(posts);
-}
-
-async function cleanupGeneratedArchives(validKeys) {
-  const archivesDir = path.join(root, 'archives');
-  const years = await fs.readdir(archivesDir, { withFileTypes: true }).catch(() => []);
-  for (const yearEntry of years) {
-    if (!yearEntry.isDirectory() || !/^\d{4}$/.test(yearEntry.name)) continue;
-    const yearDir = path.join(archivesDir, yearEntry.name);
-    const months = await fs.readdir(yearDir, { withFileTypes: true }).catch(() => []);
-    for (const monthEntry of months) {
-      if (!monthEntry.isDirectory() || !/^\d{2}$/.test(monthEntry.name)) continue;
-      const key = `${yearEntry.name}/${monthEntry.name}`;
-      const html = await fs.readFile(path.join(yearDir, monthEntry.name, 'index.html'), 'utf8').catch(() => '');
-      if (!validKeys.has(key) && html.includes(generatedBy)) {
-        await fs.rm(path.join(yearDir, monthEntry.name), { recursive: true, force: true });
-      }
-    }
-    const yearHtml = await fs.readFile(path.join(yearDir, 'index.html'), 'utf8').catch(() => '');
-    const remainingMonths = (await fs.readdir(yearDir, { withFileTypes: true }).catch(() => [])).filter((entry) => entry.isDirectory() && /^\d{2}$/.test(entry.name));
-    if (!validKeys.has(yearEntry.name) && yearHtml.includes(generatedBy) && remainingMonths.length === 0) {
-      await fs.rm(yearDir, { recursive: true, force: true });
-    }
-  }
-}
-
-function archiveListPage(title, canonical, posts) {
-  const sorted = [...posts].sort((a, b) => b.date - a.date);
-  return pageShell({
-    title,
-    description: `${title} 下的文章。`,
-    canonical,
-    active: 'archives',
-    body: `  <header class="page-hero"><span class="eyebrow">ARCHIVE</span><h1>${escapeHtml(title)}</h1><p class="hero-copy">共 ${sorted.length} 篇笔记。</p></header>
-  <main class="section"><div class="section-head"><h2>${sorted.length} 篇文章</h2><p><a class="button" href="/archives/">返回完整归档</a></p></div><div class="grid cols-3">${cardsForPosts(sorted)}</div></main>`
-  });
-}
-
-async function writeLegacyArchiveAliases(posts) {
-  const aliases = [
-    'page/2/index.html',
-    'page/3/index.html',
-    'archives/page/2/index.html',
-    'archives/page/3/index.html',
-    'archives/2020/page/2/index.html',
-    'archives/2020/03/page/2/index.html'
+function homePage(html, posts) {
+  const featured = posts.filter(post => post.featured);
+  const notes = (featured.length ? featured : posts).slice(0, 6)
+    .map(post => `          <li><a href="${articleUrl(post)}">${escapeHtml(post.title)}</a></li>`).join('\n');
+  // Only replace the contents of the two public lists. The authored introduction,
+  // artwork, headings, and their surrounding layout live in index.html.
+  const lists = [
+    [/(<section aria-labelledby="notes">\s*<h2[^>]*>[^<]*<\/h2>\s*<ul class="notes">)[\s\S]*?(<\/ul>)/, notes],
+    [/(<section aria-labelledby="archive">\s*<h2[^>]*>[^<]*<\/h2>\s*<div class="post-list">)[\s\S]*?(<\/div>)/, postRows(posts)]
   ];
-  const recent = posts.slice(0, 12);
-  const html = pageShell({
-    title: '笔记列表',
-    description: 'Anred Lab 技术博客历史分页入口。',
-    canonical: '/archives/',
-    active: 'archives',
-    body: `  <header class="page-hero"><span class="eyebrow">ARCHIVE ALIAS</span><h1>旧分页入口已合并。</h1><p class="hero-copy">这个地址保留兼容性。完整、自动更新的文章列表请进入归档。</p><div class="hero-actions"><a class="button primary" href="/archives/">查看完整归档</a></div></header>
-  <main class="section"><div class="section-head"><h2>最近 ${recent.length} 篇</h2><p>运行 <code>npm run build</code> 后自动更新。</p></div><div class="grid cols-3">${cardsForPosts(recent)}</div></main>`
-  });
-  for (const alias of aliases) {
-    await writePage(alias, html);
+  for (const [pattern, rows] of lists) {
+    if (!pattern.test(html)) throw new Error('Missing a generated list in index.html');
+    html = html.replace(pattern, (_, open, close) => `${open}\n${rows}\n        ${close}`);
   }
+  return html;
 }
 
-async function writeMarkdownArticles(posts) {
-  const all = [...posts].sort((a, b) => a.date - b.date);
-  await cleanupGeneratedArticles(new Set(posts.filter((item) => item.source === 'markdown').map((item) => item.url)));
-  for (const post of posts.filter((item) => item.source === 'markdown')) {
-    const index = all.findIndex((item) => item.url === post.url);
-    await fs.mkdir(post.outputDir, { recursive: true });
-    await fs.writeFile(path.join(post.outputDir, 'index.html'), articleShell(post, all[index - 1], all[index + 1]));
+async function build() {
+  const legacy = JSON.parse(await fs.readFile(path.join(root, 'content/legacy-posts.json'), 'utf8'));
+  const markdown = await readMarkdownPosts();
+  const posts = [...legacy, ...markdown].sort((a, b) => b.date.localeCompare(a.date));
+  const slugs = new Set();
+  for (const post of posts) {
+    const slug = post.slug.normalize('NFC').toLowerCase();
+    if (slugs.has(slug)) throw new Error(`Duplicate article URL for ${post.slug}`);
+    slugs.add(slug);
   }
-}
-
-async function cleanupGeneratedArticles(validUrls) {
-  const files = (await walk(root))
-    .filter((file) => /\/20\d{2}\/\d{2}\/\d{2}\/.+\/index\.html$/.test(file));
-  for (const file of files) {
-    const html = await fs.readFile(file, 'utf8').catch(() => '');
-    if (!html.includes(generatedBy)) continue;
-    const relDir = path.dirname(path.relative(root, file));
-    const url = `/${relDir.split(path.sep).map(encodeURIComponent).join('/')}/`;
-    if (!validUrls.has(url)) {
-      await fs.rm(path.dirname(file), { recursive: true, force: true });
-    }
+  const groups = {
+    categories: topicGroups('categories', legacy, posts),
+    tags: topicGroups('tags', legacy, posts)
+  };
+  const outputs = new Map();
+  const homeFile = path.join(root, 'index.html');
+  outputs.set(homeFile, homePage(await fs.readFile(homeFile, 'utf8'), posts));
+  for (const [kind, values] of Object.entries(groups)) {
+    outputs.set(path.join(root, `${kind}.html`), taxonomyPage(kind, values));
   }
-}
-
-async function writePage(relative, html) {
-  const file = path.join(root, relative);
-  await fs.mkdir(path.dirname(file), { recursive: true });
-  await fs.writeFile(file, html);
-}
-
-async function cleanupGeneratedDirs(baseDir, validNames) {
-  const entries = await fs.readdir(baseDir, { withFileTypes: true }).catch(() => []);
-  for (const entry of entries) {
-    if (!entry.isDirectory() || validNames.has(entry.name)) continue;
-    const indexFile = path.join(baseDir, entry.name, 'index.html');
-    const html = await fs.readFile(indexFile, 'utf8').catch(() => '');
-    if (html.includes(generatedBy)) {
-      await fs.rm(path.join(baseDir, entry.name), { recursive: true, force: true });
-    }
+  for (const post of markdown) {
+    outputs.set(path.join(articlesDir, post.slug + '.html'), articlePage(post, groups));
   }
+
+  // Retire only pages previously written by this generator, e.g. a published
+  // Markdown note has been renamed, deleted, or switched back to draft.
+  const obsolete = [];
+  for (const entry of await fs.readdir(articlesDir, { withFileTypes: true })) {
+    if (!entry.name.endsWith('.html')) continue;
+    if (!entry.isFile()) throw new Error(`Expected regular article file: ${entry.name}`);
+    const file = path.join(articlesDir, entry.name);
+    const existing = await fs.readFile(file, 'utf8');
+    const isGenerated = existing.startsWith('<!doctype html>\n' + generatedBy);
+    if (outputs.has(file) && !isGenerated) throw new Error(`Refusing to overwrite existing article: ${entry.name}`);
+    if (!outputs.has(file) && isGenerated) obsolete.push(file);
+  }
+  for (const [file, html] of outputs) await fs.writeFile(file, html);
+  for (const file of obsolete) await fs.unlink(file);
+  await writeArchivePeriods(posts);
+  await writeSearchIndex(posts);
+  console.log(`Built ${posts.length} articles, including ${markdown.length} from Markdown.`);
 }
 
-async function main() {
-  const existingPosts = await readExistingPosts();
-  const markdownPosts = await readMarkdownPosts();
-  const posts = [...existingPosts, ...markdownPosts].sort((a, b) => b.date - a.date);
-  await writeMarkdownArticles(posts);
-  await updateHome(posts);
-  await writeArchives(posts);
-  await writeCategories(posts);
-  await writeTags(posts);
-  console.log(`Built ${posts.length} posts, ${markdownPosts.length} from Markdown.`);
-}
-
-main().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+build().catch(error => { console.error(error); process.exitCode = 1; });
