@@ -29,7 +29,8 @@ ${generated}
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>${label}文章 · Anred Lab</title>
+  <title>${label}文章 · Andy Zhang</title>
+  <link rel="icon" type="image/png" href="/images/andy-zhang-avatar.png">
   <link rel="canonical" href="https://anred.space/archives/${key}/">
   <link rel="stylesheet" href="/assets/site.css">
 </head>
@@ -60,7 +61,8 @@ async function redirectEmptyPeriod(key, periods) {
   if (!old.includes(generated) || old.includes('/assets/legacy-redirect.js')) return;
   await writeFile(page, `<!doctype html>
 ${generated}
-<html lang="zh-CN"><head><meta charset="utf-8"><title>全部文章 · Anred Lab</title>
+<html lang="zh-CN"><head><meta charset="utf-8"><title>全部文章 · Andy Zhang</title>
+  <link rel="icon" type="image/png" href="/images/andy-zhang-avatar.png">
 <link rel="canonical" href="https://anred.space/#archive">
 <script src="/assets/legacy-redirect.js" defer></script>
 <noscript><meta http-equiv="refresh" content="0;url=/#archive"></noscript>

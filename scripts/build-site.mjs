@@ -212,7 +212,8 @@ ${generatedArticle ? generatedBy + '\n' : ''}<html lang="zh-CN">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="${escapeHtml(description)}">
-  <title>${escapeHtml(title)} · Anred Lab</title>
+  <title>${escapeHtml(title)} · Andy Zhang</title>
+  <link rel="icon" type="image/png" href="/images/andy-zhang-avatar.png">
   <link rel="canonical" href="https://anred.space/${canonical}">
   <link rel="stylesheet" href="${parent}assets/site.css">
 </head>
