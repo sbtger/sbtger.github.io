@@ -1,0 +1,1149 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>沙箱内存虚拟化技术</title>
+<meta name="description" content="沿沙箱启动、运行和回收的技术主线，比较快照恢复、按需分页、写时复制、内存回收和跨实例共享。">
+<link rel="canonical" href="https://anred.space/articles/sandbox-memory.html">
+<style>
+  :root {
+    color-scheme: dark;
+    --background: #181818;
+    --surface: #1d1d1d;
+    --node: #252525;
+    --text: #efefef;
+    --muted: #b8b8b8;
+    --line: #363636;
+    --mint: #73b5ff;
+    --active: #203a5c;
+    --amber: #d9d9d9;
+    font: 15px/1.62 Inter, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 82px; }
+  body { margin: 0; background: var(--background); color: var(--text); }
+  .wrap { width: min(100%, 1300px); margin: 0 auto; padding-inline: clamp(16px, 4vw, 52px); }
+  header { position: sticky; z-index: 2; top: 0; background: var(--background); border-bottom: 1px solid var(--line); }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 14px; }
+  h1, h2, h3, h4, p, dl, dd { margin: 0; }
+  h1 { font-size: 18px; line-height: 1.35; white-space: nowrap; }
+  h2 { font-size: clamp(27px, 4vw, 43px); line-height: 1.18; letter-spacing: -.035em; }
+  h3 { font-size: 19px; line-height: 1.4; }
+  h4 { font-size: 15px; line-height: 1.4; }
+  a { color: var(--mint); text-underline-offset: 4px; }
+  button { font: inherit; }
+  :is(button, a, .restore-scroll):focus-visible { outline: 2px solid var(--mint); outline-offset: 3px; }
+  nav { display: flex; gap: 5px; overflow-x: auto; padding: 3px; }
+  nav a, .phase-button {
+    padding: 5px 10px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    color: var(--muted);
+    text-decoration: none;
+    white-space: nowrap;
+    font-size: 13px;
+  }
+  nav a:hover, .phase-button:hover { border-color: var(--line); }
+  nav a[aria-current], .phase-button[aria-pressed="true"] {
+    color: var(--mint); border-color: #42638c; background: var(--active);
+  }
+  main { padding-block: 25px 64px; }
+  .intro p { margin-top: 7px; color: var(--muted); }
+  .restore-diagram { margin: 17px 0; padding: clamp(12px, 2vw, 22px); border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+  .restore-diagram .scenario { margin: 6px 0 10px; color: var(--muted); font-size: 13px; }
+  .restore-scroll { overflow-x: auto; }
+  .restore-grid { table-layout: fixed; min-width: 815px; border-collapse: separate; border-spacing: 7px 6px; }
+  .restore-lifecycle { min-width: 960px; }
+  .restore-lifecycle .stage-path > b { color: var(--mint); }
+  .project-graph { position: relative; min-width: 940px; height: 365px; }
+  .project-graph .graph-column { position: absolute; top: 0; width: 20%; text-align: center; }
+  .project-graph .graph-node { position: absolute; top: var(--y); width: 20%; transform: translateY(-50%); text-align: center; padding: 7px 5px; background: var(--node); border: 1px solid var(--line); border-radius: 7px; font-size: 13px; line-height: 1.3; }
+  .project-graph .project { left: 0; }
+  .project-graph .runtime { left: 27%; }
+  .project-graph .vmm { left: 54%; }
+  .project-graph .mode { left: 80%; }
+  .project-graph .graph-node small { display: block; color: var(--muted); font-size: 11px; margin-top: 3px; }
+  .project-links { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--mint); }
+  .project-links .edge-label { fill: currentColor; stroke: var(--surface); stroke-width: 4px; paint-order: stroke fill; font-size: 10px; }
+  .project-links path { fill: none; stroke: currentColor; stroke-width: 1.25; vector-effect: non-scaling-stroke; }
+  .implementation-cases { display: grid; gap: 8px; margin-top: 10px; }
+  .implementation-cases > div { border-top: 1px solid var(--line); padding-top: 7px; }
+  .implementation-cases dt { color: var(--mint); }
+  .comparison-graph { min-width: 700px; margin-top: 10px; }
+  .comparison-graph :is(.graph-column,.graph-node) { width: var(--graph-node-width, 26%); }
+  .comparison-graph.four-columns { min-width: 940px; }
+  .restore-grid col.stage-label { width: 106px; }
+  .restore-grid :is(th, td) { border: 0; padding: 0; }
+  .restore-grid thead th { text-align: center; font-size: 15px; }
+  .restore-grid .method-name { padding: 7px 3px; border-radius: 6px; border: 1px solid var(--line); background: var(--active); color: var(--mint); }
+  .restore-grid .stage-name { min-width: 0; width: auto; text-align: center; vertical-align: middle; color: var(--amber); }
+  .restore-grid .stage-path { border: 1px solid var(--line); border-radius: 7px; background: var(--node); padding: 6px 8px; vertical-align: middle; }
+  .restore-steps { display: grid; gap: 7px; list-style: none; margin: 0; padding: 0; }
+  .restore-steps li { position: relative; overflow-wrap: anywhere; }
+  .restore-steps li:not(:last-child)::after {
+    content: "↓";
+    position: absolute;
+    top: 100%;
+    left: 2.2em;
+    color: var(--mint);
+    font-size: 10px;
+    line-height: 7px;
+  }
+  .restore-steps b { margin-right: 6px; color: var(--mint); font-size: 12px; }
+  .restore-steps .handler { color: var(--amber); }
+  .restore-note-label { color: var(--mint); }
+  .restore-note { margin-top: 8px; color: var(--muted); font-size: 12px; }
+  .restore-scroll-note { display: none; }
+  .comparisons { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; margin-top: 17px; }
+  .comparison, .tech { padding: clamp(12px, 2vw, 22px); border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+  .phases { display: flex; flex-wrap: wrap; gap: 5px; margin: 8px 0 9px; }
+  .phase-button { background: transparent; cursor: pointer; }
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; line-height: 1.5; }
+  th, td { padding: 7px 9px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  thead th { font-weight: 650; color: var(--mint); }
+  tbody th { width: 20%; min-width: 124px; font-weight: 650; }
+  tbody tr:last-child :is(th,td) { border-bottom: 0; }
+  tr > [data-phase].emphasized { background: var(--active); }
+  .comparison[data-filtered] td { width: 78%; }
+  .takeaway { margin-top: 10px; color: var(--muted); font-size: 13px; }
+  .details-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 21px 0 9px; }
+  .details-head a { font-size: 13px; }
+  .tech { margin-bottom: 11px; }
+  .tech:target { border-color: #42638c; }
+  .tech .goal { color: var(--muted); margin: 5px 0 12px; }
+  .flowchart {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4,minmax(0,1fr));
+    gap: 19px;
+  }
+  .step {
+    min-width: 0;
+    position: relative;
+    padding: 9px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    background: var(--node);
+    overflow-wrap: anywhere;
+  }
+  .step small { display: block; color: var(--mint); font-size: 11px; }
+  .step h4 { margin: 2px 0 4px; }
+  .step p { font-size: 13px; color: var(--muted); line-height: 1.47; }
+  .step:not(:last-child)::after {
+    content: "→";
+    position: absolute;
+    width: 19px;
+    top: calc(50% - .8em);
+    right: -20px;
+    color: var(--mint);
+    text-align: center;
+  }
+  .facts { display: grid; grid-template-columns: minmax(0,1.23fr) minmax(0,1fr) minmax(0,1fr); gap: 13px; margin-top: 12px; }
+  .facts > div { border-top: 1px solid var(--line); padding-top: 7px; min-width: 0; }
+  dt { font-weight: 650; font-size: 13px; color: var(--amber); }
+  dd { margin-top: 2px; font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
+  .sources { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 3px 12px; font-size: 12px; }
+  [hidden] { display: none !important; }
+  @media (max-width: 895px) {
+    .restore-scroll-note { margin-bottom: 3px; display: block; color: var(--muted); font-size: 12px; }
+  }
+  @media (max-width: 710px) {
+    html { scroll-padding-top: 112px; }
+    header .wrap { flex-direction: column; align-items: stretch; gap: 4px; padding-block: 9px; }
+    nav { margin-inline: -3px; }
+    .flowchart { grid-template-columns: 1fr; gap: 15px; }
+    .step:not(:last-child)::after { content: "↓"; right: calc(50% - 10px); top: 100%; line-height: 16px; }
+    .facts { grid-template-columns: 1fr; gap: 7px; }
+    .comparison:not([data-filtered]) table { min-width: 630px; }
+  }
+  @page { margin: 12mm; }
+  @media print {
+    :root { color-scheme: light; --background: #fff; --surface: #fff; --node: #f1f1f1; --text: #202020; --muted: #414141; --line: #c8c8c8; --mint: #242424; --amber: #444444; }
+    header { position: static; }
+    nav, .phases, .details-head a { display: none !important; }
+    .wrap { width: 100%; padding-inline: 0; }
+    .line[hidden] { display: block !important; }
+    .line + .line { break-before: page; }
+    .comparison :is(td,th)[hidden] { display: table-cell !important; }
+    .comparison[data-filtered] td { width: auto; }
+    .comparison table { min-width: 0 !important; }
+    .tech, .comparison, .restore-grid tr { break-inside: avoid; }
+    .restore-grid { min-width: 0; }
+    .restore-grid col.stage-label { width: 80px; }
+    .restore-grid .method-name { background: var(--node); }
+    .restore-scroll { overflow: visible; }
+    .restore-scroll-note { display: none; }
+    .flowchart { grid-template-columns: repeat(4,minmax(0,1fr)); gap: 19px; }
+    .step:not(:last-child)::after { content: "→"; top: calc(50% - .8em); right: -20px; }
+    .facts { grid-template-columns: repeat(3,minmax(0,1fr)); }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <a href="../index.html">返回博客首页</a>
+    <h1>沙箱内存虚拟化技术</h1>
+    <div class="prose"><p>沿沙箱启动、运行和回收的技术主线，比较快照恢复、按需分页、写时复制、内存回收和跨实例共享。</p></div>
+    <nav aria-label="技术主线" id="nav"></nav>
+  </div>
+</header>
+<main class="wrap" id="main"></main>
+<noscript>启用浏览器的 JavaScript 后可查看阶段对比和技术流程图。</noscript>
+<template id="restore-comparison-diagram">
+  <figure class="restore-diagram" aria-labelledby="restore-flow-title">
+    <figcaption><h3 id="restore-flow-title">内存恢复流程</h3></figcaption>
+    <div class="restore-scroll" role="region" aria-label="三种快照恢复方式的阶段流程图" tabindex="0">
+      <table class="restore-grid restore-lifecycle" aria-labelledby="restore-flow-title">
+        <colgroup><col class="stage-label"><col><col><col><col><col></colgroup>
+        <thead>
+          <tr>
+            <th scope="col">恢复方式</th>
+            <th class="method-name" scope="col">准备内存后备</th>
+            <th class="method-name" scope="col">恢复状态并注册内存槽</th>
+            <th class="method-name" scope="col">运行时读页</th>
+            <th class="method-name" scope="col">运行时写页</th>
+            <th class="method-name" scope="col">访问时的页级映射</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th class="stage-name" scope="row">全量复制</th>
+            <td class="stage-path">
+              <ol class="restore-steps">
+                <li><b>VMM</b><span>建立 VM 独立的 RAM 映射，并填入快照数据。</span></li>
+              </ol>
+            </td>
+            <td class="stage-path shared-stage" rowspan="3"><b>VMM</b> 恢复 vCPU 和设备状态，向 KVM 注册内存槽，关联 guest 物理地址与 VMM 虚拟地址，随后启动 vCPU。</td>
+            <td class="stage-path" colspan="2"><b>guest</b> 直接读写已经填好的私有 RAM 页。</td>
+            <td class="stage-path shared-stage" rowspan="3"><b>宿主 KVM</b> 访问触发映射缺失或写保护时，按需建立或更新到宿主物理页的映射，guest 随后继续访问。</td>
+          </tr>
+          <tr>
+            <th class="stage-name" scope="row">文件 CoW</th>
+            <td class="stage-path">
+              <ol class="restore-steps">
+                <li><b>VMM</b><span>用 mmap(MAP_PRIVATE) 将快照文件映射为 RAM 后备。</span></li>
+              </ol>
+            </td>
+            <td class="stage-path">
+              <ol class="restore-steps">
+                <li><b>宿主内核</b><span>读未修改的页时，从文件页缓存供页，未命中则读快照。同机 VM 映射同一文件偏移时可共享。</span></li>
+              </ol>
+            </td>
+            <td class="stage-path">
+              <ol class="restore-steps">
+                <li><b>宿主内核</b><span>首次写文件后备页时，取得原页并复制成该 VM 的私有页。</span></li>
+                <li><b>guest</b><span>写入私有页，其他 VM 仍可读原页。</span></li>
+              </ol>
+            </td>
+          </tr>
+          <tr>
+            <th class="stage-name" scope="row">UFFD 按需供页</th>
+            <td class="stage-path">
+              <ol class="restore-steps">
+                <li><b>VMM</b><span>建立待填充的 RAM 映射，注册 UFFD MISSING。</span></li>
+              </ol>
+            </td>
+            <td class="stage-path" colspan="2">
+              <ol class="restore-steps">
+                <li><b>页尚未填充</b><span>读或写都会触发缺页。用户态缺页处理程序从快照取原页，用 UFFDIO_COPY 填进目标 RAM。</span></li>
+                <li><b>页已填充</b><span>guest 直接读写目标页。</span></li>
+                <li><b>加载策略</b><span>可只填访问到的页，也可在 VM 运行后由后台线程补齐剩余页。</span></li>
+              </ol>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="restore-note"><strong class="restore-note-label">内核版本要求</strong> 宿主侧全量复制、文件 CoW 和匿名内存 UFFD 按需恢复的基础能力在 Linux 4.18 已具备。UFFD 按需恢复要求宿主允许 VMM 接收 guest 访问内存时触发的 KVM 缺页通知。具体 VMM 的最低版本另计。</p>
+    <p class="sources"><a href="https://github.com/cloud-hypervisor/cloud-hypervisor/blob/main/docs/snapshot_restore.md">Cloud Hypervisor 三种恢复模式</a><a href="https://github.com/firecracker-microvm/firecracker/blob/main/docs/snapshotting/handling-page-faults-on-snapshot-resume.md">Firecracker 供页路径</a><a href="https://docs.kernel.org/admin-guide/mm/userfaultfd.html">Linux userfaultfd</a></p>
+  </figure>
+  <section class="restore-diagram" aria-labelledby="project-path-title">
+    <h3 id="project-path-title">开源恢复方案</h3>
+    <div class="restore-scroll" role="region" aria-labelledby="project-path-title" tabindex="0">
+      <div class="project-graph">
+        <h4 class="graph-column project">沙箱平台</h4>
+        <h4 class="graph-column runtime">运行时 / 节点组件</h4>
+        <h4 class="graph-column vmm">VMM</h4>
+        <h4 class="graph-column mode">内存恢复方案</h4>
+        <svg class="project-links" viewBox="0 0 1000 365" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <marker id="project-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><polygon points="0,0 8,4 0,8" fill="currentColor"/></marker>
+          </defs>
+          <g marker-end="url(#project-arrow)">
+            <path d="M200 55 H270"/>
+            <path d="M470 55 H540"/>
+            <path d="M200 110 H270"/>
+            <path d="M470 110 C499 110 514 140 540 140"/>
+            <path d="M200 175 H270"/>
+            <path d="M470 175 C505 175 507 140 540 140"/>
+            <path d="M200 245 H270"/>
+            <path d="M470 245 H540"/>
+            <path d="M470 245 C505 245 508 140 540 140"/>
+            <path d="M470 245 C507 245 505 315 540 315"/>
+            <path d="M740 55 C770 55 770 130 800 130"/>
+            <path d="M740 140 L800 130"/>
+            <path d="M740 140 C776 140 768 218 800 218"/>
+            <path d="M740 245 C768 245 770 130 800 130"/>
+            <path d="M740 315 C786 315 755 130 800 130"/>
+            <path d="M740 315 C778 315 765 218 800 218"/>
+            <path d="M740 315 H800"/>
+          </g>
+        </svg>
+        <div class="graph-node project" style="--y:55px">CubeSandbox</div>
+        <div class="graph-node project" style="--y:110px">OpenSandbox<small>Fast Sandbox 路径</small></div>
+        <div class="graph-node project" style="--y:175px">E2B Runtime<small>选择 UFFD</small></div>
+        <div class="graph-node project" style="--y:245px">OpenSandbox<small>Kubernetes · RuntimeClass</small></div>
+        <div class="graph-node runtime" style="--y:55px">CubeShim</div>
+        <div class="graph-node runtime" style="--y:110px">Fastlet / runtime-agent<small>使用 Firecracker File</small></div>
+        <div class="graph-node runtime" style="--y:175px">E2B Orchestrator</div>
+        <div class="graph-node runtime" style="--y:245px">Kata Containers</div>
+        <div class="graph-node vmm" style="--y:55px">cube-hypervisor<small>Cloud Hypervisor 分支</small></div>
+        <div class="graph-node vmm" style="--y:140px">Firecracker</div>
+        <div class="graph-node vmm" style="--y:245px">QEMU<small>图中为 VM Template 路径</small></div>
+        <div class="graph-node vmm" style="--y:315px">Cloud Hypervisor</div>
+        <div class="graph-node mode" style="--y:130px">文件 CoW</div>
+        <div class="graph-node mode" style="--y:218px">UFFD 按需供页<small>纯按需 / 按需加后台补齐</small></div>
+        <div class="graph-node mode" style="--y:315px">全量复制<small>Cloud Hypervisor 默认</small></div>
+      </div>
+    </div>
+    <p class="restore-note"><strong class="restore-note-label">快照存储位置</strong> OpenSandbox Fast Sandbox 先把内存快照准备成节点本地文件，再按需映射。CubeSandbox 用 XFS 时直接映射本地快照文件，用 JuiceFS 时直接映射共享文件，缓存未命中才从远端取。E2B 则由用户态缺页处理程序按索引从缓存或存储取数据，再填入 VM。</p>
+    <p class="restore-note"><strong class="restore-note-label">快照页加载策略</strong> cube-hypervisor 的 prefault 请求在运行前预填映射。文件 CoW 路径里，Linux 可能顺带预读邻近页。E2B 可预取预测会用到的热页。开启后台补齐的 UFFD 路径会在 guest 运行后继续加载剩余页。</p>
+    <p class="sources"><a href="https://github.com/TencentCloud/CubeSandbox/blob/master/hypervisor/docs/memory.md">Cube 内存预填</a><a href="https://github.com/opensandbox-group/fast-sandbox/blob/main/docs/guides/firecracker-runtime-e2e.md">Fast Sandbox</a><a href="https://open-sandbox.ai/guides/secure-container">OpenSandbox RuntimeClass</a><a href="https://github.com/e2b-dev/runtime/blob/main/docs/ARCHITECTURE.md">E2B</a><a href="https://github.com/kata-containers/kata-containers/blob/main/docs/how-to/what-is-vm-templating-and-how-do-I-use-it.md">Kata 模板</a><a href="https://github.com/kata-containers/kata-containers/blob/main/docs/hypervisors.md">Kata 支持的 VMM</a><a href="https://github.com/TencentCloud/CubeSandbox/blob/master/hypervisor/Cargo.toml">cube-hypervisor</a><a href="https://www.qemu.org/docs/master/devel/migration/fast-snapshot-load.html">QEMU Fast Snapshot Load</a></p>
+  </section>
+</template>
+<script>
+const sources = {
+  cubeHugeOpt: ["cube-hypervisor 内存配置", "https://github.com/TencentCloud/CubeSandbox/blob/master/hypervisor/docs/memory.md"],
+  qemuMemoryOpt: ["QEMU 内存后备参数", "https://www.qemu.org/docs/master/system/invocation.html"],
+  agentStartupPrefetch: ["AgentENV 启动热页清单", "https://github.com/kvcache-ai/AgentENV/blob/2b981b3/storage/overlaybd/src/startup_manifest.rs"],
+  e2bReclaim: ["E2B 内存回收开关", "https://github.com/e2b-dev/runtime/blob/391b22443/packages/shared/pkg/featureflags/flags.go#L1012"],
+  fastReclaim: ["Fast Sandbox 内存回收", "https://github.com/opensandbox-group/fast-sandbox/blob/15178de/docs/guides/memory-reclamation.md"],
+  agentReclaim: ["AgentENV 默认回收配置", "https://github.com/kvcache-ai/AgentENV/blob/2b981b3/config/default.toml#L33"],
+  chBalloon: ["Cloud Hypervisor Balloon 与 FPR", "https://github.com/cloud-hypervisor/cloud-hypervisor/blob/main/docs/balloon.md"],
+  kataQemuReclaim: ["Kata QEMU 空闲页回收配置", "https://github.com/kata-containers/kata-containers/blob/main/src/runtime/config/configuration-qemu.toml.in"],
+  cubePrefaultOpt: ["Cube 内存预填", "https://github.com/TencentCloud/CubeSandbox/blob/master/hypervisor/docs/memory.md#prefault"],
+  fcHugeOpt: ["Firecracker 大页", "https://github.com/firecracker-microvm/firecracker/blob/main/docs/hugepages.md"],
+  kataHugeOpt: ["Kata QEMU 大页配置", "https://github.com/kata-containers/kata-containers/blob/main/src/runtime/config/configuration-qemu.toml.in"],
+  fastImage: ["Fast Sandbox 镜像路径", "https://github.com/opensandbox-group/fast-sandbox/blob/main/README.md"],
+  chPmem: ["Cloud Hypervisor virtio-pmem", "https://github.com/cloud-hypervisor/cloud-hypervisor/blob/main/docs/device_model.md#virtio-pmem"],
+  kataTemplate: ["Kata VM Template", "https://github.com/kata-containers/kata-containers/blob/main/docs/how-to/what-is-vm-templating-and-how-do-I-use-it.md"],
+  kataSaveVM: ["Kata Cloud Hypervisor SaveVM", "https://github.com/kata-containers/kata-containers/blob/main/src/runtime/virtcontainers/clh.go#L1384-L1403"],
+  kataCheckpoint: ["Kata Firecracker 快照接入", "https://github.com/kata-containers/kata-containers/issues/13754"],
+  openSandboxKata: ["OpenSandbox Kata RuntimeClass", "https://open-sandbox.ai/guides/secure-container"],
+  openSandboxCheckpoint: ["OpenSandbox QEMU-in-runc VMState", "https://open-sandbox.ai/guides/qemu-vmstate-snapshots"],
+  cloudCowSnapshot: ["Cloud Hypervisor CoW 恢复与后续快照", "https://github.com/cloud-hypervisor/cloud-hypervisor/blob/main/docs/snapshot_restore.md#copy-on-write-restore"],
+  cloudCowPages: ["Cloud Hypervisor pagemap 选页源码", "https://github.com/cloud-hypervisor/cloud-hypervisor/blob/main/vmm/src/pagemap.rs"],
+  agentEnvMemory: ["AgentENV 内存快照流程", "https://github.com/kvcache-ai/AgentENV/blob/main/docs/src/internals/architecture.md#memory-snapshot-restore"],
+  agentEnvConfig: ["AgentENV 选页配置", "https://github.com/kvcache-ai/AgentENV/blob/main/config/default.toml"],
+  criuDelta: ["CRIU 增量转储", "https://criu.org/Incremental_dumps"],
+  criuTrack: ["CRIU 内存变化追踪", "https://criu.org/Memory_changes_tracking"],
+  fastDiffIssue: ["Fast Sandbox 增量快照提案", "https://github.com/opensandbox-group/fast-sandbox/issues/56"],
+  kataDax: ["Kata QEMU DAX 配置", "https://github.com/kata-containers/kata-containers/blob/main/src/runtime/config/configuration-qemu.toml.in"],
+  cubePmem: ["CubeSandbox pmem 设备配置", "https://github.com/TencentCloud/CubeSandbox/blob/master/CubeShim/shim/src/sandbox/config.rs"],
+  cloudMemory: ["Cloud Hypervisor 内存配置", "https://github.com/cloud-hypervisor/cloud-hypervisor/blob/main/docs/memory.md"],
+  ch: ["Cloud Hypervisor 恢复方式", "https://github.com/cloud-hypervisor/cloud-hypervisor/blob/main/docs/snapshot_restore.md"],
+  fc: ["Firecracker 快照", "https://github.com/firecracker-microvm/firecracker/blob/main/docs/snapshotting/snapshot-support.md"],
+  cube: ["Cube 快照与克隆", "https://github.com/TencentCloud/CubeSandbox/blob/4f81e8e6dd42e1484a153289d596b384f856d160/docs/zh/blog/posts/2026-06-25-cubesandbox-snapshot-clone-rollback-deep-dive.md"],
+  fast: ["Fast Sandbox File 恢复", "https://github.com/opensandbox-group/fast-sandbox/blob/main/docs/guides/firecracker-runtime-e2e.md"],
+  e2b: ["E2B 架构", "https://github.com/e2b-dev/runtime/blob/main/docs/ARCHITECTURE.md"],
+  e2bFlags: ["E2B 写保护模式", "https://github.com/e2b-dev/runtime/blob/391b22443460fb30432da889b44aa413478d5717/packages/shared/pkg/featureflags/flags.go#L232-L239"],
+  e2bIndex: ["E2B 快照索引", "https://github.com/e2b-dev/runtime/blob/391b22443460fb30432da889b44aa413478d5717/packages/shared/pkg/storage/header/metadata.go#L159-L204"],
+  userfaultfd: ["Linux userfaultfd", "https://docs.kernel.org/admin-guide/mm/userfaultfd.html"],
+  kvm: ["KVM 脏页位图", "https://docs.kernel.org/virt/kvm/api.html#kvm-get-dirty-log"],
+  soft: ["Linux Soft-dirty", "https://docs.kernel.org/admin-guide/mm/soft-dirty.html"],
+  cubeSoft: ["Cube Soft-dirty 合入", "https://github.com/TencentCloud/CubeSandbox/pull/389"],
+  pagemap: ["Linux PAGEMAP_SCAN", "https://docs.kernel.org/admin-guide/mm/pagemap.html#pagemap-scan-ioctl"],
+  pmem: ["QEMU virtio-pmem", "https://www.qemu.org/docs/master/system/devices/virtio/virtio-pmem.html"],
+  virtiofs: ["virtio-fs 架构", "https://virtio-fs.gitlab.io/"],
+  dsec: ["DSec 实测 §8.4", "https://arxiv.org/html/2609.22978v1#S8.SS4"],
+  balloon: ["Firecracker Balloon", "https://github.com/firecracker-microvm/firecracker/blob/main/docs/ballooning.md"],
+  report: ["Linux Free Page Reporting", "https://docs.kernel.org/mm/free_page_reporting.html"],
+  cubeFpr: ["Cube FPR 合入", "https://github.com/TencentCloud/CubeSandbox/pull/1758"],
+  damon: ["Linux DAMON_RECLAIM", "https://docs.kernel.org/admin-guide/mm/damon/reclaim.html"],
+  mglru: ["Linux MGLRU", "https://docs.kernel.org/admin-guide/mm/multigen_lru.html"],
+  memAgent: ["Kata mem-agent 配置", "https://github.com/kata-containers/kata-containers/blob/main/docs/how-to/how-to-use-memory-agent.md"],
+  snapbpf: ["SnapBPF", "https://site.psomas.xyz/assets/files/snapbpf-hotstorage25-preprint.pdf"],
+  ksm: ["Linux KSM", "https://docs.kernel.org/admin-guide/mm/ksm.html"],
+  thp: ["Linux THP", "https://docs.kernel.org/admin-guide/mm/transhuge.html"],
+  hugetlb: ["Linux hugetlb", "https://docs.kernel.org/admin-guide/mm/hugetlbpage.html"],
+  numa: ["Linux NUMA 内存策略", "https://docs.kernel.org/admin-guide/mm/numa_memory_policy.html"],
+};
+
+const chapters = [
+  {
+    id: "restore", short: "快照恢复", name: "快照恢复",
+    summary: "适合同模板批量启动或暂停后恢复。复用已就绪的 VM 状态可缩短启动时间，文件 CoW 可共享同机未改写页。全量复制在启动前读入全部内存，按需恢复可减少读取量，但首次访问未加载的页时可能需要等待。",
+    comparisons: [{
+      name: "从恢复请求到第一次写入", ids: ["copy", "file-cow", "uffd"],
+      phases: ["创建内存后备", "恢复到 Ready", "首访缺页", "多实例与写入"],
+      takeaway: "同模板且读多写少，重点看 File CoW 的宿主边际内存。首任务要碰大半内存，比较全量复制的端到端成本。需要跨存储层选页时，用 UFFD 测完整首任务及失败恢复。",
+    }],
+  },
+  {
+    id: "delta", short: "增量快照", name: "增量内存快照",
+    summary: "适合反复保存进度的长会话沙箱。只保存本轮变化页，可减少写盘量和暂停时间。代价是追踪、扫描和维护基线，改写接近全量时收益会缩小。",
+    comparisons: [{
+      name: "内存快照选页流程", ids: ["kvm-log", "soft-dirty", "uffd-wp", "cow-pagemap", "mincore", "full-snapshot"],
+      phases: ["保存前准备", "运行期间行为", "保存时选页", "主要开销与前提"],
+      kernelNote: "宿主侧 UFFD-WP 同步追踪（匿名页）需 Linux 5.7+，异步追踪（WP_ASYNC + PAGEMAP_SCAN）需 6.7+。其余选页方式在 Linux 4.18 已具备基础能力。x86_64 支持 Soft-dirty，ARM64 不支持。",
+      takeaway: "KVM Dirty Log 取 guest 脏页并合并 VMM 写入。Soft-dirty 清标记后选本轮写过的页。UFFD-WP 用写保护追踪，同步处理首次写，异步批量查询。CoW 方案保存相对恢复基线产生的私有页，适合快照次数少、累计改写页少的沙箱。mincore() 保存时扫描宿主驻留页，省去运行时的脏页追踪，适合从零启动、驻留页少且可安全跳过未驻留页的沙箱。Full 保存全部 guest RAM。",
+    }],
+  },
+  {
+    id: "dax", short: "镜像映射", name: "镜像数据直接映射",
+    summary: "适合同机多台沙箱反复读取同一镜像或共享目录。DAX 让 Guest 直接映射文件数据，减少重复缓存。文件系统、Guest 驱动和 VMM 需配套，原有块设备路径也可能需要调整。",
+    comparisons: [{
+      name: "镜像数据映射流程", ids: ["pmem-dax", "fs-dax"],
+      phases: ["宿主导出", "guest 接入", "首次访问", "运行与写入"],
+      kernelNote: "guest 侧 virtio-pmem 需 Linux 5.3+，virtio-fs DAX 需 5.10+。前者还需支持 DAX 的 guest 文件系统，后者需 VMM 和 virtiofsd 提供 DAX 窗口。",
+      takeaway: "固定基础镜像通常比较 pmem 设备路径，共享目录通常比较 virtio-fs。两条路都要量宿主后备页、guest 文件缓存和应用拷贝。",
+    }],
+  },
+  {
+    id: "reclaim", short: "内存回收", name: "运行中内存回收",
+    summary: "适合长期运行且内存用量有峰谷的沙箱。FPR 归还空闲页，气球缩减 Guest 可分配内存，主动回收腾出冷页。这些方式可降低宿主内存占用，但重新分配或读回冷数据可能增加延迟。",
+    comparisons: [{
+      name: "内存回收流程", ids: ["balloon", "fpr", "fph", "damon", "mem-agent"],
+      highlightActors: true,
+      phases: ["谁触发", "Guest 怎么处理页", "Host 怎么回收", "Guest 再用时"],
+      kernelNote: "guest 侧 FPR 需 Linux 5.7+，DAMON_RECLAIM 需 5.16+，mem-agent 依赖的 MGLRU 自 6.1 起可用。宿主侧常见 MADV_DONTNEED 路径在 4.18 已具备，仍需 VMM 支持对应的回收方式。",
+      takeaway: "传统气球由宿主设定目标，充气期间减少 guest 可分配内存。FPR 上报 guest 已空闲的页，供宿主回收对应的内存后备。DAMON 和 mem-agent 在 guest 内回收冷页，腾出的空闲页可通过 FPR 上报。",
+    }],
+  },
+  {
+    id: "performance", short: "性能优化", name: "性能优化",
+    summary: "适合长期运行、对内存密度或访存性能敏感的沙箱。KSM 减少重复匿名页，大页降低地址翻译开销，NUMA 放置减少远端访存。代价包括扫描、内存整理或大页预留，以及节点容量约束。",
+    comparisons: [{
+      name: "内存性能优化对照", ids: ["thp", "hugetlb", "numa", "ksm"],
+      phases: ["适合场景", "收益", "主要代价"],
+      compareTradeoffs: true,
+      kernelNote: "THP、HugeTLB、NUMA 内存放置和 KSM 的基础能力在 Linux 4.18 已具备，需宿主内核启用对应功能。 匿名内存的多尺寸透明大页（mTHP）从上游 Linux 6.8 起支持，可在宿主按页大小启用。",
+    }],
+  },
+];
+
+const techniques = {
+  copy: {
+    name: "全量复制",
+    goal: "在恢复完成前，把快照中的 RAM 字节填进新 VM 的内存，令首次访问无需再从快照取数据。",
+    stages: ["分配 VM 独立的 guest RAM 后备", "同步读取各范围并填充内存，之后运行", "通常无需为快照数据等待 I/O", "每个 VM 各持一份恢复数据"],
+    steps: [
+      ["VMM", "打开快照", "读取机器状态和各 GPA 内存范围对应的文件偏移。"],
+      ["宿主 Linux", "建立 RAM 后备", "为新 VM 建立内存映射，VMM 注册 KVM 内存槽。"],
+      ["VMM", "填充快照内存", "按范围把快照字节读入后备，复制量随快照内存规模增加。"],
+      ["KVM / guest", "恢复并运行", "加载匹配的 VM 状态，启动 vCPU，业务访问已经填好的内容。"],
+    ],
+    benefit: "适合首任务很快遍历大量内存，或者可以预先恢复至待命的场景。",
+    cost: "恢复前集中读取并复制，批量创建会放大 I/O 与实例私有驻留。",
+    example: "Cloud Hypervisor 的 copy 模式。用同一模板对比 Ready、首任务完成和各并发档的宿主内存。",
+    refs: ["ch"],
+  },
+  "file-cow": {
+    name: "按需加载 CoW",
+    goal: "把快照文件直接作为 guest RAM 的私有后备。同机映射同一文件偏移的实例可以共用干净页。",
+    stages: ["mmap(MAP_PRIVATE) 映射快照文件", "先建映射与恢复状态，内存按访问进入", "Linux 文件缺页命中 page cache 或读取文件", "同 inode 干净页可共享，写入触发私有复制"],
+    steps: [
+      ["VMM", "计算并映射范围", "按快照元数据定位内存文件偏移，使用 MAP_PRIVATE 建立宿主虚拟映射。"],
+      ["KVM", "安装内存槽", "关联 guest 物理地址和 VMM 虚址，恢复 vCPU、设备等状态。"],
+      ["宿主 Linux", "处理首次读", "页缓存有数据就建立映射；未命中时由文件系统读取，回填干净页。"],
+      ["宿主 Linux", "处理首次私有写", "为写入 VM 创建私有页。两个 VM 先读到 7，A 改成 9 后，B 仍读到 7。"],
+    ],
+    benefit: "预初始化内容按使用量载入。同一宿主、同一 inode、同一偏移的干净页共享可降低批量启动内存。",
+    cost: "冷读仍要等待。私有改写越多，共享比例越低。reflink 共享磁盘块，独立 inode 有各自的页缓存身份。",
+    example: "CubeSandbox、Firecracker File，以及 Fast Sandbox 的同文件硬链接路径。实测时要核对映射和 inode。",
+    refs: ["cube", "fc", "fast"],
+  },
+  uffd: {
+    name: "按需加载 UFFD",
+    goal: "把缺哪些内存页的通知交给用户态，由用户态缺页处理程序决定从缓存、父快照或对象存储的什么位置取数据。",
+    stages: ["建立目标 RAM，登记 UFFD MISSING", "先恢复状态，用户态缺页处理程序就绪即可执行", "访问等待，用户态缺页处理程序按偏移取数据并 COPY", "源缓存可复用，普通 UFFDIO_COPY 通常逐 VM 填页"],
+    steps: [
+      ["VMM", "注册缺页区域", "把未填充的 RAM 范围注册为 MISSING，将用户缺页描述符交给处理器。"],
+      ["guest / KVM", "访问缺页", "访问尚未装入的地址。内核传递缺页事件，相关访问等待。"],
+      ["用户态缺页处理程序", "将地址换成数据位置", "从宿主虚址算到逻辑内存偏移，查快照索引，从缓存或源对象读正确的数据。"],
+      ["宿主 Linux", "安装页面并放行", "用 UFFDIO_COPY 填到目标映射，处理完相应缺页后继续执行。"],
+    ],
+    benefit: "适合分块、分版本、跨机供页。稳定的首任务工作集可以单独预取。",
+    cost: "用户态通知、读源数据和复制会增加缺页开销。需要处理慢源、读取失败与丢弃事件。",
+    example: "E2B Runtime 借 Firecracker 恢复，首命令是否更快取决于实际访问的数据量、缓存和取块延迟。",
+    refs: ["userfaultfd", "e2b", "e2bIndex"],
+  },
+  "full-snapshot": {
+    name: "全量快照（Full）",
+    stages: ["无需建立追踪基线", "无需追踪写入", "暂停 VM，保存全部 guest RAM", "写入量随 guest RAM 容量增长"],
+  },
+  "kvm-log": {
+    name: "KVM Dirty Log",
+    goal: "在 KVM 层按 guest 物理页记录写入，保存时取出页号，结合 VMM 侧记录得到本轮变化。",
+    stages: ["用 ioctl 在 KVM memslot 启用脏页日志", "KVM 标记 guest 写过的页", "用 ioctl 读取 guest 写入的脏页位图，再合并 VMM 直接写入的记录", "经典位图无需 Dirty Ring。运行时标记脏页，保存时读取位图，两步都有开销。"],
+    steps: [
+      ["VMM", "开启内存槽标记", "为需追踪的 KVM memslot 启用 KVM_MEM_LOG_DIRTY_PAGES，并建立本轮追踪起点。"],
+      ["KVM", "记录 guest 写入", "按 GPA 对应的页记录脏状态，实现可能利用硬件状态或写保护路径。"],
+      ["快照程序", "读取并合并", "一致性点读取 KVM 位图，同时合入设备模型等从 VMM 直接写 RAM 的记录。"],
+      ["快照程序", "传出变化范围", "将位图转成快照偏移与长度，交给增量保存，并按 KVM 接口管理下一轮。"],
+    ],
+    benefit: "位图一页一位，收集紧凑。Firecracker Diff 用这类机制收集变更页。",
+    cost: "运行时脏页追踪与重置有开销。需要覆盖宿主侧写入，保证页集合与保存内容的一致性。",
+    example: "同一页写 100 次，位图仍只有一个页位。Firecracker 的经典位图路径使用 KVM_GET_DIRTY_LOG。",
+    refs: ["kvm", "fc"],
+  },
+  "soft-dirty": {
+    name: "Soft-dirty",
+    goal: "利用宿主 VMM 进程页表中的 software dirty 标记，找出追踪窗口内写过或重新映射的页。",
+    stages: ["echo 4 > /proc/pid/clear_refs", "宿主内核处理写缺页并置 soft-dirty", "读 guest RAM 对应 pagemap 条目的第 55 位", "重置页表、首次写与逐项扫描都有成本"],
+    steps: [
+      ["快照程序", "清除旧一轮标记", "对 VMM 的 clear_refs 写 4。内核清掉相关 soft-dirty 位并撤掉 PTE 的可写权限。"],
+      ["宿主 Linux", "标记写过的页", "后续首次写受保护映射，内核处理写故障、设标记并恢复可写。新建或扩展映射亦可标脏。"],
+      ["快照程序", "扫描 VMM 地址范围", "定位 guest RAM 的宿主虚址，读 pagemap 的第 55 位，换算逻辑快照偏移。"],
+      ["快照程序", "保存并建立下一基线", "Cube 连续提交把本轮变化写入 reflink 副本，再为下一轮重新开始追踪。"],
+    ],
+    benefit: "可沿用 Linux 进程页表语义。Cube 连续提交可以复用已有的 pagemap 扫描。",
+    cost: "扫描量随范围增大，重映射、新区间与换页等状态需要按实现核对。",
+    example: "同一 guest 2 GiB 内存分成 4 KiB 页时，顺序读 pagemap 原始条目约 4 MiB。",
+    refs: ["soft", "cubeSoft"],
+  },
+  "cow-pagemap": {
+    name: "CoW 私有页",
+    stages: [
+      "以恢复时映射的文件作为基线。",
+      "写文件后备页时生成私有页。",
+      "扫描 pagemap，找出已驻留或已换出的非文件页。",
+      "统计相对恢复文件的私有页。保存时仍需扫描映射范围。",
+    ],
+  },
+  mincore: {
+    name: "mincore()",
+    stages: [
+      "关闭脏页追踪。",
+      "访问后，部分 guest RAM 页驻留在宿主内存。",
+      "保存时调用 mincore()，选取驻留页。",
+      "Firecracker 要求关闭 swap。只读过的页也可能被选中。",
+    ],
+  },
+  "uffd-wp": {
+    name: "UFFD-WP（同步 / 异步）",
+    stages: [
+      "用 ioctl 注册 WP 并加写保护。异步在能力协商时额外请求 WP_ASYNC。",
+      "同步由用户态记录并解除写保护。异步由内核解除写保护。",
+      "同步取用户态记录。异步用 ioctl PAGEMAP_SCAN 批量查询本轮写过的页。",
+      "同步首次写要等用户态。异步在保存时批量扫描。",
+    ],
+  },
+  "wp-sync": {
+    name: "UFFD-WP 同步追踪",
+    goal: "在首次写受保护页时阻塞该次写入，给用户态一个明确的记录和处理时点。",
+    stages: ["登记 MODE_WP 并施加写保护", "触发 WP 事件，用户态记录后解除保护", "从追踪器提取集合，配合一致性点拷贝", "按首次写次数承担事件与调度开销"],
+    steps: [
+      ["VMM / 追踪器", "建立写保护范围", "协商 WP 能力，注册 MODE_WP，并对目标内存应用 UFFDIO_WRITEPROTECT。"],
+      ["guest / 宿主内核", "第一次写受保护页", "内核上报 WP 事件，写入等候处理。"],
+      ["用户态处理器", "记页号并解除保护", "记录对应页地址，执行解保护操作，随后原写入继续。"],
+      ["快照程序", "取本轮脏集", "在一致性边界收集记录、复制内容。新一轮重新保护需要追踪的范围。"],
+    ],
+    benefit: "用户态可在首次写时更新脏集，或执行与在线快照有关的按页逻辑。",
+    cost: "集中首次写很多页时，上报、唤醒与解保护会影响写延迟。匿名页 WP 参考 Linux 5.7。",
+    example: "E2B Runtime 存在可选同步 WP 配置。暂停时是否直接用用户态追踪器的集合还取决于另一开关。",
+    refs: ["userfaultfd", "e2bFlags"],
+  },
+  "wp-async": {
+    name: "UFFD-WP 异步追踪",
+    goal: "用同类写保护表示追踪起点，首次写由内核处理，快照程序在保存阶段批量读取被写过的范围。",
+    stages: ["协商 WP_ASYNC 并对追踪范围写保护", "内核在首次写入时清掉 WP 标记", "PAGEMAP_SCAN 查询 PAGE_IS_WRITTEN，可按需重新保护", "避开逐页用户态应答，仍有内核处理和扫描"],
+    steps: [
+      ["VMM / 追踪器", "开启异步写保护", "协商 UFFD_FEATURE_WP_ASYNC，在跟踪区注册 WP 并建立保护。"],
+      ["宿主 Linux", "处理第一次写", "由内核自动解除该页 UFFD 写保护，并继续处理写入。"],
+      ["快照程序", "批量获取写过范围", "查询 PAGEMAP_SCAN 的 PAGE_IS_WRITTEN，可把查询和适用范围的再保护结合。"],
+      ["快照程序", "生成增量", "在一致性边界读页内容并保存。页号集合与存储格式可以独立选择。"],
+    ],
+    benefit: "写热点无需等待供页线程逐次处理。异步追踪和 MISSING 供页可同时用于恢复后的 VM。",
+    cost: "需要较新的宿主支持。上游 WP_ASYNC 与 PAGEMAP_SCAN 参考 Linux 6.7，部署时探测具体协商能力。",
+    example: "E2B Runtime 固定版本的同步模式回退为关闭。实际运行配置、脏集提取版本需要分别核对。",
+    refs: ["userfaultfd", "pagemap", "e2bFlags"],
+  },
+  reflink: {
+    name: "reflink + 覆盖变更页",
+    goal: "用文件系统克隆快速得到一份完整的逻辑内存文件，只向克隆写入本轮变化。",
+    stages: ["XFS 等文件系统克隆基线的 extent 引用", "在副本的对应偏移覆盖脏页", "按普通完整文件寻址，可直接映射", "共享磁盘块按文件系统引用保留"],
+    steps: [
+      ["快照程序", "选择可用的完整基线", "找到上一版内存文件和布局，取得本轮一致的脏页及字节。"],
+      ["文件系统", "克隆文件块引用", "在支持 reflink 的同一文件系统内生成新文件，未变范围共享底层磁盘块。"],
+      ["快照程序", "写入已变范围", "对副本的对应偏移覆盖，文件系统为变化区域执行写时复制。页清零也必须写出或以正确的空洞表达。"],
+      ["恢复端", "按同样逻辑映射", "新文件已是完整逻辑视图，VMM 按其偏移读页，无需先重放旧版差异文件。"],
+    ],
+    benefit: "少写未变的数据，同时维持完整文件恢复接口。Cube 的本地快照提交采用这一组合。",
+    cost: "要求同一支持 reflink 的文件系统。跨存储后端的分发、写放大和耐久性需要单独量。",
+    example: "父版三页 A/B/C，当前 A/X/0。克隆继承 A，覆盖 B→X 与 C→0。",
+    refs: ["cubeSoft", "cube"],
+  },
+  "delta-index": {
+    name: "独立增量 + 父镜像索引",
+    goal: "只保存变化数据，并为当前快照提供可以定位每个逻辑内存范围的来源索引。",
+    stages: ["保留上一版索引与被引用的源数据", "写新变化，合并逻辑范围到版本 / 偏移的映射", "按偏移查本版索引，直达相应旧块、新块或零范围", "引用对象须完整持久化，回收依赖可达性"],
+    steps: [
+      ["快照程序", "引用上一代数据", "读取父索引，保持本轮没有变化的逻辑范围指向其原有来源。"],
+      ["快照程序", "输出本轮变化", "写新增脏范围，更新范围与数据对象偏移的映射。显式表达清零。"],
+      ["存储层", "发布完整索引", "确保新数据与所有依赖可读取，再发布该版本的索引或 manifest。"],
+      ["供页或恢复程序", "按逻辑地址找数据", "查询当前版本的合并索引，到所指的数据版本取页，可结合局部缓存。"],
+    ],
+    benefit: "发布、下载可以以差异或受访范围为单位，适合 E2B 这类分层和按需恢复。",
+    cost: "需要索引校验、对象保留与垃圾回收。供页时也会面对块读取、缓存和网络尾延迟。",
+    example: "父版 A/B/C，子版 A/X/0。P0 仍指向父数据，P1 指向新数据，P2 明确为零。",
+    refs: ["e2b", "e2bIndex"],
+  },
+  "pmem-dax": {
+    name: "virtio-pmem + DAX",
+    goal: "把宿主镜像文件作为 guest 的虚拟 pmem 设备，guest 借支持 DAX 的文件系统直访文件数据。",
+    stages: ["VMM 以镜像文件作为虚拟持久内存区域", "guest 识别 pmem 设备，按支持的 FS 启用 DAX", "文件系统把文件偏移映射到设备后备", "可共享只读基线，写入和持久化由具体设备与挂载定义"],
+    steps: [
+      ["VMM", "提供镜像后备", "把宿主镜像映射成 guest 可访问的设备内存区域。"],
+      ["guest Linux", "识别并挂载", "virtio-pmem 驱动接上虚拟设备，以支持 DAX 的文件系统挂载。"],
+      ["guest 文件系统", "建立文件数据映射", "按文件的数据布局定位设备地址，绕过相应的 guest 文件数据缓存。"],
+      ["应用 / 宿主", "直接读后备字节", "多个 VM 若使用相同宿主只读后备，可共用数据。应用自己拷贝到堆时仍会占内存。"],
+    ],
+    benefit: "适合大量 VM 读同一镜像。DSec 在特定强化学习负载上单启 DAX，报告宿主峰值内存下降 40.2%。",
+    cost: "需要兼容设备和 guest 文件系统。DSec 同一测试的瞬时 CPU 峰值从 26.5% 到 41.4%，需复测冷访和尾延迟。",
+    example: "把只读基础系统做成支持 DAX 的镜像，写入放到实例专有的可写层。",
+    refs: ["pmem", "dsec"],
+  },
+  "fs-dax": {
+    name: "virtio-fs DAX",
+    goal: "按共享目录导出宿主文件，用 DAX 窗口将被访问的文件范围映射给 guest。",
+    stages: ["宿主向文件后端指定导出目录", "guest 挂载 virtio-fs，协商 DAX 能力", "为文件范围建立宿主后备映射", "共享数据，读写由导出权限与一致性策略约束"],
+    steps: [
+      ["宿主文件后端", "导出目录", "指定目录及访问权限，提供文件查找、打开及数据访问的后端。"],
+      ["guest Linux", "挂载共享文件系统", "路径及文件元数据经 virtio-fs / FUSE 协议访问。"],
+      ["guest 驱动 / 后端", "建立 DAX 窗口映射", "确定文件和偏移，把所需宿主文件范围映入可用的共享窗口。"],
+      ["应用", "访问共享文件数据", "经支持的 DAX 路径读写数据，省掉对应的每 VM 文件数据缓存。"],
+    ],
+    benefit: "适合多个 VM 读同一模型或资源目录，无需把目录先打成块设备镜像。",
+    cost: "需要 VMM、后端和 guest 驱动实际支持 DAX 窗口。维护权限、映射窗口和文件更新的一致性。",
+    example: "导出只读 /models，多个 VM 直接访问同一权重文件。可写导出需另外确认访问和一致性要求。",
+    refs: ["virtiofs"],
+  },
+  balloon: {
+    name: "Balloon",
+    goal: "由宿主按目标让 guest 交出一定数量的页。在气球持有期间，这些页退出 guest 的可分配池。",
+    stages: ["Host 设置充气目标", "Guest 气球驱动分配并一直持有内存页，将页号通知 VMM", "VMM 释放对应内存", "Host 调低目标，Guest 放气后则释放内存页，可重新分配"],
+    steps: [
+      ["宿主策略", "设置目标", "根据宿主压力、优先级与 guest 状态决定希望腾出的量。"],
+      ["guest 气球驱动", "充气并占页", "向 guest 分配器申请能交出的页，把页号送给 VMM。压力大时可能达不到目标。"],
+      ["VMM / 宿主 Linux", "处理内存后备", "确认内存范围后丢弃允许丢弃的后备。具体操作随匿名、共享或文件映射变化。"],
+      ["guest 气球驱动", "放气后归还", "目标下调后，驱动把页交回 guest 分配器。宿主在后续实际访问时重新提供后备。"],
+    ],
+    benefit: "适合宿主需要持续控制某类 VM 的可分配容量，回收目标可由控制面调整。",
+    cost: "充气可能触发 guest 回收或换出。实际拿到的页数、业务延迟与 PSI 要一起观察。",
+    example: "设 512 MiB 气球目标，若页都交出并成功丢弃后备，guest 在放气前无法把这批页用于下次任务。",
+    refs: ["balloon"],
+  },
+  fpr: {
+    name: "Free Page Reporting",
+    goal: "guest 把已经空闲的页短暂隔离并上报，VMM 释放相应后备，然后 guest 可继续使用这些页。",
+    stages: ["Guest 空闲页达到上报条件", "Guest 暂扣空闲页并批量上报", "VMM 释放可回收内存", "VMM 通知处理完成，Guest 将页放回空闲链表。再次访问时，Host 按需补页。"],
+    steps: [
+      ["guest Linux", "发现已空闲的页", "应用释放或 guest 回收后，符合条件的页进入空闲页分配器。"],
+      ["guest 驱动", "暂扣并报告", "批量隔离空闲块，经 virtio-balloon 的 reporting 队列提交 GPA 范围。"],
+      ["VMM / 宿主 Linux", "释放对应后备", "按映射语义丢弃。私有匿名页常用 MADV_DONTNEED，私有文件快照与共享后备需分别处理。"],
+      ["guest Linux", "应答后恢复可分配", "将空闲页放回分配器。VM 配置容量不变，新任务触碰时可重新获得物理后备。"],
+    ],
+    benefit: "不需要持续扣住 guest 可用内存，传统气球目标为 0 时也可报告。适合突发任务之间的空档。",
+    cost: "只有符合条件且已空闲的页可以上报。共享或未驻留页会改变实际释放量。与 UFFD 组合还要处理 REMOVE 语义。",
+    example: "Cube PR #1758 的一组验证中，guest 释放约 1.8 GiB 已触及内存后，启用 FPR 的 VMM RSS 回到接近测试前。",
+    refs: ["report", "balloon", "cubeFpr"],
+  },
+  damon: {
+    name: "DAMON",
+    goal: "在 guest 尚保留长期未访问的可回收页时主动降低缓存，再用 FPR 把新腾出的页交给宿主。",
+    stages: ["Guest 内核定期监测", "Guest 按访问频率和策略回收冷页", "Guest 可通过 FPR 上报，VMM 回收对应内存", "Guest 再次访问冷数据时可能要重读或换入"],
+    steps: [
+      ["guest DAMON", "采样访问", "监测区域的访问频率，识别保持低访问数且年龄超过阈值的候选范围。"],
+      ["guest DAMON_RECLAIM", "按预算回收", "受时间、区域、水位与配额限制，尝试回收可丢弃的冷文件页等。"],
+      ["guest FPR", "报告已变空闲的块", "若回收页满足页上报条件，暂时隔离并将地址范围交给 VMM。"],
+      ["VMM / 宿主 Linux", "归还宿主并应答", "释放可丢弃的物理后备。后续 guest 访问原冷文件时可能重新读盘。"],
+    ],
+    benefit: "可在 guest 自身尚无明显压力时缩短冷页驻留。DSec 单启此组合，报告宿主内存时间积分下降 21.2%。",
+    cost: "误判冷页会增加重读和尾延迟。DSec 测量中峰值基本不变，使用配置时要核对 guest 版本与配额。",
+    example: "VM 工作负载停下来后仍留大量冷文件缓存。DAMON 先腾出缓存，FPR 再处理形成的空闲页。",
+    refs: ["damon", "report", "dsec"],
+  },
+  fph: {
+    name: "Free Page Hinting（FPH）",
+    stages: ["Host 通过 VMM 发起一轮回收", "Guest 暂扣空闲页块并上报", "VMM 释放可回收的宿主内存", "VMM 结束本轮后，Guest 归还暂扣页"],
+  },
+  "mem-agent": {
+    name: "mem-agent（MGLRU）",
+    goal: "在 guest 内由用户态代理驱动内核 MGLRU，按活跃度和压力控制冷页回收与内存整理。",
+    stages: ["Guest mem-agent 定期执行", "Guest 用 MGLRU 回收冷页，按需整理碎片", "Guest 可通过 FPR 上报，VMM 回收对应内存", "Guest 可重新分配空闲页，冷数据可能要重读或换入"],
+    steps: [
+      ["guest mem-agent", "选择周期和受控范围", "读取配置与 guest 压力，按策略启动内存老化、回收或整理。"],
+      ["guest 内核", "生成访问世代", "借 MGLRU 将页面按最近访问归入世代，优先尝试淘汰较老、符合条件的页。"],
+      ["guest mem-agent", "控制干扰", "按 PSI 等反馈限制回收，按策略执行内存整理，腾出或合并空闲范围。"],
+      ["guest FPR / VMM", "可选跨层归还", "开启空闲页上报后，合格页通知 VMM。后续访问被淘汰的数据仍按 guest 规则取回。"],
+    ],
+    benefit: "便于用 guest 侧策略主动控制缓存和碎片，适合较长驻且空闲阶段较多的 VM。",
+    cost: "回收过于激进会增加 CPU 和重访开销。需要适配目标 guest 的 MGLRU、PSI 与设备支持。",
+    example: "Kata mem-agent 可开启 reclaim_guest_freed_memory，配套将 guest 空闲页对应的宿主后备归还。",
+    refs: ["mglru", "memAgent", "report"],
+  },
+  prefetch: {
+    name: "启动热页预取",
+    goal: "根据首任务工作集，提前把高概率访问的快照范围读入缓存或准备给用户态缺页处理程序。",
+    stages: ["可随模板版本记录常见首访工作集", "启动前或关键路径之外准备热范围", "热页优先命中，遗漏仍正常缺页", "首任务 P50/P99、预取字节、命中与浪费"],
+    steps: [
+      ["模板或运行时", "记录首任务读了什么", "以同类真实任务捕获缺页和访问顺序，保存快照页偏移或范围。"],
+      ["控制面 / 加载器", "调度预取", "按模板复用情况和节点预算，在批量创建前或恢复早期异步读热范围。"],
+      ["宿主缓存 / 用户态缺页处理程序", "准备数据", "File 路径增加文件页缓存命中，UFFD 路径可提前取源块、解压或准备供页。"],
+      ["guest", "优先命中热页", "被覆盖的首次访问少等存储。其他页仍由原路径读取。"],
+    ],
+    benefit: "热集合稳定、同一缓存被多实例使用时有机会摊薄准备成本。",
+    cost: "同步预读可能仅把等待提前，过度预取会增加 I/O 与缓存占用。",
+    example: "本次调研的 Cube 小样本，冷缓存首命令中位数约 1279 ms，计入预读后约 1272 ms，每组 6 次。",
+    refs: ["snapbpf", "e2b"],
+  },
+  zero: {
+    name: "跳过已分配零页",
+    goal: "对本来会输出且内容全零的页，保留零值恢复语义，同时减少快照实际输出。",
+    stages: ["扫描已分配候选页，写出空洞或零范围", "保留文件空洞，或加载含零覆盖的索引", "访问该偏移时恢复为零", "扫描 CPU、分配空间、写入与持久化耗时"],
+    steps: [
+      ["快照程序", "确定候选范围", "全量保存选已分配并准备写出的页。增量保存只关注本轮需要表达的变化范围。"],
+      ["快照程序", "检查整页是否全零", "读候选页的全部字节，识别可以用零语义表示的页。"],
+      ["文件系统 / 索引", "写出零语义", "全量稀疏文件可留空洞。父页原先非零时，子版本要覆盖、打洞或明确标记为零。"],
+      ["恢复程序", "按零范围重建", "恢复时得到全零页，同时校验相邻数据和父版非零页未被错误继承。"],
+    ],
+    benefit: "全零页多且写带宽紧时，有机会降低磁盘和传输实际字节。",
+    cost: "扫描消耗 CPU 与内存带宽。已有空洞越多，可再省的量越少。",
+    example: "本次 Cube 微基准中，额外识别零页省约 14.18 MiB，含 fdatasync 的中位耗时从 558 ms 增到 584 ms。",
+    refs: [],
+  },
+  compression: {
+    name: "快照内存页压缩",
+    goal: "对快照数据按页或块编码，减少磁盘和网络字节，并保留恢复所需的随机读取能力。",
+    stages: ["按页或块压缩，写编码与偏移索引", "按全量解压或按需解压策略准备", "按访问范围读取压缩块并解码", "压缩率、CPU、随机读放大、首任务时延"],
+    steps: [
+      ["快照程序", "给快照数据分块", "选择覆盖页边界的块，并按需求决定每块独立编码或分帧。"],
+      ["保存端", "压缩并写索引", "记录原始逻辑偏移、压缩位置及长度，写入数据和校验信息。"],
+      ["恢复端", "定位所需的数据块", "按索引读取相应范围，可利用预取及已解码缓存。"],
+      ["恢复端", "解码并重建数据", "将解码数据填入 RAM 或交给按需用户态缺页处理程序。业务收到原始页字节。"],
+    ],
+    benefit: "当存储或网络是瓶颈时，节省传输与落盘。独立块更适配按需恢复。",
+    cost: "压缩和解压增加 CPU。块太大时，少量页访问也需要整块读取和解码。",
+    example: "某个 VM 首次只碰一页，若页所在压缩块是 2 MiB，缓存未命中时可能需要读取并解码整块。",
+    refs: [],
+  },
+  ksm: {
+    name: "KSM 内存去重",
+    goal: "在宿主扫描已标记的私有匿名页，把内容相同的物理页合并，降低重复驻留。",
+    stages: ["启用 KSM，VMM 标记可合并范围", "匿名 RAM 正常分配并被应用写入", "ksmd 比对并合并同内容页，之后写入触发 CoW", "净节省、扫描 CPU 和后续 CoW"],
+    steps: [
+      ["VMM", "标记候选范围", "给适用的匿名映射执行 MADV_MERGEABLE，宿主启用扫描。"],
+      ["宿主 ksmd", "寻找相同页面", "周期性扫描候选页，比较内容并确认匹配。"],
+      ["宿主 Linux", "合并为只读映射", "多个映射引用同一物理页，原本重复的后备可以释放。"],
+      ["宿主 Linux", "处理后续改写", "遇到写入时分出私有副本，单个 VM 的修改留在自身映射。"],
+    ],
+    scenario: "同机大量沙箱持有内容相同、很少改写的匿名页。",
+    benefit: "合并重复匿名页，降低宿主内存占用。",
+    cost: "扫描消耗 CPU，写入会触发 CoW。跨租户共享有侧信道风险。",
+    example: "同机相似 VM 长驻，且重复内容在匿名后备里。对照关闭 KSM，记录共享页数、节点净内存和 CPU。",
+    refs: ["ksm"],
+  },
+  thp: {
+    name: "透明大页（THP）",
+    goal: "由内核选择为适合的内存区分配或合并更大的页，提高单个地址转换项覆盖的范围。",
+    stages: ["检查匿名、文件或 shmem 后备的 THP 能力", "缺页时按策略分配大页或回退普通页", "后台有机会合并，也可按需拆分", "TLB miss、驻留、整理 CPU 与尾延迟"],
+    steps: [
+      ["宿主 / VMM", "选择映射和策略", "按 sysfs 等配置或 MADV_HUGEPAGE 标记允许使用的区域。"],
+      ["宿主 Linux", "在缺页时分配", "满足对齐和连续内存时可分配大页，必要时走普通页路径。"],
+      ["宿主 Linux", "运行时合并或拆分", "khugepaged 等路径可能将小页合并，回收或其他操作也可能拆分。"],
+      ["CPU / KVM", "使用较大映射", "在对齐、后备与映射条件满足时，大页有更高的 TLB 覆盖率。"],
+    ],
+    scenario: "长期运行、频繁访问大块内存的沙箱。",
+    benefit: "降低 TLB miss，无需预留大页池。",
+    cost: "大页分配和内存整理可能增加尾延迟，稀疏访问可能增加内存占用。",
+    example: "4 KiB 与 2 MiB 是常见规格，2 MiB 映射覆盖 512 个 4 KiB 页的地址范围，收益依访问模式。",
+    refs: ["thp"],
+  },
+  hugetlb: {
+    name: "HugeTLB 大页",
+    goal: "预先准备宿主大页池，VMM 显式使用大页作为特定 guest RAM 的后备。",
+    stages: ["预留目标 NUMA 节点的大页池", "通过 hugetlbfs 等建立显式后备", "按大页规格映射，回收粒度与后备受约束", "地址翻译、池余量、分配失败与兼容性"],
+    steps: [
+      ["宿主平台", "准备大页池", "核对页大小与 NUMA 节点，按工作负载规模为持久大页分配池容量。"],
+      ["VMM", "选择 HugeTLB 大页后备", "通过 hugetlbfs 或相应配置创建映射，确认对齐与剩余容量。"],
+      ["KVM / 宿主 Linux", "建立 guest RAM 映射", "用大页后备支持目标区域，在条件允许时建立较大二级映射。"],
+      ["宿主平台", "监控池与释放路径", "观察分配失败、释放后回池以及与快照、FPR 的组合行为。"],
+    ],
+    scenario: "规格固定、访存密集的专用 VM 池。",
+    benefit: "页大小可控，减少地址翻译开销。",
+    cost: "需预留大页池，池不足时可能分配失败。需验证快照和回收兼容性。",
+    example: "有确定容量的访存密集 VM 池，设置节点本地 2 MiB 大页配额，与普通页对比吞吐和尾延迟。",
+    refs: ["hugetlb", "ch"],
+  },
+  numa: {
+    name: "NUMA 内存放置",
+    goal: "让经常访问一段 guest RAM 的 vCPU 尽量从相同 NUMA 节点读取对应宿主物理页。",
+    stages: ["识别宿主 NUMA 节点、CPU 与余量", "设定 vCPU 亲和性和 RAM 分配策略", "保持局部访问，监控远端访问与热点", "本地/远端访存、各节点容量及 P99"],
+    steps: [
+      ["调度器", "选择宿主节点和 CPU", "按可用容量和工作负载分布匹配 vCPU 所在的物理 NUMA 节点。"],
+      ["VMM", "绑定线程和内存策略", "设置 vCPU 线程的 CPU 亲和性，并为相应内存后备设置 mbind 等策略。"],
+      ["宿主 Linux", "分配物理页", "缺页或预分配时依策略放置。已经驻留的共享文件页位置要一并考虑。"],
+      ["平台", "核对局部性和均衡", "比较业务 vCPU 的远端访问与各 NUMA 节点余量，容量紧张时调整策略。"],
+    ],
+    scenario: "多 NUMA 节点宿主上的访存密集沙箱。",
+    benefit: "让 vCPU 就近访问内存，减少远端访存。",
+    cost: "严格绑定限制调度，个别节点可能先耗尽内存。",
+    example: "在同一多路宿主，将 vCPU 与 RAM 同节点和跨节点分别测试，查看远端访存比与 P99。",
+    refs: ["numa"],
+  },
+};
+
+function element(tag, text, className) {
+  const node = document.createElement(tag);
+  if (text) node.textContent = text;
+  if (className) node.className = className;
+  return node;
+}
+
+function link(text, href) {
+  const node = element("a", text);
+  node.href = href;
+  return node;
+}
+
+function renderComparison(model) {
+  const section = element("section", "", "restore-diagram");
+  const scroller = element("div", "", "restore-scroll");
+  scroller.tabIndex = 0;
+  scroller.setAttribute("role", "region");
+  scroller.setAttribute("aria-label", model.name);
+  const table = element("table", "", "restore-grid");
+  table.setAttribute("aria-label", model.name);
+  const columns = table.appendChild(element("colgroup"));
+  columns.append(element("col", "", "stage-label"));
+  const head = table.createTHead().insertRow();
+  for (const name of ["技术", ...model.phases]) {
+    const label = element("th", name, "method-name");
+    label.scope = "col";
+    head.append(label);
+  }
+  const body = table.createTBody();
+  for (const id of model.ids) {
+    const technique = techniques[id];
+    const row = body.insertRow();
+    const label = element("th", technique.name, "stage-name");
+    label.scope = "row";
+    row.append(label);
+    const values = model.compareTradeoffs ? [technique.scenario, technique.benefit, technique.cost] : technique.stages;
+    for (const text of values) {
+      const cell = element("td", "", "stage-path");
+      if (model.highlightActors) {
+        for (const part of text.split(/\b(Host|Guest|VMM)\b/)) {
+          cell.append(/^(Host|Guest|VMM)$/.test(part)
+            ? element("strong", part, "restore-note-label")
+            : part);
+        }
+      } else {
+        cell.textContent = text;
+      }
+      row.append(cell);
+    }
+  }
+  scroller.append(table);
+  section.append(element("h3", model.name), scroller);
+  if (model.takeaway) section.append(element("p", model.takeaway, "restore-note"));
+  if (model.kernelNote) {
+    const note = element("p", "", "restore-note");
+    note.append(element("strong", "内核版本要求", "restore-note-label"), " " + model.kernelNote);
+    section.append(note);
+  }
+  return section;
+}
+
+const implementationMaps = {
+  delta: {
+    labels: ["沙箱项目", "VMM / 实现组件", "脏页追踪 / 选页", "保存格式"],
+    columns: [
+      [["cube", "CubeSandbox"], [null], ["e2b", "E2B Runtime"], ["fast", "OpenSandbox Fast Sandbox", "增量快照提案"], ["agentenv", "AgentENV"]],
+      [["cube-vmm", "cube-hypervisor"], ["ch-cow", "Cloud Hypervisor"], [null], ["firecracker", "Firecracker"], [null]],
+      [["soft", "Soft-dirty"], ["private-pages", "pagemap 找 CoW 私有页"], ["uffd-wp", "UFFD-WP", "异步 / 同步可选"], ["bitmap", "KVM Dirty Log"], ["resident", "mincore()"], ["full", "全量写入"]],
+      [["reflink", "完整逻辑内存文件", "reflink + 覆盖变更页"], ["layers", "独立增量 + 父镜像索引"], ["diff", "稀疏差量内存文件", "Firecracker 原生输出"], ["overlaybd", "OverlayBD 内存增量层"], ["full-file", "全量内存文件"]],
+    ],
+    edges: [
+      ["cube","cube-vmm"], ["cube-vmm","soft"], ["cube-vmm","private-pages","incremental"], ["soft","reflink"],
+      ["ch-cow","private-pages"], ["private-pages","reflink"],
+      ["e2b","firecracker"], ["fast","firecracker"], ["agentenv","firecracker"],
+      ["firecracker","uffd-wp","E2B 定制"], ["uffd-wp","layers"],
+      ["firecracker","bitmap"], ["bitmap","diff"], ["bitmap","overlaybd"],
+      ["firecracker","resident"], ["resident","diff"], ["resident","overlaybd"],
+      ["cube-vmm","full"], ["ch-cow","full"], ["firecracker","full"], ["full","full-file"],
+    ],
+    notes: [
+      [["按轮追踪写入", "Firecracker 用 KVM Dirty Log 并合并 VMM 写入记录。CubeSandbox 用 Soft-dirty 每轮清标记。E2B 用 UFFD-WP，异步模式可在保存时批量查写过的页。"]],
+      [["按页状态选取", "CoW 方案按恢复基线选取私有页，适合从模板启动后保存一次。mincore() 按驻留状态选页，适合能够安全跳过非驻留页的场景，Firecracker 关闭脏页追踪时可用它生成原生 Diff。"]],
+      [["全量保存", "Full 保存全部 guest RAM，适合建立初始基线或生成独立快照。"]],
+    ],
+    refs: ["cubeSoft", "e2bFlags", "e2bIndex", "fc", "userfaultfd", "agentEnvMemory", "agentEnvConfig", "fastDiffIssue", "cloudCowSnapshot", "cloudCowPages"],
+  },
+  dax: {
+    labels: ["沙箱平台 / 方案", "运行时 / 节点组件", "VMM", "镜像访问方案"],
+    columns: [
+      [["cube", "CubeSandbox"], ["dsec", "DeepSeek DSec", "公开论文方案"], ["fast", "OpenSandbox Fast Sandbox"], ["e2b", "E2B Runtime"], ["agent", "AgentENV"]],
+      [["cube-shim", "CubeShim"], [null], ["fastlet", "Fastlet / runtime-agent"], ["orchestrator", "E2B Orchestrator"], ["agent-node", "AgentENV 节点运行时"], ["kata", "Kata Containers"]],
+      [["cube-vmm", "cube-hypervisor"], ["ch", "Cloud Hypervisor", "--pmem"], [null], ["firecracker", "Firecracker"], [null], ["qemu", "QEMU", "配合 virtiofsd"]],
+      [["pmem", "virtio-pmem + DAX"], [null], [null], ["block", "块设备访问 · 无 DAX", "Fast Sandbox / E2B / AgentENV"], [null], ["dax", "virtio-fs DAX", "需启用 DAX 窗口"]],
+    ],
+    edges: [
+      ["cube","cube-shim"], ["cube-shim","cube-vmm"], ["cube-vmm","pmem"], ["ch","pmem"],
+      ["dsec","firecracker"], ["firecracker","pmem","DSec"],
+      ["fast","fastlet"], ["fastlet","firecracker"], ["e2b","orchestrator"], ["orchestrator","firecracker"],
+      ["agent","agent-node"], ["agent-node","firecracker"], ["firecracker","block"],
+      ["kata","qemu"], ["qemu","dax"],
+    ],
+    note: "virtio-pmem + DAX 映射镜像数据，virtio-fs DAX 映射共享目录中的文件。图中块设备分支展示三个项目的公开 rootfs 路径。",
+    refs: ["cubePmem", "dsec", "pmem", "virtiofs", "kataDax", "chPmem", "e2b", "fastImage", "agentEnvMemory"],
+  },
+  reclaim: {
+    labels: ["沙箱平台 / 方案", "运行时 / 节点组件", "VMM", "气球与空闲页上报", "Guest 内存回收"],
+    columns: [
+      [["cube", "CubeSandbox"], ["fast", "OpenSandbox Fast Sandbox"], ["e2b", "E2B Runtime"], ["agentenv", "AgentENV"], ["dsec", "DeepSeek DSec", "公开论文方案"], [null], [null]],
+      [["cube-shim", "CubeShim"], ["builder", "模板构建器 / fsb-vm"], ["orchestrator", "E2B Orchestrator"], [null], [null], [null], ["kata", "Kata Containers"]],
+      [["cube-vmm", "cube-hypervisor"], [null], [null], [null], ["fc", "Firecracker"], ["ch", "Cloud Hypervisor"], ["qemu", "QEMU"]],
+      [[null], [null], ["inflate", "Balloon"], ["fpr", "Free Page Reporting"], ["fph", "Free Page Hinting"], [null], [null]],
+      [[null], [null], [null], [null], ["damon", "DAMON"], [null], ["agent", "Kata mem-agent", "MGLRU"]],
+    ],
+    edges: [
+      ["cube","cube-shim"], ["cube-shim","cube-vmm"], ["cube-vmm","fpr"],
+      ["fast","builder"], ["builder","fc"], ["e2b","orchestrator"], ["orchestrator","fc"],
+      ["agentenv","fc"], ["dsec","fc"], ["fc","inflate"], ["fc","fpr"], ["fc","fph"], ["fc","damon"],
+      ["kata","qemu"], ["qemu","fpr"], ["ch","inflate"], ["ch","fpr"], ["damon","fpr"], ["agent","fpr","可选"],
+    ],
+    notes: [
+      [["E2B Runtime", "按功能开关接入 FPR 和 FPH，默认关闭。"]],
+      [["AgentENV / DeepSeek DSec", "Guest 用 DAMON 回收冷页，再通过 FPR 上报。AgentENV 默认配置跳过匿名页。"]],
+    ],
+    refs: ["balloon", "cubeFpr", "dsec", "memAgent", "report", "chBalloon", "kataQemuReclaim", "e2bReclaim", "fastReclaim", "agentReclaim"],
+  },
+  performance: {
+    labels: ["沙箱平台 / 方案", "运行时 / 节点组件", "VMM", "内存优化方式"],
+    columns: [
+      [["cube", "CubeSandbox"], ["e2b", "E2B Runtime"], ["fast", "OpenSandbox Fast Sandbox", "直连 Firecracker 路径"], ["agentenv", "AgentENV"], ["dsec-paper", "DeepSeek DSec", "公开论文方案"], [null]],
+      [["shim", "CubeShim"], ["orchestrator", "E2B Orchestrator"], ["fastlet", "Fastlet"], [null], [null], ["kata", "Kata Containers"]],
+      [["cube-vmm", "cube-hypervisor"], [null], ["fc", "Firecracker"], [null], ["ch", "Cloud Hypervisor"], ["qemu", "QEMU"]],
+      [[null], ["huge", "HugeTLB 大页"], ["thp", "透明大页（THP）"], ["numa", "NUMA 内存放置"], ["ksm", "KSM 内存去重"], [null]],
+    ],
+    edges: [
+      ["cube","shim"], ["shim","cube-vmm"], ["e2b","orchestrator"], ["orchestrator","fc"],
+      ["fast","fastlet"], ["fastlet","fc"], ["agentenv","fc"], ["dsec-paper","fc"],
+      ["kata","qemu"], ["qemu","huge"], ["qemu","numa"], ["qemu","ksm"], ["fc","huge"], ["fc","thp"],
+      ["ch","huge"], ["ch","thp"], ["ch","ksm"], ["ch","numa"], ["cube-vmm","huge"], ["cube-vmm","thp"], ["cube-vmm","numa"], ["cube-vmm","ksm"],
+    ],
+    note: "左侧连线展示项目接入的运行时和 VMM。右侧连线展示 VMM 可配置的内存优化能力，项目实际启用情况取决于部署配置。",
+    refs: ["cloudMemory", "fcHugeOpt", "kataHugeOpt", "cubeHugeOpt", "qemuMemoryOpt", "e2b", "fastImage", "agentEnvMemory", "dsec"],
+  },
+};
+
+function renderImplementationMap(chapterId) {
+  const model = implementationMaps[chapterId];
+  const section = element("section", "", "restore-diagram");
+  const heading = element("h3", model.columns[0].some(node => node[0] === "dsec") ? "开源方案与公开案例" : "开源方案");
+  heading.id = chapterId + "-implementations";
+  section.setAttribute("aria-labelledby", heading.id);
+  const scroller = element("div", "", "restore-scroll");
+  scroller.tabIndex = 0;
+  scroller.setAttribute("role", "region");
+  scroller.setAttribute("aria-labelledby", heading.id);
+  const graph = element("div", "", "project-graph comparison-graph");
+  const step = 55;
+  const height = 86 + (Math.max(...model.columns.map(column => column.length)) - 1) * step;
+  graph.style.height = height + "px";
+  const svgNamespace = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(svgNamespace, "svg");
+  svg.setAttribute("class", "project-links");
+  svg.setAttribute("viewBox", "0 0 1000 " + height);
+  svg.setAttribute("preserveAspectRatio", "none");
+  svg.setAttribute("aria-hidden", "true");
+  graph.append(svg);
+
+  const positions = new Map();
+  const fourColumns = model.columns.length === 4;
+  const fiveColumns = model.columns.length === 5;
+  const xPositions = fiveColumns ? [0, 210, 420, 630, 840] : fourColumns ? [0, 270, 540, 800] : [0, 370, 740];
+  const nodeWidth = fiveColumns ? 160 : fourColumns ? 200 : 260;
+  graph.classList.toggle("four-columns", fourColumns || fiveColumns);
+  graph.style.setProperty("--graph-node-width", nodeWidth / 10 + "%");
+  for (const [columnIndex, column] of model.columns.entries()) {
+    const x = xPositions[columnIndex];
+    const label = element("h4", model.labels[columnIndex], "graph-column");
+    label.style.left = x / 10 + "%";
+    graph.append(label);
+    for (const [index, [id, name, subtitle]] of column.entries()) {
+      if (id === null) continue;
+      const y = (height - (column.length - 1) * step) / 2 + 10 + index * step;
+      const node = element("div", name, "graph-node");
+      node.style.left = x / 10 + "%";
+      node.style.setProperty("--y", y + "px");
+      if (subtitle) node.append(element("small", subtitle));
+      graph.append(node);
+      positions.set(id, { x, y });
+    }
+  }
+  for (const [source, target, annotation] of model.edges) {
+    const start = positions.get(source);
+    const end = positions.get(target);
+    const direction = start.x < end.x ? 1 : -1;
+    const x = direction === 1 ? start.x + nodeWidth : start.x;
+    const tip = direction === 1 ? end.x - 1 : end.x + nodeWidth + 1;
+    const arrowBase = tip - 7 * direction;
+    const middle = (x + tip) / 2;
+    const line = document.createElementNS(svgNamespace, "path");
+    line.setAttribute("d", ["M", x, start.y, "C", middle, start.y, middle, end.y, tip, end.y].join(" "));
+    const arrow = document.createElementNS(svgNamespace, "polygon");
+    arrow.setAttribute("points", tip + "," + end.y + " " + arrowBase + "," + (end.y - 4) + " " + arrowBase + "," + (end.y + 4));
+    arrow.setAttribute("fill", "currentColor");
+    svg.append(line, arrow);
+    if (annotation) {
+      const label = document.createElementNS(svgNamespace, "text");
+      label.setAttribute("class", "edge-label");
+      label.setAttribute("x", middle);
+      label.setAttribute("y", (start.y + end.y) / 2 - 5);
+      label.setAttribute("text-anchor", "middle");
+      label.textContent = annotation;
+      svg.append(label);
+    }
+  }
+
+  const references = element("p", "", "sources");
+  for (const id of model.refs) references.append(link(...sources[id]));
+  scroller.append(graph);
+  section.append(heading, scroller);
+  if (model.note) section.append(element("p", model.note, "restore-note"));
+  for (const notes of model.notes ?? []) {
+    const paragraph = element("p", "", "restore-note");
+    for (const [name, description] of notes) {
+      if (paragraph.hasChildNodes()) paragraph.append("　");
+      paragraph.append(element("strong", name, "restore-note-label"), " " + description);
+    }
+    section.append(paragraph);
+  }
+  if (model.extra) {
+    const [name, description] = model.extra;
+    const paragraph = element("p", "", "restore-note");
+    paragraph.append(element("strong", name, "restore-note-label"), " " + description);
+    section.append(paragraph);
+  }
+  if (model.examples) {
+    const cases = element("dl", "", "implementation-cases");
+    for (const [name, description] of model.examples) {
+      const item = element("div");
+      item.append(element("dt", name), element("dd", description));
+      cases.append(item);
+    }
+    section.append(cases);
+  }
+  section.append(references);
+  return section;
+}
+
+const measuredEffects = {
+  restore: [
+    ["Kata · 官方样例", "Kata 官方 VM Template 样例中，同一宿主上的 100 台 VM（每台配置 128 MB）相比未启用 VM Template，合计节省约 9 GB 内存。", [["Kata 样例", "https://github.com/kata-containers/kata-containers/blob/main/docs/how-to/what-is-vm-templating-and-how-do-I-use-it.md"]]],
+    ["Cloud Hypervisor · PR 测试", "#7800 在 2 GB Guest 上测得全量复制到 UFFD，恢复至 vCPU 继续运行由约 7.14 s 降至 83 ms，每组 3 次。#8581 在 512 MiB Guest 上测得全量复制到文件 CoW，单实例恢复 P50 由 54–58 ms 降至 22–35 ms。两项测试环境不同，均未覆盖首个真实任务。", [["UFFD PR #7800", "https://github.com/cloud-hypervisor/cloud-hypervisor/pull/7800"], ["CoW PR #8581", "https://github.com/cloud-hypervisor/cloud-hypervisor/pull/8581"]]],
+    ["Cube + JuiceFS · 官方基准", "单并发跨机快照启动，首次平均 766.8 ms，预热后平均 199.5 ms。", [["Cube 基准", "https://cubesandbox.com/zh/blog/posts/2026-11-04-cubesandbox-juicefs-perf-benchmark"]]],
+    ["Firecracker 工作集预取 · 论文", "REAP 在论文的函数负载中，相比原生 Firecracker 快照恢复，平均冷启动获得 3.7× 加速。该结果来自研究原型。", [["REAP 论文", "https://arxiv.org/abs/2101.09355"]]],
+  ],
+  delta: [
+    ["CocoonBox / Cloud Hypervisor · 项目实验", "8 GiB Guest 从全量写内存改为 reflink + 覆盖私有页后，休眠 API 端到端耗时从 22.73 s 降至 1.03 s，内存写入从 8 GiB 降至约 274.5 MB。收益包含持久化写回，结果来自 CocoonBox 项目实验。", [["CocoonBox 基准", "https://github.com/loomhand/cocoonbox/blob/main/docs/bench.md"]]],
+    ["公开实测", "CubeBench v0.7.3 中，脏页约 6.5 MiB 时快照平均耗时 35.5 ms，约 194.4 MiB 时为 91.7 ms，约 1137 MiB 时为 332.4 ms。脚本每轮新建沙箱，只保存一次，按脚本注释对应首次快照的 PagemapAnon 路径。报告未附逐轮选页日志。这组数据对比不同脏页量下的耗时。", [["CubeBench", "https://docs.cubesandbox.com/blog/posts/2026-10-28-cubebench-073"], ["测试脚本", "https://github.com/TencentCloud/CubeSandbox/blob/master/examples/snapshot-rollback-clone/bench_snapshot_dirty.py"]]],
+  ],
+  dax: [
+    ["公开实测", "DeepSeek DSec 在真实 Agent 强化学习负载中，单开 virtio-pmem + DAX 后，宿主内存峰值下降 40.2%，瞬时 CPU 峰值从 26.5% 升至 41.4%。", [["DSec §8.4", "https://arxiv.org/html/2609.22978v1#S8.SS4"]]],
+    ["OpenDsec · 独立实现 A/B", "6 台 VM 读取同一份 64 MB 文件，报告宿主内存从 515–529 MB 降至 112–140 MB。属于文件复用率很高的合成场景。", [["OpenDsec 实测", "https://kernflux.github.io/en/blog/posts/dsec-implementation-notes"]]],
+    ["Firecracker · 官方示例", "单台 128 MB Guest 用 pmem 时，开启 DAX 后 RSS 约从 120 MB 降到 96 MB，约等于该例中的 virtio-blk。多实例共享收益需要用节点内存或 PSS 另行衡量。", [["Firecracker pmem 文档", "https://github.com/firecracker-microvm/firecracker/blob/main/docs/pmem.md"]]],
+  ],
+  reclaim: [
+    ["公开实测", "CubeSandbox PR 测试中，Guest 释放约 1.8 GiB 内存后，关闭 FPR 时 VMM RSS 仍约 1.9 GiB，开启后降回测试前水平附近。", [["Cube FPR 测试", "https://github.com/TencentCloud/CubeSandbox/pull/1758"]]],
+    ["公开实测", "DSec 单开 DAMON + FPR 后，测试期间累计宿主内存占用下降 21.2%，峰值基本不变。", [["DSec §8.4", "https://arxiv.org/html/2609.22978v1#S8.SS4"]]],
+    ["AgentENV · Issue 配置对照", "调整 DAMON 参数后，train-fasttext 的 Guest 平均占用从 922.1 MiB 降至 392.6 MiB，任务耗时从 114.75 s 增至 122.71 s。count-dataset-tokens 的 Guest 平均占用从 585.8 MiB 降至 274.7 MiB，耗时从 75.59 s 降至 72.01 s。每种配置仅一轮，内存指标为 Guest 的 MemTotal 减 MemFree。", [["AgentENV Issue #281", "https://github.com/kvcache-ai/AgentENV/issues/281"]]],
+    ["QEMU FPR · EuroSys 论文", "16 GiB Guest 编译 Clang 时，启用 FPR 相比静态分配且未回收的基线，QEMU RSS 累计占用下降 34%。", [["HyperAlloc §5.3、§5.5", "https://www.sra.uni-hannover.de/Publications/2025/hyperalloc-eurosys25/wrenger_25_eurosys.pdf"]]],
+  ],
+  performance: [
+    ["KSM / NUMA · 论文对照", "AdaptMD 论文在 NUMA 测试中观察到，跨节点去重可能引入远端访存，全局去重的性能代价最高达双节点 43%、四节点 60%。这是论文特定负载的上限样例。", [["AdaptMD §II-C", "https://www.cse.cuhk.edu.hk/~pclee/www/pubs/tc24adaptmd.pdf"]]],
+    ["THP 开 / 关 · Firecracker Issue 对照", "Apple Silicon 上通过 Tart 嵌套运行 Firecracker，2 vCPU / 2 GiB，关闭脏页追踪。普通页时 Bun/Pi 模块导入耗时 11.66–13.21 s，开启 THP 后为 0.314–0.414 s。该结果针对特定嵌套环境与模块导入。", [["Tart Issue #1340", "https://github.com/openai/tart/issues/1340"]]],
+    ["HugeTLB 与普通页 · Firecracker 官方测试", "Firecracker 报告，Guest RAM 改用 2 MiB HugeTLB 后备后，microVM 启动测试最多改善约 50%。公开文档只给出了最高改善幅度。", [["官方大页说明", "https://github.com/firecracker-microvm/firecracker/blob/main/docs/hugepages.md"]]],
+    ["NUMA 放置 · 独立 KVM 测试", "94 vCPU 虚拟机的 STREAM 测试中，默认配置约 77 GB/s，仅绑 CPU 约 75 GB/s，CPU 绑定配合 NUMA 拓扑和内存放置约 561 GB/s。该结果来自大型 VM 的合成带宽测试。", [["CloudRift NUMA 测试", "https://labs.cloudrift.ai/research/benchmarking-vcpu-numa-libvirt-settings"]]],
+  ],
+};
+
+function renderMeasuredEffects(chapterId) {
+  const section = element("section", "", "restore-diagram");
+  const heading = element("h3", "实际效果");
+  heading.id = chapterId + "-effects";
+  section.setAttribute("aria-labelledby", heading.id);
+  section.append(heading);
+  const results = element("dl", "", "implementation-cases");
+  for (const [label, description, refs = []] of measuredEffects[chapterId]) {
+    const item = element("div");
+    item.append(element("dt", label), element("dd", description));
+    if (refs.length) {
+      const sources = element("dd", "", "sources");
+      for (const reference of refs) sources.append(link(...reference));
+      item.append(sources);
+    }
+    results.append(item);
+  }
+  section.append(results);
+  return section;
+}
+
+const primaryNav = document.getElementById("nav");
+const main = document.getElementById("main");
+const targets = new Map();
+const pages = chapters.map(chapter => {
+  const line = element("section", "", "line");
+  line.id = chapter.id;
+  const header = element("div", "", "intro");
+  const heading = element("h2", chapter.name);
+  heading.id = chapter.id + "-title";
+  line.setAttribute("aria-labelledby", heading.id);
+  header.append(heading, element("p", chapter.summary));
+
+  line.append(header);
+  if (chapter.id === "restore") {
+    line.append(document.getElementById("restore-comparison-diagram").content.cloneNode(true));
+  } else {
+    for (const group of chapter.comparisons) line.append(renderComparison(group));
+    line.append(renderImplementationMap(chapter.id));
+  }
+
+  line.append(renderMeasuredEffects(chapter.id));
+
+  const navLink = link(chapter.short, "#" + chapter.id);
+  primaryNav.append(navLink);
+  main.append(line);
+  const page = { line, navLink };
+  targets.set(chapter.id, page);
+  return page;
+});
+
+function navigate() {
+  const target = location.hash.slice(1);
+  const active = targets.get(target) || pages[0];
+  for (const page of pages) {
+    page.line.hidden = page !== active;
+    if (page === active) page.navLink.setAttribute("aria-current", "location");
+    else page.navLink.removeAttribute("aria-current");
+  }
+  if (targets.has(target) && target !== active.line.id) {
+    document.getElementById(target).scrollIntoView({block:"start"});
+  } else {
+    window.scrollTo(0, 0);
+  }
+}
+window.addEventListener("hashchange", navigate);
+navigate();
+</script>
+</body>
+</html>

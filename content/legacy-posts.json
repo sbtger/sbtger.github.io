@@ -291,5 +291,18 @@
     ],
     "legacyPath": "/2020/03/15/hello-world/",
     "featured": false
+  },
+  {
+    "slug": "sandbox-memory",
+    "title": "沙箱内存虚拟化技术",
+    "date": "2026-11-25",
+    "categories": [
+      "基础知识"
+    ],
+    "tags": [
+      "沙箱",
+      "虚拟化"
+    ],
+    "featured": false
   }
 ]

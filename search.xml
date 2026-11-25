@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>沙箱内存虚拟化技术</title>
+    <url>/articles/sandbox-memory.html</url>
+    <content><![CDATA[<p>沿沙箱启动、运行和回收的技术主线，比较快照恢复、按需分页、写时复制、内存回收和跨实例共享。</p>]]></content>
+    <categories><category>基础知识</category></categories>
+    <tags><tag>沙箱</tag><tag>虚拟化</tag></tags>
+  </entry>
+  <entry>
     <title>DDIA-01.可靠、可扩展、可维护的应用</title>
     <url>/articles/ddia-reliability.html</url>
     <content><![CDATA[<h2 id="第一部分-数据系统的基础">第一部分 数据系统的基础</h2><h2 id="1-可靠、可扩展、可维护的应用">1.可靠、可扩展、可维护的应用</h2><p>本书主要讲述的内容是数据系统的原理与实践，以及如何构建数据密集型应用。目前的很多应用都是数据密集型，而不是计算密集型。计算性能基本不是大多数应用的限制因素，而是通常大量的数据信息。这些数据信息如何存储为了下次查找（database），加速读取（cache），根据索引查找（index），流处理？，大量增加数据（批处理）。由于不同场景对于性能，数据访问方式，具体实现的要求不同，数据系统有很多。对于数据系统，我们主要关注可靠性、可扩展性和可维护性3点。</p>
