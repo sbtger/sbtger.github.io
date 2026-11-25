@@ -27,6 +27,7 @@
   .wrap { width: min(100%, 1300px); margin: 0 auto; padding-inline: clamp(16px, 4vw, 52px); }
   header { position: sticky; z-index: 2; top: 0; background: var(--background); border-bottom: 1px solid var(--line); }
   header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 14px; }
+  .article-heading { display: flex; align-items: center; gap: 12px; }
   h1, h2, h3, h4, p, dl, dd { margin: 0; }
   h1 { font-size: 18px; line-height: 1.35; white-space: nowrap; }
   h2 { font-size: clamp(27px, 4vw, 43px); line-height: 1.18; letter-spacing: -.035em; }
@@ -35,7 +36,7 @@
   a { color: var(--mint); text-underline-offset: 4px; }
   button { font: inherit; }
   :is(button, a, .restore-scroll):focus-visible { outline: 2px solid var(--mint); outline-offset: 3px; }
-  nav { display: flex; gap: 5px; overflow-x: auto; padding: 3px; }
+  nav { display: flex; flex-wrap: wrap; gap: 5px; padding: 3px; }
   nav a, .phase-button {
     padding: 5px 10px;
     border: 1px solid transparent;
@@ -152,10 +153,13 @@
   @media (max-width: 895px) {
     .restore-scroll-note { margin-bottom: 3px; display: block; color: var(--muted); font-size: 12px; }
   }
-  @media (max-width: 710px) {
+  @media (max-width: 820px) {
     html { scroll-padding-top: 112px; }
     header .wrap { flex-direction: column; align-items: stretch; gap: 4px; padding-block: 9px; }
-    nav { margin-inline: -3px; }
+    nav { margin-inline: -3px; gap: 2px; }
+    nav a { padding-inline: 2px; }
+  }
+  @media (max-width: 710px) {
     .flowchart { grid-template-columns: 1fr; gap: 15px; }
     .step:not(:last-child)::after { content: "↓"; right: calc(50% - 10px); top: 100%; line-height: 16px; }
     .facts { grid-template-columns: 1fr; gap: 7px; }
@@ -187,9 +191,10 @@
 <body>
 <header>
   <div class="wrap">
-    <a href="../index.html">返回博客首页</a>
-    <h1>沙箱内存虚拟化技术</h1>
-    <div class="prose"><p>沿沙箱启动、运行和回收的技术主线，比较快照恢复、按需分页、写时复制、内存回收和跨实例共享。</p></div>
+    <div class="article-heading">
+      <a href="../index.html">返回</a>
+      <h1>沙箱内存虚拟化技术</h1>
+    </div>
     <nav aria-label="技术主线" id="nav"></nav>
   </div>
 </header>

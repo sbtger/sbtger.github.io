@@ -15,8 +15,10 @@ export async function writeSearchIndex(posts) {
   for (const post of posts) {
     const article = await fs.readFile(path.join('articles', post.slug + '.html'), 'utf8');
     const body = article.match(/<div class="prose">([\s\S]*?)<\/div>\s*<nav\b/);
-    if (!body) throw new Error('Missing article body for search: ' + post.slug);
-    const content = body[1].replaceAll(']]>', ']]]]><![CDATA[>');
+    const description = article.match(/<meta name="description" content="([^"]*)">/);
+    const searchContent = body?.[1] ?? description?.[1];
+    if (!searchContent) throw new Error('Missing article body for search: ' + post.slug);
+    const content = searchContent.replaceAll(']]>', ']]]]><![CDATA[>');
     entries.push([
       '  <entry>',
       '    <title>' + xml(post.title) + '</title>',

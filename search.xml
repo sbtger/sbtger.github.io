@@ -3,7 +3,7 @@
   <entry>
     <title>沙箱内存虚拟化技术</title>
     <url>/articles/sandbox-memory.html</url>
-    <content><![CDATA[<p>沿沙箱启动、运行和回收的技术主线，比较快照恢复、按需分页、写时复制、内存回收和跨实例共享。</p>]]></content>
+    <content><![CDATA[沿沙箱启动、运行和回收的技术主线，比较快照恢复、按需分页、写时复制、内存回收和跨实例共享。]]></content>
     <categories><category>基础知识</category></categories>
     <tags><tag>沙箱</tag><tag>虚拟化</tag></tags>
   </entry>
