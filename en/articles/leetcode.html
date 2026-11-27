@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LeetCode Notes · Andy Zhang</title>
+  <link rel="icon" href="/images/andy-zhang-avatar.png" type="image/png">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="canonical" href="https://anred.space/en/articles/leetcode.html">
+  <link rel="alternate" hreflang="zh-CN" href="https://anred.space/articles/leetcode.html">
+</head>
+<body>
+  <main class="shell">
+    <article class="frame reader">
+      <h1 class="page-title">LeetCode Notes</h1>
+      <header class="byline"><a class="author" href="/"><img src="/images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-07-22">2020-07-22</time><span aria-hidden="true">·</span><a href="/articles/leetcode.html" lang="zh-CN" hreflang="zh-CN">中文</a></header>
+      <div class="prose"><h2>Arrays</h2><ol><li>Read the constraints before choosing an approach. Consider empty input and boundary cases early.</li><li>If compilation reports <code>control reaches end of non-void function</code>, make sure every reachable control path returns a value. A return inside one branch might leave another path uncovered.</li><li>When comparing values, check whether equality satisfies the condition.</li><li>In C++, prefer <code>++i</code> when the old value is unnecessary. Post-increment may have to preserve the previous value, particularly for user-defined types.</li><li>Use the correct type for Java floating-point literals.</li></ol><pre><code>float f = 1.1;     // Invalid: 1.1 is a double literal in Java.
+float f = 1.1f;    // Valid.
+double d = 34.4;   // Valid.</code></pre></div>
+      <nav class="page-links" aria-label="Related pages"><a href="/#archive">Back to articles</a></nav>
+    </article>
+  </main>
+</body>
+</html>

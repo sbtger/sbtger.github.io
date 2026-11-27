@@ -8,17 +8,18 @@
   <link rel="icon" type="image/png" href="/images/andy-zhang-avatar.png">
   <link rel="canonical" href="https://anred.space/articles/android-components.html">
   <link rel="stylesheet" href="../assets/site.css">
+  <link rel="alternate" hreflang="en" href="https://anred.space/en/articles/android-components.html">
 </head>
 <body>
   <main class="shell">
     <article class="frame reader">
       <h1 class="page-title">Android安全之组件安全</h1>
-      <header class="byline"><a class="author" href="../index.html"><img src="../images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-07-20">2020-07-20</time> · 防护笔记整理</header>
+      <header class="byline"><a class="author" href="/zh/"><img src="../images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-07-20">2020-07-20</time> · 防护笔记整理<span aria-hidden="true">·</span><a href="/en/articles/android-components.html" lang="en" hreflang="en">English</a></header>
       <div class="prose"><h2>组件通信</h2><p>Android 用 Intent 在组件之间传递动作、数据与附加参数。组件是否能被外部调用，以及调用方是否具备执行业务操作的权限，是两项独立的检查。</p>
 <h2>四类组件的职责</h2><table><thead><tr><th scope="col">组件</th><th scope="col">用途</th><th scope="col">审核要点</th></tr></thead><tbody><tr><td>Activity</td><td>承载用户界面和交互流程</td><td>涉及个人信息或账户变更的页面，需要在执行操作时核实用户和权限。</td></tr><tr><td>Service</td><td>提供后台服务，也可允许其他组件绑定</td><td>区分仅供应用内部使用的服务和对外接口，限定可调用的操作。</td></tr><tr><td>BroadcastReceiver</td><td>接收系统或应用广播</td><td>根据用途限定接收范围和发送方权限，同时处理空消息与缺少字段的消息。</td></tr><tr><td>ContentProvider</td><td>通过 URI 统一管理数据访问</td><td>分别检查读、写及临时授权范围，针对具体资源作权限判断。</td></tr></tbody></table>
 <h2>显式与隐式 Intent</h2><p>显式 Intent 指定目标组件。隐式 Intent 交给系统根据动作、类别、数据等条件匹配接收方。业务已知接收方时可以缩小目标范围，避免个人标识和私密参数流向无关应用。</p>
 <h2>动态广播的生命周期</h2><p>在界面启动时注册的接收器，应在对应的生命周期节点注销。接收器若与界面生命周期脱节，可能继续引用已经结束的界面，或在不再需要时接收事件。</p></div>
-      <nav class="page-links" aria-label="相关索引"><a href="../index.html#archive">返回文章列表</a> <a href="../categories.html#categories-4">android security</a> <a href="../tags.html#tags-5">android</a> <a href="../tags.html#tags-6">security</a> <a href="../tags.html#tags-7">组件安全</a></nav>
+      <nav class="page-links" aria-label="相关索引"><a href="/zh/#archive">返回文章列表</a> <a href="../categories.html#categories-4">android security</a> <a href="../tags.html#tags-5">android</a> <a href="../tags.html#tags-6">security</a> <a href="../tags.html#tags-7">组件安全</a></nav>
     </article>
   </main>
 </body>

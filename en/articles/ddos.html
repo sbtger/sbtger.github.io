@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Network Security Notes on Denial of Service · Andy Zhang</title>
+  <link rel="icon" href="/images/andy-zhang-avatar.png" type="image/png">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="canonical" href="https://anred.space/en/articles/ddos.html">
+  <link rel="alternate" hreflang="zh-CN" href="https://anred.space/articles/ddos.html">
+</head>
+<body>
+  <main class="shell">
+    <article class="frame reader">
+      <h1 class="page-title">Network Security Notes on Denial of Service</h1>
+      <header class="byline"><a class="author" href="/"><img src="/images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-03-16">2020-03-16</time><span aria-hidden="true">·</span><a href="/articles/ddos.html" lang="zh-CN" hreflang="zh-CN">中文</a></header>
+      <div class="prose"><h2>Availability and resource exhaustion</h2><p>An availability problem can appear as delayed responses to legitimate requests. The bottleneck could be a network link, connections or queues, CPU, storage, or memory. Distributed traffic may come from many sources, so a single host rarely tells the full story.</p>
+<h2>Checking for memory leaks</h2><p>A leak occurs when allocated memory is no longer needed but cannot be freed. Growing memory consumption alone does not establish unusual traffic. Examine request volume, load changes, and memory reclamation together.</p>
+<h2>Connection and traffic metrics</h2><p>Track interface traffic, active and half-open connections, request latency, error rates, and backend queue depth. Compare with a normal baseline for the same time period to see how incoming traffic correlates with backend saturation.</p>
+<h2>Response and recovery</h2><p>Check connection timeouts, queue capacity, routing, and edge-device settings against the actual bottleneck. After applying rate limits, upstream filtering, or isolating a high-load feature, monitor successful legitimate requests to confirm recovery.</p></div>
+      <nav class="page-links" aria-label="Related pages"><a href="/#archive">Back to articles</a></nav>
+    </article>
+  </main>
+</body>
+</html>

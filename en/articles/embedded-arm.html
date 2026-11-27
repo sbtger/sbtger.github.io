@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Embedded Systems Notes: PIC and ARM — engineering notes by Peng Zhang.">
+  <title>Embedded Systems Notes: PIC and ARM · Andy Zhang</title>
+  <link rel="icon" type="image/png" href="/images/andy-zhang-avatar.png">
+  <link rel="canonical" href="https://anred.space/en/articles/embedded-arm.html">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="alternate" hreflang="en" href="https://anred.space/en/articles/embedded-arm.html">
+  <link rel="alternate" hreflang="zh-CN" href="https://anred.space/articles/embedded-arm.html">
+</head>
+<body>
+  <main class="shell">
+    <article class="frame reader">
+      <h1 class="page-title">Embedded Systems Notes: PIC and ARM</h1>
+      <header class="byline"><a class="author" href="/"><img src="/images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-03-17">2020-03-17</time><span aria-hidden="true">·</span><a href="/articles/embedded-arm.html" lang="zh-CN" hreflang="zh-CN">中文</a></header>
+      <div class="prose">
+<h2>PIC</h2>
+<h3>Interrupts</h3>
+<p>Interrupts can be grouped, masked, and managed through a common entry point. The handler checks pending flags to distinguish the sources. Clear stale flags before enabling a source. External interrupt inputs may support selectable triggering edges. The falling edge can be sharper on circuits that drive low more strongly, so choose based on the actual signal. A change interrupt can use an XOR comparison between successive port states.</p>
+<h3>Power, configuration, and I/O</h3>
+<p>The original PIC example uses a lower internal voltage and a higher port voltage for reliability. Hardware configuration words establish options such as reset and oscillator settings before ordinary execution. Compared with the 80C51, these PIC examples add clamp diodes, analog/digital selection, direction selection, and configurable pull-ups. Internal oscillators can be calibrated externally. The available choices trade off response speed, power, and noise immunity.</p>
+<ul><li>The voltage examples use A=5 V, B=3.3 V, and C=1.8 V. Example general I/O thresholds are 70% of Vcc for high and 30% for low. Reset examples use 80% and 12%. Thresholds depend on the part.</li>
+<li>Rise time is commonly measured from 10% to 90% of Vcc, and fall time from 90% to 10%. The original rule of thumb is to keep each transition within 4% of the signal period. A lower signal frequency increases the available time.</li>
+<li>Clock control at the component level reduces dynamic power and can help manage interference. A hardware watchdog detects stalled software and can reset the device. Reset reason flags help firmware choose a recovery path.</li>
+<li>Push-pull outputs actively drive both levels. Open-collector and open-drain outputs require a pull-up for the high level. Their switching behavior depends on the load and pull-up.</li></ul>
+<h2>ARM architecture</h2>
+<h3>Instruction set extensions and processor families</h3>
+<ul><li><strong>T:</strong> Thumb uses compact encodings. The original notes estimate typical code size at roughly 65% of ARM code. Smaller code can improve fetch efficiency, while some operations need additional instructions. Classic exception entry has its own instruction-state requirements. Classic Thumb appears in ARMv4T and later variants.</li>
+<li><strong>D:</strong> On-chip debug support can halt execution on debugger request.</li>
+<li><strong>M:</strong> Enhanced multiplication supports a 64-bit result from two 32-bit operands, with long multiply and multiply-accumulate instructions.</li>
+<li><strong>I:</strong> EmbeddedICE provides breakpoint and watchpoint facilities.</li>
+<li><strong>E:</strong> Enhanced DSP instructions include 16-bit multiply or multiply-accumulate and signed saturating arithmetic.</li>
+<li><strong>J:</strong> Jazelle accelerates some Java bytecode execution in historical ARM implementations.</li>
+<li><strong>S:</strong> A synthesizable design can be supplied in an HDL such as VHDL or Verilog.</li></ul>
+<p>Architecture revisions balance performance improvements and compatibility. Thumb-2 was introduced with ARMv6T2. ARMv7 profiles include A for application processors, R for real-time workloads, and M for microcontrollers. Cortex product lines span several architecture generations.</p>
+<h3>Buses and execution modes</h3>
+<p>AMBA defines on-chip buses. AHB connects higher-performance blocks and supports single, burst, and split transactions in applicable variants. ASB supports burst transfers. APB provides a simpler interface for low-bandwidth peripherals.</p>
+<p>Classic ARM modes include user, FIQ, IRQ, supervisor, abort, system, and undefined-instruction modes. Software and exception entry can change mode. ARM and Thumb are instruction states. In classic configurations, reset enters ARM state, and interworking instructions select the target state. Assembly directives such as CODE16 and CODE32 select instruction encoding during assembly.</p>
+<p>Classic ARM has 31 general-purpose registers and six status registers when banked copies are counted. R0–R7 are unbanked, R8–R14 are banked in some modes, and R15 is the program counter. The CPSR includes the interrupt masks, Thumb state, and mode bits. Classic Thumb emphasizes R0–R7 and also uses registers such as SP and LR.</p>
+<p>Exception vectors cover reset, undefined instructions, software interrupts, prefetch and data aborts, IRQ, and FIQ. ARM implementations can support little- and big-endian data. Alignment constraints vary with instruction and architecture. I/O commonly uses ordinary load and store instructions on memory-mapped device registers.</p>
+<h3>Memory and flash</h3>
+<p>Primary storage includes ROM and RAM. Secondary storage includes disks and flash-based media such as CF and SD cards. An illustrative latency hierarchy runs from registers and cache through SRAM, DRAM, and ROM. NAND flash reads and programs pages and erases blocks. The K8F1208 example organizes 4,096 blocks into 32 pages per block, with 512 data bytes and 16 spare bytes per page. An address selects the block, page, and location within the page.</p>
+<p>The MMU translates virtual to physical addresses and checks access permissions. Broad memory-management schemes include segmentation, paging, and combinations of both. ARM architectural translation uses page tables with multiple supported mapping sizes.</p>
+<h3>S3C2410 clocks and power</h3>
+<p>FCLK feeds the CPU, HCLK feeds AHB devices, and PCLK feeds APB devices. PLLs multiply an external reference clock. The example has a main system PLL and a USB PLL, and software can gate clocks where supported to save power.</p>
+<ul><li>Idle stops the CPU core clock.</li><li>Normal operation allows software clock control.</li><li>Slow operation can bypass the PLL.</li><li>Sleep or power-down can wake on an external EINT[15:0] or RTC alarm when the wake logic has power.</li></ul>
+<p>The example uses a 1.8 V core and 3.3 V processor and memory I/O. Power-on delays and supply sequencing give rails time to settle before initialization. Hardware configuration provides flexibility while software libraries can simplify development and portability.</p>
+<h3>Timers</h3>
+<ul><li>The watchdog uses PCLK or an implementation-specific clock. It can provide a timer interrupt or reset the system. Typical components include prescalers, WTDAT, WTCNT, WTCON, and reset logic. Configure it before starting it.</li><li>The real-time clock can have its own clock or supply. Reads across a rollover can produce inconsistent fields, so software can verify a stable reading or use hardware latching if available. The RTC also supports alarms.</li><li>Timer hardware can generate PWM and manage dead time for power electronics. Some timers generate DMA requests. DMA and CPU accesses can contend for the same bus, so software delay loops may become less predictable.</li></ul>
+<h3>Interrupts and DMA</h3>
+<p>Peripherals can use polling, interrupts, or DMA. Interrupts provide good response without constant polling and require careful debugging when nested. IRQ and higher-priority FIQ are distinct classes. Controllers can group or vector sources and use masks, pending flags, and priorities.</p>
+<p>DMA transfers data directly between supported peripherals and memory or between memory regions. It reduces CPU instruction overhead and supports fast devices that would be impractical to service byte by byte with interrupts. A controller may offer single-service requests, single-service handshake, or full-service handshake. Features to check include priorities, valid source and destination pairs, sustained throughput, block and burst modes, and completion interrupts. Shared bus use can change CPU timing.</p></div>
+      <nav class="page-links" aria-label="Related links"><a href="/#archive">Back to articles</a></nav>
+    </article>
+  </main>
+</body>
+</html>

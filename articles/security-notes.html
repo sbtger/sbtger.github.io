@@ -8,18 +8,19 @@
   <link rel="icon" type="image/png" href="/images/andy-zhang-avatar.png">
   <link rel="canonical" href="https://anred.space/articles/security-notes.html">
   <link rel="stylesheet" href="../assets/site.css">
+  <link rel="alternate" hreflang="en" href="https://anred.space/en/articles/security-notes.html">
 </head>
 <body>
   <main class="shell">
     <article class="frame reader">
       <h1 class="page-title">安全类错题集</h1>
-      <header class="byline"><a class="author" href="../index.html"><img src="../images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-08-07">2020-08-07</time> · 防护笔记整理</header>
+      <header class="byline"><a class="author" href="/zh/"><img src="../images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-08-07">2020-08-07</time> · 防护笔记整理<span aria-hidden="true">·</span><a href="/en/articles/security-notes.html" lang="en" hreflang="en">English</a></header>
       <div class="prose"><h2>Java 字符串与线程</h2><p>String.length() 返回 UTF-16 代码单元数。yield() 向调度器提示当前线程愿意让出处理器。线程之后何时再次运行取决于调度器。</p>
 <h2>等待、唤醒与休眠</h2><table><thead><tr><th scope="col">方法</th><th scope="col">执行时发生什么</th></tr></thead><tbody><tr><td>wait()</td><td>持有对象监视器的线程进入等待集，并释放该对象的监视器。返回前需要重新取得监视器。</td></tr><tr><td>notify()</td><td>从该对象的等待集中唤醒一个线程。被唤醒的线程需要等其他线程释放监视器后才能继续。</td></tr><tr><td>sleep()</td><td>当前线程暂停一段时间。休眠期间它仍持有此前取得的监视器。</td></tr></tbody></table>
 <h2>HTTP 与移动应用</h2><p>HTTP 301 表示资源永久迁移，响应可用 Location 指出新地址。Android 的广播接收器既能在清单中声明，也能随组件生命周期动态注册。发布包做代码收缩和混淆时，可分别检查包体积与名称映射文件。</p>
 <h2>Shell 位置参数</h2><p>Shell 脚本中，$0 是脚本名，$1 是第一个传入参数，$# 是参数个数，$? 是上一条命令的退出状态。使用带双引号的 &quot;$@&quot; 可以保留各个参数的边界。</p>
 <h2>服务权限与消息有效期</h2><p>数据库与缓存服务应限定监听范围、调用方身份和账号权限。对于一次性请求，还需要核对消息有效期及唯一标识，避免合法请求被重复受理。</p></div>
-      <nav class="page-links" aria-label="相关索引"><a href="../index.html#archive">返回文章列表</a> <a href="../categories.html#categories-2">基础知识</a> <a href="../tags.html#tags-2">安全</a></nav>
+      <nav class="page-links" aria-label="相关索引"><a href="/zh/#archive">返回文章列表</a> <a href="../categories.html#categories-2">基础知识</a> <a href="../tags.html#tags-2">安全</a></nav>
     </article>
   </main>
 </body>

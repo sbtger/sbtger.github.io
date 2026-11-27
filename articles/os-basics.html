@@ -8,12 +8,13 @@
   <link rel="icon" type="image/png" href="/images/andy-zhang-avatar.png">
   <link rel="canonical" href="https://anred.space/articles/os-basics.html">
   <link rel="stylesheet" href="../assets/site.css">
+  <link rel="alternate" hreflang="en" href="https://anred.space/en/articles/os-basics.html">
 </head>
 <body>
   <main class="shell">
     <article class="frame reader">
       <h1 class="page-title">操作系统基础知识</h1>
-      <header class="byline"><a class="author" href="../index.html"><img src="../images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-08-06">2020-08-06</time></header>
+      <header class="byline"><a class="author" href="/zh/"><img src="../images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-08-06">2020-08-06</time><span aria-hidden="true">·</span><a href="/en/articles/os-basics.html" lang="en" hreflang="en">English</a></header>
       <div class="prose"><h2 id="进程">进程</h2><p>进程是正在执行的程序，是操作系统资源分配的基本单位。一般包含指令、数据和PCB。</p>
 <p>孤儿进程是指父进程退出，还在运行的子进程。孤儿进程会被init进程（id为1）收养，不会对系统造成危害。</p>
 <p>僵尸进程是指子进程的进程描述符在退出时不会释放，父进程同时也没有进行wait()或waitpid()操作获取子进程信息，因此子进程的进程描述符还会保存在系统中。由于进程号是有限的，如果产生大量的僵尸进程，将会没有可用的进程号而导致系统不能产生新的进程。解决办法是杀死父进程。使之成为孤儿进程。</p>
@@ -68,7 +69,7 @@
 <p>先进先出：但也可能会把经常访问的页面换出。</p>
 <p>LRU：根据过去判断。将最近最久未使用的页面换出。维护一个链表。页面访问则将之移动到表头。由于需要更新链表，因此LRU代价很高。</p>
 <p>时钟算法：时钟算法使用环形链表，0则不替换，1则替换。</p></div>
-      <nav class="page-links" aria-label="相关索引"><a href="../index.html#archive">返回文章列表</a> <a href="../categories.html#categories-2">基础知识</a> <a href="../tags.html#tags-3">操作系统</a></nav>
+      <nav class="page-links" aria-label="相关索引"><a href="/zh/#archive">返回文章列表</a> <a href="../categories.html#categories-2">基础知识</a> <a href="../tags.html#tags-3">操作系统</a></nav>
     </article>
   </main>
 </body>

@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Microcomputer Interface Notes on Memory · Andy Zhang</title>
+  <link rel="icon" href="/images/andy-zhang-avatar.png" type="image/png">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="canonical" href="https://anred.space/en/articles/microcomputer-memory.html">
+  <link rel="alternate" hreflang="zh-CN" href="https://anred.space/articles/microcomputer-memory.html">
+</head>
+<body>
+  <main class="shell">
+    <article class="frame reader">
+      <h1 class="page-title">Microcomputer Interface Notes on Memory</h1>
+      <header class="byline"><a class="author" href="/"><img src="/images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-03-19">2020-03-19</time><span aria-hidden="true">·</span><a href="/articles/microcomputer-memory.html" lang="zh-CN" hreflang="zh-CN">中文</a></header>
+      <div class="prose"><h2>Connecting memory to the CPU</h2><h3>Interface requirements</h3><ul><li>Check CPU bus loading. Add a buffer or line driver when the load exceeds the bus's drive capacity to keep logic levels valid.</li><li>Match CPU timing to memory access speed.</li><li>Allocate address ranges and generate chip-select signals.</li><li>Connect the control signals.</li></ul>
+<h3>Address decoding</h3><p>The 74LS138 is a common 3-to-8 decoder. A decoded output selects the target device for an I/O access or enables a memory chip.</p>
+<h3>Expanding memory</h3><p>To expand word width, combine chips to supply more bits per address. To increase the number of words, use separate chip banks and select a bank with high address bits. For both kinds of expansion, determine the word width first, then the number of banks.</p>
+<h3>Generating chip selects</h3><dl><dt>Direct address-line selection</dt><dd>Simple wiring can waste address space and leave overlapping or noncontiguous ranges.</dd><dt>Full decoding</dt><dd>All relevant high address bits take part in decoding. Inputs can be fixed to implement a specific address range.</dd><dt>Partial decoding</dt><dd>Only some high bits participate. An omitted bit can make the same chip appear at multiple addresses.</dd></dl></div>
+      <nav class="page-links" aria-label="Related pages"><a href="/#archive">Back to articles</a></nav>
+    </article>
+  </main>
+</body>
+</html>

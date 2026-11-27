@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Checking ELF Hardening with checksec · Andy Zhang</title>
+  <link rel="icon" href="/images/andy-zhang-avatar.png" type="image/png">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="canonical" href="https://anred.space/en/articles/checksec.html">
+  <link rel="alternate" hreflang="zh-CN" href="https://anred.space/articles/checksec.html">
+</head>
+<body>
+  <main class="shell">
+    <article class="frame reader">
+      <h1 class="page-title">Checking ELF Hardening with checksec</h1>
+      <header class="byline"><a class="author" href="/"><img src="/images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-03-22">2020-03-22</time><span aria-hidden="true">·</span><a href="/articles/checksec.html" lang="zh-CN" hreflang="zh-CN">中文</a></header>
+      <div class="prose"><h2>Reading ELF hardening results</h2><p>checksec summarizes hardening attributes observable in an executable. It reports build properties of the specific file. Operating-system runtime settings also affect what applies in practice.</p><h2>Common fields</h2><table><thead><tr><th>Field</th><th>Meaning</th></tr></thead><tbody>
+<tr><td>NX</td><td>Separates executable permissions from writable data. Often used to check whether the stack is marked non-executable.</td></tr>
+<tr><td>PIE and ASLR</td><td>PIE builds a position-independent executable. ASLR is runtime address randomization by the operating system.</td></tr>
+<tr><td>Stack canary</td><td>The compiler can insert a guard value into selected functions and check it before return.</td></tr>
+<tr><td>RELRO</td><td>The loader marks selected relocation-related data read-only after handling relocations. Reports often distinguish partial and full RELRO.</td></tr>
+<tr><td>FORTIFY</td><td>Adds checks to some standard library calls when conditions such as a compiler-known buffer size are met.</td></tr></tbody></table>
+<h2>Checking build artifacts</h2><p>Inspect the actual released executables and shared libraries. Record the toolchain and target architecture. Code review and boundary tests are still needed to find out-of-bounds access.</p></div>
+      <nav class="page-links" aria-label="Related pages"><a href="/#archive">Back to articles</a></nav>
+    </article>
+  </main>
+</body>
+</html>

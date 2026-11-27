@@ -8,12 +8,13 @@
   <link rel="icon" type="image/png" href="/images/andy-zhang-avatar.png">
   <link rel="canonical" href="https://anred.space/articles/microcomputer-memory.html">
   <link rel="stylesheet" href="../assets/site.css">
+  <link rel="alternate" hreflang="en" href="https://anred.space/en/articles/microcomputer-memory.html">
 </head>
 <body>
   <main class="shell">
     <article class="frame reader">
       <h1 class="page-title">微机接口笔记_存储器</h1>
-      <header class="byline"><a class="author" href="../index.html"><img src="../images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-03-19">2020-03-19</time></header>
+      <header class="byline"><a class="author" href="/zh/"><img src="../images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-03-19">2020-03-19</time><span aria-hidden="true">·</span><a href="/en/articles/microcomputer-memory.html" lang="en" hreflang="en">English</a></header>
       <div class="prose"><h2 id="存储器与CPU的连接">存储器与CPU的连接</h2><h3 id="1-设计接口应考虑的问题">1. 设计接口应考虑的问题</h3><ul>
 <li>CPU总线的负载能力：总线直接驱动负载能力超过后，应在总线和负载间接缓冲器或驱动器，否则会影响信号逻辑电平。</li>
 <li>CPU时序与存储器存取速度间的配合</li>
@@ -30,7 +31,7 @@
 <h4 id="形成片选信号的三种方法：">形成片选信号的三种方法：</h4><p><strong>线选法：</strong>线路简单，但空间浪费、地址重叠、地址不连续。</p>
 <p><strong>全译码：</strong>全部高位地址都参与译码。没有用到的地址信号可以固定到译码器上。</p>
 <p><strong>部分译码：</strong>只对高位地址中的某几位译码，生成片选信号。如果有高位地址没有使用，则会出现地址重叠。</p></div>
-      <nav class="page-links" aria-label="相关索引"><a href="../index.html#archive">返回文章列表</a> <a href="../categories.html#categories-11">微机接口</a> <a href="../tags.html#tags-24">微机接口</a> <a href="../tags.html#tags-25">存储器</a></nav>
+      <nav class="page-links" aria-label="相关索引"><a href="/zh/#archive">返回文章列表</a> <a href="../categories.html#categories-11">微机接口</a> <a href="../tags.html#tags-24">微机接口</a> <a href="../tags.html#tags-25">存储器</a></nav>
     </article>
   </main>
 </body>

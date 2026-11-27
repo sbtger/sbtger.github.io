@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Operating System Fundamentals — engineering notes by Peng Zhang.">
+  <title>Operating System Fundamentals · Andy Zhang</title>
+  <link rel="icon" type="image/png" href="/images/andy-zhang-avatar.png">
+  <link rel="canonical" href="https://anred.space/en/articles/os-basics.html">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="alternate" hreflang="en" href="https://anred.space/en/articles/os-basics.html">
+  <link rel="alternate" hreflang="zh-CN" href="https://anred.space/articles/os-basics.html">
+</head>
+<body>
+  <main class="shell">
+    <article class="frame reader">
+      <h1 class="page-title">Operating System Fundamentals</h1>
+      <header class="byline"><a class="author" href="/"><img src="/images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-08-06">2020-08-06</time><span aria-hidden="true">·</span><a href="/articles/os-basics.html" lang="zh-CN" hreflang="zh-CN">中文</a></header>
+      <div class="prose">
+<h2>Processes</h2>
+<p>A process is a program in execution and a unit of resource allocation. It includes instructions, data, and a process control block.</p>
+<p>An orphan is a child whose parent exits first. It is adopted by init or an appropriate subreaper. A zombie is an exited child whose status has not been collected through a call such as wait() or waitpid(). It retains a process table entry and a PID. Enough zombies can exhaust the PID space. The parent should reap its children, or an adopter can reap them after the parent exits.</p>
+<p>A daemon is a background process independent of a controlling terminal. It can perform periodic work.</p>
+<h2>Threads</h2>
+<p>Threads are execution paths within a process and units of scheduling. Multiple threads can share process resources while handling work such as network requests, events, and rendering concurrently.</p>
+<h3>Processes and threads</h3>
+<ul><li>Resources are allocated to a process and shared by its threads.</li><li>Threads are independently schedulable.</li><li>Creating, terminating, and switching processes generally has more overhead. A process switch may also require switching address spaces, whereas a switch between threads of one process can retain the address space.</li><li>Threads can communicate through shared data. Separate processes use interprocess communication.</li></ul>
+<p>User-level threading handles management in user space, avoiding many kernel transitions. Kernel-level scheduling can run threads on different processors in parallel. Some systems map multiple user-level threads onto a pool of kernel threads.</p>
+<h2>Concurrency and parallelism</h2>
+<p>Concurrent tasks make progress during the same interval. A single core can interleave them. Parallel tasks run simultaneously and require multiple execution resources.</p>
+<h2>Time-sharing and real-time systems</h2>
+<p>Time-sharing divides CPU time into slices and rotates among jobs, improving interactive response and utilization. A real-time system must respond to external inputs within prescribed deadlines. Predictable timing is central to reliability and safety.</p>
+<h2>Process states</h2>
+<p>Common states are new, ready, running, terminated, and blocked. A ready process can run when given CPU time. A blocked process waits for a resource or event such as I/O. A running process can block on an external device or return to ready when its slice expires or a higher-priority task preempts it.</p>
+<h2>Scheduling algorithms</h2>
+<ul><li><strong>First come, first served.</strong> Simple arrival ordering can make short or I/O-heavy jobs wait behind long ones.</li><li><strong>Shortest job first.</strong> Schedule by estimated execution time. A stream of short jobs can starve a long job.</li><li><strong>Shortest remaining time first.</strong> The preemptive form of shortest job first.</li><li><strong>Round robin.</strong> Run the first ready task for one slice, then move it to the back if it remains runnable. Short slices increase switching overhead. Long slices increase response time.</li><li><strong>Priority scheduling.</strong> Select based on priority. Aging can raise the priority of waiting tasks to mitigate starvation.</li></ul>
+<p>A preemptive scheduler can suspend a running process. Under nonpreemptive scheduling, the chosen task keeps the CPU until it blocks or finishes. A context switch saves the outgoing execution state and restores the incoming state.</p>
+<h2>Deadlock</h2>
+<p>Deadlock occurs when each member of a group waits for an event that only another member can cause. The four necessary conditions are mutual exclusion, holding resources while waiting for more, no forced preemption of held resources, and circular wait.</p>
+<ul><li>Ignoring deadlock may be a deliberate trade-off where prevention is expensive and the event is rare.</li><li>Prevention breaks at least one necessary condition.</li><li>Avoidance tests requests or admissions to avoid unsafe allocations.</li><li>Detection and recovery use information such as a resource-allocation graph to identify and resolve deadlocks.</li></ul>
+<h2>Synchronization and IPC</h2>
+<p>Common concepts include critical sections, mutexes, semaphores, and monitors. A pipe is a kernel buffer that provides a one-way stream. A named pipe associates it with a pathname, allowing unrelated processes to communicate. Message queues hold discrete messages. Shared memory lets processes access the same region. Semaphores control access to shared resources, and sockets support communication across hosts.</p>
+<h2>Disk scheduling</h2>
+<p>First come, first served is simple and fair but can have long seeks. Shortest seek time first favors the nearest request, potentially starving distant ones. SCAN, the elevator algorithm, serves requests as the head moves in one direction before reversing.</p>
+<h2>Virtual memory and page replacement</h2>
+<p>Virtual memory provides a larger logical address space and can load only portions of a process at a time. Backing storage can help hold data that does not currently fit in RAM.</p>
+<ul><li><strong>Optimal.</strong> Evict the page whose next access is farthest in the future. This is a theoretical baseline.</li><li><strong>FIFO.</strong> Evict the oldest insertion. Frequently accessed pages can still be removed.</li><li><strong>LRU.</strong> Evict the least recently used page. An exact linked-list implementation pays for an update on each access.</li><li><strong>Clock.</strong> A circular scan clears set reference bits and gives the corresponding pages a second chance. A page with a clear bit can be selected for eviction.</li></ul></div>
+      <nav class="page-links" aria-label="Related links"><a href="/#archive">Back to articles</a></nav>
+    </article>
+  </main>
+</body>
+</html>

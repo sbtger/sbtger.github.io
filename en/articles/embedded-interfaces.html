@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Embedded Systems Notes on Communication Interfaces · Andy Zhang</title>
+  <link rel="icon" href="/images/andy-zhang-avatar.png" type="image/png">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="canonical" href="https://anred.space/en/articles/embedded-interfaces.html">
+  <link rel="alternate" hreflang="zh-CN" href="https://anred.space/articles/embedded-interfaces.html">
+</head>
+<body>
+  <main class="shell">
+    <article class="frame reader">
+      <h1 class="page-title">Embedded Systems Notes on Communication Interfaces</h1>
+      <header class="byline"><a class="author" href="/"><img src="/images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-03-24">2020-03-24</time><span aria-hidden="true">·</span><a href="/articles/embedded-interfaces.html" lang="zh-CN" hreflang="zh-CN">中文</a></header>
+      <div class="prose"><h2>Embedded communication interfaces</h2><p>Start with a known example, compile it, and adapt it for reliability. Embedded hardware supports communication, input, and output. Typical components include sensors, actuators, user interfaces, communication peripherals, and power supplies. External hardware can be added through these interfaces.</p>
+<h3>UART and serial communication</h3><p>A communication protocol defines how shared signaling distinguishes data from framing or control information. Serial links can be simplex, half-duplex, or full-duplex. Asynchronous protocols commonly serve lower data rates. Synchronous protocols use a clock and are often used for higher rates.</p><p>An asynchronous character frame commonly includes a low start bit, five to eight data bits, optional parity, and one or two high stop bits. Stop bits give the receiver time before the next character. Both ends must agree on frame format, baud rate, and parity. Send and receive buffer depth affects performance.</p><p>Before sending, check for a full transmit buffer and determine whether the shift register has finished when needed. Common receive errors include parity errors, framing errors, and overruns when software does not read data in time.</p>
+<h3>RS-232C</h3><p>RS-232C is point-to-point. It uses larger voltage swings than TTL. For data signals, logical 1 is roughly −3 to −15 V and logical 0 is +3 to +15 V. Control lines use positive voltage for asserted and negative voltage for deasserted. MC1488/1489 were used with external supplies for TTL conversion. MAX232-family alternatives differ in supply voltage and required capacitors. Protect the transceiver against line faults.</p>
+<h3>RS-485</h3><p>RS-485 supports multiple nodes on a differential bus, which helps reject common-mode interference. The driver produces a differential voltage whose polarity represents the data value. Repeaters can extend distance or divide a network into segments. Check polarity, termination at the far ends, stub lengths, and line protection.</p>
+<h3>Reliability checklist</h3><ul><li>Handle timeouts, reinitialization, and receive-buffer overruns.</li><li>Choose the stop-bit duration to meet throughput and receiver timing requirements. Some configurations use 1.5 bit periods.</li><li>Budget transmitter and receiver baud error. The original notes refer to ±2.5% as a rule of thumb. Consider external oscillators and divider selection.</li><li>Define framing, turnaround delay, checks, inter-frame time, and frame length.</li><li>Choose a baud rate appropriate to the link distance.</li></ul>
+<h3>I²C, SPI, and 1-Wire</h3><p>I²C uses a data line (SDA) and clock line (SCL). Open-drain lines require pull-ups. Devices share the bus and are selected by address. A transfer can issue repeated START conditions before a STOP releases the bus.</p><p>Related interfaces include SPI and 1-Wire.</p></div>
+      <nav class="page-links" aria-label="Related pages"><a href="/#archive">Back to articles</a></nav>
+    </article>
+  </main>
+</body>
+</html>

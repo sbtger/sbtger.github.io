@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Security Review Notes · Andy Zhang</title>
+  <link rel="icon" href="/images/andy-zhang-avatar.png" type="image/png">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="canonical" href="https://anred.space/en/articles/security-notes.html">
+  <link rel="alternate" hreflang="zh-CN" href="https://anred.space/articles/security-notes.html">
+</head>
+<body>
+  <main class="shell">
+    <article class="frame reader">
+      <h1 class="page-title">Security Review Notes</h1>
+      <header class="byline"><a class="author" href="/"><img src="/images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-08-07">2020-08-07</time><span aria-hidden="true">·</span><a href="/articles/security-notes.html" lang="zh-CN" hreflang="zh-CN">中文</a></header>
+      <div class="prose"><h2>Java strings and threads</h2><p>String.length() returns the number of UTF-16 code units. yield() tells the scheduler that the current thread is willing to give up the processor. The scheduler decides when to run the thread again.</p><h2>Waiting, notifying, and sleeping</h2><table><thead><tr><th>Method</th><th>Behavior</th></tr></thead><tbody><tr><td>wait()</td><td>A thread holding an object's monitor enters its wait set, releases the monitor, and reacquires it before returning.</td></tr><tr><td>notify()</td><td>Wakes one waiter. That thread must acquire the monitor before it can continue.</td></tr><tr><td>sleep()</td><td>Pauses the current thread for a time while it keeps any monitors it already holds.</td></tr></tbody></table>
+<h2>HTTP and mobile apps</h2><p>HTTP 301 indicates a permanent move, and Location can identify the new address. Android broadcast receivers can be declared in the manifest or registered dynamically for a component lifecycle. When shrinking and obfuscating a release build, inspect package size and preserve its mapping file.</p>
+<h2>Shell parameters</h2><p>In a shell script, $0 is the script name, $1 is the first argument, $# is the number of arguments, and $? is the previous command's exit status. Use <code>"$@"</code> to preserve the boundaries between arguments.</p>
+<h2>Service permissions and request freshness</h2><p>Constrain the network exposure, caller identity, and account privileges of database and cache services. For one-time operations, check expiry and a unique request identifier to avoid accepting a previously valid request again.</p></div>
+      <nav class="page-links" aria-label="Related pages"><a href="/#archive">Back to articles</a></nav>
+    </article>
+  </main>
+</body>
+</html>

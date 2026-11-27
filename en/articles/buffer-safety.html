@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Buffer Safety and Process Memory · Andy Zhang</title>
+  <link rel="icon" href="/images/andy-zhang-avatar.png" type="image/png">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="canonical" href="https://anred.space/en/articles/buffer-safety.html">
+  <link rel="alternate" hreflang="zh-CN" href="https://anred.space/articles/buffer-safety.html">
+</head>
+<body>
+  <main class="shell">
+    <article class="frame reader">
+      <h1 class="page-title">Buffer Safety and Process Memory</h1>
+      <header class="byline"><a class="author" href="/"><img src="/images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-03-23">2020-03-23</time><span aria-hidden="true">·</span><a href="/articles/buffer-safety.html" lang="zh-CN" hreflang="zh-CN">中文</a></header>
+      <div class="prose"><h2>Process memory layout</h2><table><thead><tr><th>Region</th><th>Common uses</th></tr></thead><tbody><tr><td>Text</td><td>Program machine instructions.</td></tr><tr><td>Data and BSS</td><td>Objects with static storage duration. Nonzero initializers usually go in the data segment, and zero-initialized objects can go in BSS.</td></tr><tr><td>Heap</td><td>Memory allocated and freed while the program runs.</td></tr><tr><td>Stack</td><td>Temporary call state, including some local variables. Architecture and compiler settings affect the actual layout.</td></tr></tbody></table>
+<h2>Lengths and indices</h2><p>A buffer has a starting address, capacity, and data format. An array of length n has valid indices from 0 through n−1. When allocating memory or checking a copy length, address negative values and signed-to-unsigned conversions before comparing against the available capacity.</p>
+<h2>Out-of-bounds writes</h2><p>A write beyond the buffer can corrupt adjacent data and cause crashes. Verify the allocated destination capacity and the source length. Strings also need space for the terminator. Test empty, exact-fit, and one-unit-too-large inputs.</p></div>
+      <nav class="page-links" aria-label="Related pages"><a href="/#archive">Back to articles</a></nav>
+    </article>
+  </main>
+</body>
+</html>

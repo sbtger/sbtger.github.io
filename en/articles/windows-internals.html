@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Windows Operating System Internals — engineering notes by Peng Zhang.">
+  <title>Windows Operating System Internals · Andy Zhang</title>
+  <link rel="icon" type="image/png" href="/images/andy-zhang-avatar.png">
+  <link rel="canonical" href="https://anred.space/en/articles/windows-internals.html">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="alternate" hreflang="en" href="https://anred.space/en/articles/windows-internals.html">
+  <link rel="alternate" hreflang="zh-CN" href="https://anred.space/articles/windows-internals.html">
+</head>
+<body>
+  <main class="shell">
+    <article class="frame reader">
+      <h1 class="page-title">Windows Operating System Internals</h1>
+      <header class="byline"><a class="author" href="/"><img src="/images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-03-20">2020-03-20</time><span aria-hidden="true">·</span><a href="/articles/windows-internals.html" lang="zh-CN" hreflang="zh-CN">中文</a></header>
+      <div class="prose">
+<h2>Windows architecture</h2>
+<h3>Legacy NTLDR boot</h3>
+<p>In this historical Windows boot sequence, the boot partition’s first sector and the following sectors load NTLDR. Its real-mode stage switches the CPU to protected mode, where its OS loader runs.</p>
+<p>NTLDR builds memory descriptors, sets up page mappings and the page-directory register, enables paging, reads boot.ini, and runs ntdetect.com. It loads ntoskrnl.exe, hal.dll, the SYSTEM hive, boot drivers, and required file-system drivers. It constructs the LOADER_PARAMETER_BLOCK, then transfers control to the kernel entry point.</p>
+<h3>Kernel initialization</h3>
+<ul><li>Phase 0 initializes the CPU and some kernel data structures in a process context.</li><li>Phase 1 runs in a thread and initializes most remaining modules, with concurrency where applicable.</li></ul>
+<h2>Kernel and driver development</h2>
+<h3>How drivers fit into the kernel</h3>
+<p>Drivers sit between hardware and the kernel’s services to applications. In implementation, kernel and driver development are closely coupled. Driver design must account for synchronous and asynchronous I/O, shared and exclusive access, buffer management, and device state. Drivers are part of the I/O system and can interact with the hardware abstraction layer or hardware.</p>
+<h3>Types of drivers</h3>
+<p>A driver is a software component that participates in communication between an OS and a device. An application requesting data calls an operating-system API, which can invoke functions supplied by a driver.</p>
+<p>A function driver handles the device’s principal functions. Filter drivers perform additional processing elsewhere in the stack. A software driver can operate without an associated hardware device and may use core OS data structures.</p>
+<h3>Windows driver model</h3>
+<p>The OS hosts the driver, and invokes the callbacks registered by the driver on relevant events. Kernel-mode drivers use the Windows kernel APIs, the WDK runtime, and services exposed by other drivers. User-mode APIs and the full standard C or C++ libraries are unavailable in that environment.</p>
+<h3>Driver objects, device objects, and I/O</h3>
+<p>A driver object can own multiple device objects. Each device object is associated with one driver object. The I/O manager uses I/O request packets (IRPs) to communicate requests down a device stack.</p></div>
+      <nav class="page-links" aria-label="Related links"><a href="/#archive">Back to articles</a></nav>
+    </article>
+  </main>
+</body>
+</html>

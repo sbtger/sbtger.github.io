@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Handy Python Snippets — engineering notes by Peng Zhang.">
+  <title>Handy Python Snippets · Andy Zhang</title>
+  <link rel="icon" type="image/png" href="/images/andy-zhang-avatar.png">
+  <link rel="canonical" href="https://anred.space/en/articles/python-snippets.html">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="alternate" hreflang="en" href="https://anred.space/en/articles/python-snippets.html">
+  <link rel="alternate" hreflang="zh-CN" href="https://anred.space/articles/python-snippets.html">
+</head>
+<body>
+  <main class="shell">
+    <article class="frame reader">
+      <h1 class="page-title">Handy Python Snippets</h1>
+      <header class="byline"><a class="author" href="/"><img src="/images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-07-13">2020-07-13</time><span aria-hidden="true">·</span><a href="/articles/python-snippets.html" lang="zh-CN" hreflang="zh-CN">中文</a></header>
+      <div class="prose"><h2 id="1-numpy-array、torch-tensor和Image之间相互转换">1. Converting between NumPy arrays, PyTorch tensors, and images</h2><h3 id="（1）numpy-array与Image之间互相转换">NumPy array and PIL image</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image  </span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">im = Image.open(<span class="string">"a.jpg"</span>)</span><br><span class="line"></span><br><span class="line">img = np.array(im)      <span class="comment"># image to numpy array</span></span><br><span class="line">im=Image.fromarray(img) <span class="comment"># numpy array to image</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="（2）numpy-array与torch-tensor之间互相转换">NumPy array and PyTorch tensor</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">a = torch.ones(<span class="number">5</span>)</span><br><span class="line">b = a.numpy()			<span class="comment"># torch tensor to numpy array</span></span><br><span class="line">a = torch.from_numpy(b)  <span class="comment"># numpy array to torch tensor</span></span><br><span class="line"><span class="comment"># The tensor and array share storage in this example. Mutating either changes the other.</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="（3）torch-tensor与Image之间互相转换">PyTorch tensor and PIL image</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"></span><br><span class="line">path_img = <span class="string">"./1.bmp"</span></span><br><span class="line">img_pil = Image.open(path_img).convert(<span class="string">'RGB'</span>)</span><br><span class="line">img_tensor = transforms.Compose([</span><br><span class="line">    <span class="comment"># transforms.Resize((224, 224)),</span></span><br><span class="line">    transforms.ToTensor(),  <span class="comment"># Image to torch tensor</span></span><br><span class="line">    <span class="comment"># transforms.Normalize(norm_mean, norm_std),</span></span><br><span class="line">])(img_pil)</span><br><span class="line"></span><br><span class="line">img = transforms.ToPILImage()(img_tensor)</span><br><span class="line"><span class="comment"># torch tensor to Image</span></span><br></pre></td></tr></table></figure>
+
+
+<hr>
+<h2 id="2-numpy-array与list之间的转换">2. Converting between NumPy arrays and lists</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">a = [[<span class="number">1.0</span>, <span class="number">2.0</span>], [<span class="number">2.0</span>, <span class="number">1.0</span>]] <span class="comment"># list a</span></span><br><span class="line">b = np.asarray(a) 			<span class="comment"># list to numpy array</span></span><br><span class="line">c = b.tolist()			    <span class="comment"># numpy array to list</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>How arrays and lists differ</strong></p>
+<p>A NumPy array has one dtype. A Python list can hold objects of different types. </p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">a = [<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>,<span class="string">'1'</span>,<span class="string">'2'</span>,<span class="string">'3'</span>]</span><br><span class="line">b = np.array([<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>])</span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<h2 id="3-numpy的sum-函数">3. NumPy sum()</h2><p>With no axis argument, sum() returns the sum of all elements.</p>
+<p><strong>axis selects the dimension to reduce.</strong></p>
+<p>For a three-dimensional array, axes 0, 1, and 2 count from the outermost dimension to the innermost.</p>
+<p>Negative axes count from the end. In a three-dimensional array, -1 is innermost, and -3 is outermost.</p>
+<p>The figure illustrates NumPy sum() along different axes.</p>
+<p><img src="/images/python-snippets-1.png" alt="image 1" loading="lazy"></p>
+<p><strong>keepdims retains reduced axes as dimensions of length one.</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">array([[<span class="number">1</span>],[<span class="number">2</span>]])</span><br><span class="line">array([<span class="number">1</span>,<span class="number">2</span>])</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="4-np-linalg-norm-函数">4. np.linalg.norm()</h2><p><strong>linalg stands for linear algebra.</strong> </p>
+<p><strong>Norm</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">x_norm = np.linalg.norm(x, ord=<span class="literal">None</span>, axis=<span class="literal">None</span>, Keepdims=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong>x is the input vector or matrix.</strong></p>
+<p><strong>ord selects the type of norm.</strong></p>
+<table>
+<thead>
+<tr>
+<th align="center">ord</th>
+<th align="center">Norm type</th>
+<th align="center">Formula</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">None</td>
+<td align="center">L2 norm (default for a vector)</td>
+<td align="center">$\sqrt{x_1^2+x_2^2+…+x_n^2}$</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">L1 norm</td>
+<td align="center">$|x_1|+|x_2|+…+|x_n|$</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">L2 norm</td>
+<td align="center">$\sqrt{x_1^2+x_2^2+…+x_2^2}$</td>
+</tr>
+<tr>
+<td align="center">np.inf</td>
+<td align="center">Infinity norm</td>
+<td align="center">$max(|x_i|)$</td>
+</tr>
+</tbody></table>
+<p><strong>axis determines the dimension or dimensions over which the norm is evaluated.</strong></p>
+<p><strong>keepdims retains reduced axes as dimensions of length one.</strong></p>
+<hr></div>
+      <nav class="page-links" aria-label="Related links"><a href="/#archive">Back to articles</a></nav>
+    </article>
+  </main>
+</body>
+</html>
