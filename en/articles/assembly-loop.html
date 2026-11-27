@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Assembly Notes on the LOOP Instruction · Andy Zhang</title>
+  <link rel="icon" href="/images/andy-zhang-avatar.png" type="image/png">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="canonical" href="https://anred.space/en/articles/assembly-loop.html">
+  <link rel="alternate" hreflang="zh-CN" href="https://anred.space/articles/assembly-loop.html">
+</head>
+<body>
+  <main class="shell">
+    <article class="frame reader">
+      <h1 class="page-title">Assembly Notes on the LOOP Instruction</h1>
+      <header class="byline"><a class="author" href="/"><img src="/images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-03-18">2020-03-18</time><span aria-hidden="true">·</span><a href="/articles/assembly-loop.html" lang="zh-CN" hreflang="zh-CN">中文</a></header>
+      <div class="prose"><h2>[BX] and LOOP</h2><p>[BX] refers to a memory operand. The default segment is DS, and context can determine the operand size.</p><p><code>push ax</code> subtracts 2 from SP and stores AX at SS × 16 + SP. <code>pop ax</code> reads AX from that address and adds 2 to SP.</p>
+<h3>LOOP execution</h3><p>LOOP decrements CX. If the result is nonzero, it branches to the label. Otherwise execution falls through.</p><p>For a typical counted loop, initialize CX with the iteration count, put the label before the body, and put LOOP after it.</p><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">assume cs:code</span><br><span class="line">code segment</span><br><span class="line">	mov bx,0</span><br><span class="line">	mov cx,12</span><br><span class="line">    mov ax,0ffffh</span><br><span class="line">    mov ds,ax</span><br><span class="line">    mov ax,0020h</span><br><span class="line">    mov es,ax</span><br><span class="line"> s: mov al,[bx]</span><br><span class="line">    mov es:[bx],al</span><br><span class="line">    inc bx</span><br><span class="line">    loop s</span><br><span class="line">    </span><br><span class="line">	mov ax,4c00h</span><br><span class="line">	int 21h</span><br><span class="line">code ends</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+<h3>Assembler details</h3><p>Some assemblers require a leading zero in a hexadecimal literal that starts with a letter, so use <code>0FFFFH</code>. Some assemblers also reject a bare numeric memory operand such as <code>[number]</code>, making a register-based operand such as <code>[BX]</code> useful.</p><p>Combining LOOP with [BX] makes it possible to advance through memory while bounding the iteration count.</p><p>The original DOS notes describe <code>0:0200–0:02FF</code> as a 256-byte practice area. Availability depends on the DOS environment and loaded software.</p></div>
+      <nav class="page-links" aria-label="Related pages"><a href="/#archive">Back to articles</a></nav>
+    </article>
+  </main>
+</body>
+</html>

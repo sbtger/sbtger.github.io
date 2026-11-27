@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Data Collection Notes on Scrapy · Andy Zhang</title>
+  <link rel="icon" href="/images/andy-zhang-avatar.png" type="image/png">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="canonical" href="https://anred.space/en/articles/scrapy.html">
+  <link rel="alternate" hreflang="zh-CN" href="https://anred.space/articles/scrapy.html">
+</head>
+<body>
+  <main class="shell">
+    <article class="frame reader">
+      <h1 class="page-title">Data Collection Notes on Scrapy</h1>
+      <header class="byline"><a class="author" href="/"><img src="/images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-03-19">2020-03-19</time><span aria-hidden="true">·</span><a href="/articles/scrapy.html" lang="zh-CN" hreflang="zh-CN">中文</a></header>
+      <div class="prose"><h2>The Scrapy framework</h2><p>The original Windows setup used pip to install Scrapy and dependencies including lxml, Twisted, and pypiwin32.</p><h3>Choosing a compatible wheel</h3><p>A wheel is an archive that can contain Python files and precompiled native modules, such as Windows .pyd files. It allows installation without a local build environment.</p><p>Check the supported installation tags before choosing a wheel, for example <code>cp37-cp37m-win_amd64</code>. The historical examples below used private pip interfaces whose availability depends on the pip version. For current pip, use <code>python -m pip debug --verbose</code>.</p><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> pip._internal.pep425tags</span><br><span class="line">print(pip._internal.pep425tags.get_supported())</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> pip.pep425tags</span><br><span class="line">print(pip.pep425tags.get_supported())</span><br></pre></td></tr></table></figure></div>
+      <nav class="page-links" aria-label="Related pages"><a href="/#archive">Back to articles</a></nav>
+    </article>
+  </main>
+</body>
+</html>

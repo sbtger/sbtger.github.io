@@ -205,7 +205,7 @@ function topicGroups(kind, legacy, posts) {
   return groups;
 }
 
-function readerPage({ title, description, canonical, parent = '', body, generatedArticle = false }) {
+function readerPage({ title, description, canonical, parent = '', body, generatedArticle = false, englishUrl }) {
   return `<!doctype html>
 ${generatedArticle ? generatedBy + '\n' : ''}<html lang="zh-CN">
 <head>
@@ -215,7 +215,7 @@ ${generatedArticle ? generatedBy + '\n' : ''}<html lang="zh-CN">
   <title>${escapeHtml(title)} · Andy Zhang</title>
   <link rel="icon" type="image/png" href="/images/andy-zhang-avatar.png">
   <link rel="canonical" href="https://anred.space/${canonical}">
-  <link rel="stylesheet" href="${parent}assets/site.css">
+  <link rel="stylesheet" href="${parent}assets/site.css">${englishUrl ? `\n  <link rel="alternate" hreflang="en" href="https://anred.space/${englishUrl}">` : ''}
 </head>
 <body>
   <main class="shell">
@@ -236,40 +236,48 @@ function taxonomyPage(kind, groups) {
     links.push(`<li><a href="#${group.id}">${label}</a></li>`);
     sections.push(`<section><h2 id="${group.id}">${label}</h2><div class="post-list">\n${postRows(group.posts)}\n        </div></section>`);
   }
-  const body = `      <a class="back" href="index.html">返回首页</a>
+  const body = `      <a class="back" href="/zh/">返回首页</a>
       <h1 class="page-title">${title}</h1>
       <ul class="notes">${links.join('')}</ul>
       <div class="writing">${sections.join('')}</div>`;
   return readerPage({ title, description: `按${title}浏览 Anred Lab 的技术笔记。`, canonical: `${kind}.html`, body });
 }
 
-function articlePage(post, groups) {
-  const links = ['<a href="../index.html#archive">返回文章列表</a>'];
+function articlePage(post, groups, englishUrl) {
+  const languageLink = englishUrl
+    ? `<span aria-hidden="true">·</span><a href="/${englishUrl}" lang="en" hreflang="en">English</a>`
+    : '';
+  const links = ['<a href="/zh/#archive">返回文章列表</a>'];
   for (const kind of ['categories', 'tags']) {
     for (const name of post[kind]) {
       links.push(`<a href="../${kind}.html#${groups[kind].get(name).id}">${escapeHtml(name)}</a>`);
     }
   }
   const body = `      <h1 class="page-title">${escapeHtml(post.title)}</h1>
-      <header class="byline"><a class="author" href="../index.html"><img src="../images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="${post.date}">${post.date}</time></header>
+      <header class="byline"><a class="author" href="/zh/"><img src="../images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="${post.date}">${post.date}</time>${languageLink}</header>
       <div class="prose">${post.html}</div>
       <nav class="page-links" aria-label="相关索引">${links.join(' ')}</nav>`;
   return readerPage({ title: post.title, description: post.description, canonical: articleUrl(post),
-    parent: '../', body, generatedArticle: true });
+    parent: '../', body, generatedArticle: true, englishUrl });
 }
 
-function homePage(html, posts) {
+function homePage(html, posts, english = false) {
+  const url = post => (english ? '/en/' : '/') + articleUrl(post);
+  const title = post => english ? post.englishTitle : escapeHtml(post.title);
+  const rows = english
+    ? posts.map(post => `          <a href="${url(post)}"><span>${title(post)}</span><time datetime="${post.date}">${post.date}</time></a>`).join('\n')
+    : postRows(posts).replaceAll('href="articles/', 'href="/articles/');
   const featured = posts.filter(post => post.featured);
   const notes = (featured.length ? featured : posts).slice(0, 6)
-    .map(post => `          <li><a href="${articleUrl(post)}">${escapeHtml(post.title)}</a></li>`).join('\n');
+    .map(post => `          <li><a href="${url(post)}">${title(post)}</a></li>`).join('\n');
   // Only replace the contents of the two public lists. The authored introduction,
   // artwork, headings, and their surrounding layout live in index.html.
   const lists = [
     [/(<section aria-labelledby="notes">\s*<h2[^>]*>[^<]*<\/h2>\s*<ul class="notes">)[\s\S]*?(<\/ul>)/, notes],
-    [/(<section aria-labelledby="archive">\s*<h2[^>]*>[^<]*<\/h2>\s*<div class="post-list">)[\s\S]*?(<\/div>)/, postRows(posts)]
+    [/(<section aria-labelledby="archive">\s*<h2[^>]*>[^<]*<\/h2>\s*<div class="post-list">)[\s\S]*?(<\/div>)/, rows]
   ];
   for (const [pattern, rows] of lists) {
-    if (!pattern.test(html)) throw new Error('Missing a generated list in index.html');
+    if (!pattern.test(html)) throw new Error('Missing a generated list in the homepage');
     html = html.replace(pattern, (_, open, close) => `${open}\n${rows}\n        ${close}`);
   }
   return html;
@@ -290,13 +298,31 @@ async function build() {
     tags: topicGroups('tags', legacy, posts)
   };
   const outputs = new Map();
-  const homeFile = path.join(root, 'index.html');
-  outputs.set(homeFile, homePage(await fs.readFile(homeFile, 'utf8'), posts));
+  const englishPosts = [];
+  for (const post of posts) {
+    const file = path.join(root, 'en/articles', post.slug + '.html');
+    let html;
+    try {
+      html = await fs.readFile(file, 'utf8');
+    } catch (error) {
+      if (error.code === 'ENOENT' && !legacy.includes(post)) continue;
+      throw error;
+    }
+    const title = html.match(/<title>([^<]+)<\/title>/i)?.[1];
+    if (!title) throw new Error(`Missing English title: ${file}`);
+    englishPosts.push({ ...post, englishTitle: title.trim().replace(/\s*·\s*Andy Zhang$/, '') });
+  }
+  for (const [file, entries, english] of [['index.html', englishPosts, true], ['zh/index.html', posts, false]]) {
+    const homeFile = path.join(root, file);
+    outputs.set(homeFile, homePage(await fs.readFile(homeFile, 'utf8'), entries, english));
+  }
   for (const [kind, values] of Object.entries(groups)) {
     outputs.set(path.join(root, `${kind}.html`), taxonomyPage(kind, values));
   }
+  const translatedSlugs = new Set(englishPosts.map(post => post.slug));
   for (const post of markdown) {
-    outputs.set(path.join(articlesDir, post.slug + '.html'), articlePage(post, groups));
+    const englishUrl = translatedSlugs.has(post.slug) ? 'en/' + articleUrl(post) : undefined;
+    outputs.set(path.join(articlesDir, post.slug + '.html'), articlePage(post, groups, englishUrl));
   }
 
   // Retire only pages previously written by this generator, e.g. a published

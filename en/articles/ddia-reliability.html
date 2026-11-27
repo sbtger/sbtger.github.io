@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DDIA 01: Reliable, Scalable, and Maintainable Applications · Andy Zhang</title>
+  <link rel="icon" href="/images/andy-zhang-avatar.png" type="image/png">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="canonical" href="https://anred.space/en/articles/ddia-reliability.html">
+  <link rel="alternate" hreflang="zh-CN" href="https://anred.space/articles/ddia-reliability.html">
+</head>
+<body>
+  <main class="shell">
+    <article class="frame reader">
+      <h1 class="page-title">DDIA 01: Reliable, Scalable, and Maintainable Applications</h1>
+      <header class="byline"><a class="author" href="/"><img src="/images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2021-09-26">2021-09-26</time><span aria-hidden="true">·</span><a href="/articles/ddia-reliability.html" lang="zh-CN" hreflang="zh-CN">中文</a></header>
+      <div class="prose"><h2>Part I: Foundations of Data Systems</h2><h3>Reliable, scalable, and maintainable applications</h3><p>The book examines how data systems work and how to build data-intensive applications. Many applications are limited by the amount of data they handle. Databases store data for later retrieval, caches speed up access, indexes locate records, and stream and batch systems process new data. Different requirements for performance, access patterns, and implementation motivate different systems. This chapter focuses on reliability, scalability, and maintainability.</p>
+<h2>Reliability</h2><p>A reliable system keeps working through hardware faults, software faults, and human error.</p><ul><li>Use redundancy and rapid recovery for hardware faults.</li><li>For software faults that can cascade, examine assumptions and interactions, test thoroughly, isolate processes, allow failure and restart, and monitor actual behavior.</li><li>To reduce human error, simplify interfaces, separate environments for sandbox testing, test the whole system, make recovery fast, monitor performance and error rates, and train operators.</li></ul>
+<p>Reliability matters because people entrust systems with things they care about. Imagine an application that loses a user's family photographs when its database fails.</p><h2>Scalability</h2></div>
+      <nav class="page-links" aria-label="Related pages"><a href="/#archive">Back to articles</a></nav>
+    </article>
+  </main>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Android Component Security · Andy Zhang</title>
+  <link rel="icon" href="/images/andy-zhang-avatar.png" type="image/png">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="canonical" href="https://anred.space/en/articles/android-components.html">
+  <link rel="alternate" hreflang="zh-CN" href="https://anred.space/articles/android-components.html">
+</head>
+<body>
+  <main class="shell">
+    <article class="frame reader">
+      <h1 class="page-title">Android Component Security</h1>
+      <header class="byline"><a class="author" href="/"><img src="/images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-07-20">2020-07-20</time><span aria-hidden="true">·</span><a href="/articles/android-components.html" lang="zh-CN" hreflang="zh-CN">中文</a></header>
+      <div class="prose"><h2>Communication between components</h2><p>Android uses intents to pass actions, data, and extra parameters between components. Whether an external app can call a component and whether the caller is authorized to perform a particular operation are separate checks.</p>
+<h2>Four component types</h2><table><thead><tr><th>Component</th><th>Role</th><th>Review focus</th></tr></thead><tbody>
+<tr><td>Activity</td><td>Hosts user interfaces and interactions.</td><td>Verify identity and permissions at the point of use for personal data or account changes.</td></tr>
+<tr><td>Service</td><td>Provides background work and may accept bindings.</td><td>Distinguish internal services from external interfaces and limit callable operations.</td></tr>
+<tr><td>BroadcastReceiver</td><td>Receives system or application broadcasts.</td><td>Limit receipt and sender permissions for the use case. Handle empty or incomplete messages.</td></tr>
+<tr><td>ContentProvider</td><td>Manages access to data through URIs.</td><td>Check read, write, and temporary grants separately for the specific resource.</td></tr></tbody></table>
+<h2>Explicit and implicit intents</h2><p>An explicit intent specifies the target component. An implicit intent lets Android match a recipient based on the action, category, and data. When the recipient is known, narrowing the target helps keep identifiers and private parameters within their intended scope.</p>
+<h2>Dynamic receiver lifecycle</h2><p>Unregister a receiver at the corresponding lifecycle boundary. A receiver that outlives its screen can retain a reference to a closed UI or continue to receive events after they are needed.</p></div>
+      <nav class="page-links" aria-label="Related pages"><a href="/#archive">Back to articles</a></nav>
+    </article>
+  </main>
+</body>
+</html>

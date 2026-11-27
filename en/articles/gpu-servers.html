@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Notes on Cloud GPU Servers · Andy Zhang</title>
+  <link rel="icon" href="/images/andy-zhang-avatar.png" type="image/png">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="canonical" href="https://anred.space/en/articles/gpu-servers.html">
+  <link rel="alternate" hreflang="zh-CN" href="https://anred.space/articles/gpu-servers.html">
+</head>
+<body>
+  <main class="shell">
+    <article class="frame reader">
+      <h1 class="page-title">Notes on Cloud GPU Servers</h1>
+      <header class="byline"><a class="author" href="/"><img src="/images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-03-15">2020-03-15</time><span aria-hidden="true">·</span><a href="/articles/gpu-servers.html" lang="zh-CN" hreflang="zh-CN">中文</a></header>
+      <div class="prose"><h2>Why I tried cloud GPUs</h2><p>I wanted to run deep-learning code, and my laptop's GPU was slow and had little memory. These notes describe services I tried and reflect the hardware, pricing, and terms at the time. PyCharm Professional supported running programs against a remote interpreter, which the free edition did not offer in my setup.</p>
+<h3>Tencent Cloud</h3><p>I first tried Tencent for the reliability of a large provider. It worked well but cost more than the alternatives. Its COS object storage offered 50 GB for six months for RMB 1 in a promotion, and scripted uploads and downloads were much faster than my home connection.</p><p><a href="https://cloud.tencent.com/">Tencent Cloud</a></p>
+<h3>MistGPU</h3><p>New users received an RMB 8 voucher. At the time a GTX 1080 Ti cost RMB 3/hour and an RTX 2080 Ti cost RMB 4/hour. Local uploads were slow. A Python script downloading datasets from Tencent COS to the machine was much faster. The server's IP appeared to belong to Alibaba Cloud.</p><p><a href="https://mistgpu.cn/">MistGPU</a></p>
+<h3>Colab</h3><p>Google Colab ran Jupyter notebooks in the cloud without setup. The GPU had changed from a K80 to a T4, although the free tier felt slower than I expected. I had trouble accessing Google Drive, and uploading files above 1 GB was particularly slow. Small training jobs worked well. Colab Pro was advertised at USD 9.99/month with access to T4 and P100 resources and possible TPU priority. I encountered a USD credit-card requirement for the subscription.</p><p><a href="https://colab.research.google.com/notebooks/intro.ipynb">Colab</a></p>
+<p>My preferred combination was Tencent COS and MistGPU. The promoted storage price, compute cost, and hardware made it attractive. I also found daily GPU rentals on Taobao but did not try them.</p></div>
+      <nav class="page-links" aria-label="Related pages"><a href="/#archive">Back to articles</a></nav>
+    </article>
+  </main>
+</body>
+</html>

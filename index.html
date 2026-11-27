@@ -1,75 +1,83 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Peng Zhang 的技术札记。记录操作系统、移动安全、数据系统和工程实践。">
+  <meta name="description" content="Engineering notes by Peng Zhang on operating systems, security, and data systems.">
   <title>Andy Zhang</title>
   <link rel="icon" type="image/png" href="/images/andy-zhang-avatar.png">
-  <link rel="stylesheet" href="assets/site.css">
-  <script defer src="assets/bio.js"></script>
-  <script defer src="assets/orbit-scroll.js"></script>
+  <link rel="stylesheet" href="/assets/site.css">
+  <script defer src="/assets/bio.js"></script>
+  <script defer src="/assets/orbit-scroll.js"></script>
+  <link rel="canonical" href="https://anred.space/">
+  <link rel="alternate" hreflang="x-default" href="https://anred.space/">
+  <link rel="alternate" hreflang="zh-CN" href="https://anred.space/zh/">
 </head>
 <body class="home-page">
   <aside class="art" aria-hidden="true">
-    <iframe src="assets/anred-visual.html?scene=home" title="冰蓝主星与淡紫色卫星" tabindex="-1"></iframe>
+    <iframe src="/assets/anred-visual.html?scene=home" title="Blue planet and lavender moon" tabindex="-1"></iframe>
   </aside>
   <main class="shell">
     <article class="frame">
       <div class="home">
         <div class="home-copy">
-          <h1 class="site-title"><a href="https://github.com/sbtger" aria-label="sbtger 的 GitHub 主页"><span class="at">@</span>sbtger</a></h1>
-          <section class="bio" id="bio" aria-label="作者简介">
+          <h1 class="site-title"><a href="https://github.com/sbtger" aria-label="sbtger on GitHub"><span class="at">@</span>sbtger</a></h1>
+          <nav aria-label="Language"><a href="/zh/" lang="zh-CN" hreflang="zh-CN">中文</a></nav>
+          <section class="bio" id="bio" aria-label="About the author">
             <div class="bio-controls">
-              <span>简介</span>
-              <div class="bio-options" role="group" aria-label="简介长度">
-                <button type="button" aria-pressed="true" aria-controls="short-bio">简版</button>
-                <button type="button" aria-pressed="false" aria-controls="long-bio">长版</button>
+              <span>About</span>
+              <div class="bio-options" role="group" aria-label="Biography length">
+                <button type="button" aria-pressed="true" aria-controls="short-bio">Short</button>
+                <button type="button" aria-pressed="false" aria-controls="long-bio">Full</button>
               </div>
             </div>
-            <div class="bio-panel" id="short-bio"><p>我是 Peng Zhang。这里是 Anred Lab，我用它记录操作系统、网络与 Android 安全、数据密集型应用，以及解决工程问题时留下的笔记。</p>
-          <p>可以从下面的精选笔记开始，也可以按<a href="categories.html">分类</a>或<a href="tags.html">标签</a>浏览。你可以在 <a href="https://github.com/sbtger">GitHub</a> 找到我，或<a href="mailto:zpandy999@163.com">写邮件给我</a>。</p></div>
-            <div class="bio-panel" id="long-bio" hidden><p>我是 Peng Zhang，Anred Lab 的作者。我习惯从一个具体的工程问题出发，沿着应用、协议、内存和系统调用往下追，记录每一步如何解释眼前的现象。</p>
-          <p>这里收录了从 Hexo 时期开始写的笔记。有些是操作系统、汇编和嵌入式接口的学习记录，有些来自 Android 应用安全、网络防护和 Python 工具的实际使用。数据系统部分从《设计数据密集型应用》的可靠性、可扩展性和可维护性讲起。</p>
-          <p>想按主题阅读，可以翻<a href="categories.html">分类</a>或<a href="tags.html">标签</a>。我的代码在 <a href="https://github.com/sbtger">GitHub</a>，也可以<a href="mailto:zpandy999@163.com">写邮件给我</a>。</p></div>
+            <div class="bio-panel" id="short-bio">
+              <p>I'm Peng Zhang. Anred Lab is where I keep technical notes on operating systems, network and Android security, data-intensive applications, and the engineering problems I work on.</p>
+              <p>Start with the featured notes below. You can also find me on <a href="https://github.com/sbtger">GitHub</a> or <a href="mailto:zpandy999@163.com">email me</a>.</p>
+            </div>
+            <div class="bio-panel" id="long-bio" hidden>
+              <p>I'm Peng Zhang, the author of Anred Lab. I start with a concrete engineering problem and work my way down through the application, protocols, memory, and system calls, taking notes on what each layer explains.</p>
+              <p>The archive goes back to the site's Hexo days. It includes notes on operating systems, assembly, and embedded interfaces, along with hands-on work in Android security, network defense, and Python tooling. The data systems notes begin with reliability, scalability, and maintainability from <em>Designing Data-Intensive Applications</em>.</p>
+              <p>You can find my code on <a href="https://github.com/sbtger">GitHub</a> or <a href="mailto:zpandy999@163.com">email me</a>.</p>
+            </div>
           </section>
           <div class="writing">
             <section aria-labelledby="notes">
-              <h2 id="notes">精选笔记</h2>
+              <h2 id="notes">Featured notes</h2>
               <ul class="notes">
-          <li><a href="articles/sandbox-memory.html">沙箱内存虚拟化技术</a></li>
-          <li><a href="articles/ddia-reliability.html">DDIA-01.可靠、可扩展、可维护的应用</a></li>
-          <li><a href="articles/security-notes.html">安全类错题集</a></li>
-          <li><a href="articles/os-basics.html">操作系统基础知识</a></li>
-          <li><a href="articles/leetcode.html">leetcode总结</a></li>
-          <li><a href="articles/android-components.html">Android安全之组件安全</a></li>
+          <li><a href="/en/articles/sandbox-memory.html">Sandbox Memory Virtualization</a></li>
+          <li><a href="/en/articles/ddia-reliability.html">DDIA 01: Reliable, Scalable, and Maintainable Applications</a></li>
+          <li><a href="/en/articles/security-notes.html">Security Review Notes</a></li>
+          <li><a href="/en/articles/os-basics.html">Operating System Fundamentals</a></li>
+          <li><a href="/en/articles/leetcode.html">LeetCode Notes</a></li>
+          <li><a href="/en/articles/android-components.html">Android Component Security</a></li>
         </ul>
             </section>
             <section aria-labelledby="archive">
-              <h2 id="archive">文章</h2>
+              <h2 id="archive">Articles</h2>
               <div class="post-list">
-          <a href="articles/sandbox-memory.html"><span>沙箱内存虚拟化技术</span><time datetime="2026-11-25">2026年11月25日</time></a>
-          <a href="articles/ddia-reliability.html"><span>DDIA-01.可靠、可扩展、可维护的应用</span><time datetime="2021-09-26">2021年9月26日</time></a>
-          <a href="articles/security-notes.html"><span>安全类错题集</span><time datetime="2020-08-07">2020年8月7日</time></a>
-          <a href="articles/os-basics.html"><span>操作系统基础知识</span><time datetime="2020-08-06">2020年8月6日</time></a>
-          <a href="articles/leetcode.html"><span>leetcode总结</span><time datetime="2020-07-22">2020年7月22日</time></a>
-          <a href="articles/android-components.html"><span>Android安全之组件安全</span><time datetime="2020-07-20">2020年7月20日</time></a>
-          <a href="articles/android-security.html"><span>android_security</span><time datetime="2020-07-15">2020年7月15日</time></a>
-          <a href="articles/python-snippets.html"><span>常用python代码</span><time datetime="2020-07-13">2020年7月13日</time></a>
-          <a href="articles/assembly-addressing.html"><span>汇编语言程序设计笔记_存储器寻址</span><time datetime="2020-03-25">2020年3月25日</time></a>
-          <a href="articles/embedded-interfaces.html"><span>嵌入式系统安全笔记_接口技术</span><time datetime="2020-03-24">2020年3月24日</time></a>
-          <a href="articles/buffer-safety.html"><span>网络安全笔记_缓冲区溢出</span><time datetime="2020-03-23">2020年3月23日</time></a>
-          <a href="articles/checksec.html"><span>checksec</span><time datetime="2020-03-22">2020年3月22日</time></a>
-          <a href="articles/windows-internals.html"><span>主流操作系统安全_Windows</span><time datetime="2020-03-20">2020年3月20日</time></a>
-          <a href="articles/scrapy.html"><span>信息采集_爬虫</span><time datetime="2020-03-19">2020年3月19日</time></a>
-          <a href="articles/microcomputer-memory.html"><span>微机接口笔记_存储器</span><time datetime="2020-03-19">2020年3月19日</time></a>
-          <a href="articles/assembly-loop.html"><span>汇编语言程序设计笔记_Loop</span><time datetime="2020-03-18">2020年3月18日</time></a>
-          <a href="articles/embedded-arm.html"><span>嵌入式系统安全笔记_ARM</span><time datetime="2020-03-17">2020年3月17日</time></a>
-          <a href="articles/ddos.html"><span>网络安全笔记_DDoS攻击</span><time datetime="2020-03-16">2020年3月16日</time></a>
-          <a href="articles/network-lab.html"><span>网络侦察实验</span><time datetime="2020-03-16">2020年3月16日</time></a>
-          <a href="articles/oranges-os.html"><span>Orange&#x27;s 一个操作系统实现 小知识点</span><time datetime="2020-03-15">2020年3月15日</time></a>
-          <a href="articles/gpu-servers.html"><span>关于GPU服务器的一点小经验</span><time datetime="2020-03-15">2020年3月15日</time></a>
-          <a href="articles/hello-world.html"><span>Hello World</span><time datetime="2020-03-15">2020年3月15日</time></a>
+          <a href="/en/articles/sandbox-memory.html"><span>Sandbox Memory Virtualization</span><time datetime="2026-11-25">2026-11-25</time></a>
+          <a href="/en/articles/ddia-reliability.html"><span>DDIA 01: Reliable, Scalable, and Maintainable Applications</span><time datetime="2021-09-26">2021-09-26</time></a>
+          <a href="/en/articles/security-notes.html"><span>Security Review Notes</span><time datetime="2020-08-07">2020-08-07</time></a>
+          <a href="/en/articles/os-basics.html"><span>Operating System Fundamentals</span><time datetime="2020-08-06">2020-08-06</time></a>
+          <a href="/en/articles/leetcode.html"><span>LeetCode Notes</span><time datetime="2020-07-22">2020-07-22</time></a>
+          <a href="/en/articles/android-components.html"><span>Android Component Security</span><time datetime="2020-07-20">2020-07-20</time></a>
+          <a href="/en/articles/android-security.html"><span>Android Security</span><time datetime="2020-07-15">2020-07-15</time></a>
+          <a href="/en/articles/python-snippets.html"><span>Handy Python Snippets</span><time datetime="2020-07-13">2020-07-13</time></a>
+          <a href="/en/articles/assembly-addressing.html"><span>Assembly Notes on Memory Addressing</span><time datetime="2020-03-25">2020-03-25</time></a>
+          <a href="/en/articles/embedded-interfaces.html"><span>Embedded Systems Notes on Communication Interfaces</span><time datetime="2020-03-24">2020-03-24</time></a>
+          <a href="/en/articles/buffer-safety.html"><span>Buffer Safety and Process Memory</span><time datetime="2020-03-23">2020-03-23</time></a>
+          <a href="/en/articles/checksec.html"><span>Checking ELF Hardening with checksec</span><time datetime="2020-03-22">2020-03-22</time></a>
+          <a href="/en/articles/windows-internals.html"><span>Windows Operating System Internals</span><time datetime="2020-03-20">2020-03-20</time></a>
+          <a href="/en/articles/scrapy.html"><span>Data Collection Notes on Scrapy</span><time datetime="2020-03-19">2020-03-19</time></a>
+          <a href="/en/articles/microcomputer-memory.html"><span>Microcomputer Interface Notes on Memory</span><time datetime="2020-03-19">2020-03-19</time></a>
+          <a href="/en/articles/assembly-loop.html"><span>Assembly Notes on the LOOP Instruction</span><time datetime="2020-03-18">2020-03-18</time></a>
+          <a href="/en/articles/embedded-arm.html"><span>Embedded Systems Notes: PIC and ARM</span><time datetime="2020-03-17">2020-03-17</time></a>
+          <a href="/en/articles/ddos.html"><span>Network Security Notes on Denial of Service</span><time datetime="2020-03-16">2020-03-16</time></a>
+          <a href="/en/articles/network-lab.html"><span>Network Lab Notes on Secure File Uploads</span><time datetime="2020-03-16">2020-03-16</time></a>
+          <a href="/en/articles/oranges-os.html"><span>Orange’s Operating System Implementation Notes</span><time datetime="2020-03-15">2020-03-15</time></a>
+          <a href="/en/articles/gpu-servers.html"><span>Notes on Cloud GPU Servers</span><time datetime="2020-03-15">2020-03-15</time></a>
+          <a href="/en/articles/hello-world.html"><span>Hello World</span><time datetime="2020-03-15">2020-03-15</time></a>
         </div>
             </section>
           </div>

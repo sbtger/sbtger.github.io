@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Network Lab Notes on Secure File Uploads · Andy Zhang</title>
+  <link rel="icon" href="/images/andy-zhang-avatar.png" type="image/png">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="canonical" href="https://anred.space/en/articles/network-lab.html">
+  <link rel="alternate" hreflang="zh-CN" href="https://anred.space/articles/network-lab.html">
+</head>
+<body>
+  <main class="shell">
+    <article class="frame reader">
+      <h1 class="page-title">Network Lab Notes on Secure File Uploads</h1>
+      <header class="byline"><a class="author" href="/"><img src="/images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-03-16">2020-03-16</time><span aria-hidden="true">·</span><a href="/articles/network-lab.html" lang="zh-CN" hreflang="zh-CN">中文</a></header>
+      <div class="prose"><h2>HTML forms and file data</h2><p>A form’s action specifies where to submit, and its method specifies how. File uploads typically use POST with multipart/form-data so files and ordinary fields can travel as separate parts. Server-side validation is still required after browser-side checks.</p>
+<h2>Server-side file handling</h2><p>Control permitted file types and sizes, generate storage names on the server, and separate upload storage from directories where application code executes. Give the application process only the file permissions it needs.</p>
+<h2>Logging and response</h2><p>Record upload time, request ID, processing result, and necessary audit details. If a suspicious file is found, isolate affected services, verify access scope, and record the affected resources and recovery status.</p></div>
+      <nav class="page-links" aria-label="Related pages"><a href="/#archive">Back to articles</a></nav>
+    </article>
+  </main>
+</body>
+</html>

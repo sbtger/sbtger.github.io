@@ -8,12 +8,13 @@
   <link rel="icon" type="image/png" href="/images/andy-zhang-avatar.png">
   <link rel="canonical" href="https://anred.space/articles/python-snippets.html">
   <link rel="stylesheet" href="../assets/site.css">
+  <link rel="alternate" hreflang="en" href="https://anred.space/en/articles/python-snippets.html">
 </head>
 <body>
   <main class="shell">
     <article class="frame reader">
       <h1 class="page-title">常用python代码</h1>
-      <header class="byline"><a class="author" href="../index.html"><img src="../images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-07-13">2020-07-13</time></header>
+      <header class="byline"><a class="author" href="/zh/"><img src="../images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-07-13">2020-07-13</time><span aria-hidden="true">·</span><a href="/en/articles/python-snippets.html" lang="en" hreflang="en">English</a></header>
       <div class="prose"><h2 id="1-numpy-array、torch-tensor和Image之间相互转换">1. numpy array、torch tensor和Image之间相互转换</h2><h3 id="（1）numpy-array与Image之间互相转换">（1）numpy array与Image之间互相转换</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image  </span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">im = Image.open(<span class="string">"a.jpg"</span>)</span><br><span class="line"></span><br><span class="line">img = np.array(im)      <span class="comment"># image to numpy array</span></span><br><span class="line">im=Image.fromarray(img) <span class="comment"># numpy array to image</span></span><br></pre></td></tr></table></figure>
 
 <h3 id="（2）numpy-array与torch-tensor之间互相转换">（2）numpy array与torch tensor之间互相转换</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">a = torch.ones(<span class="number">5</span>)</span><br><span class="line">b = a.numpy()			<span class="comment"># torch tensor to numpy array</span></span><br><span class="line">a = torch.from_numpy(b)  <span class="comment"># numpy array to torch tensor</span></span><br><span class="line"><span class="comment"># 转换后的tensor与numpy array指向同一地址，对一方值的改变会改变另一方</span></span><br></pre></td></tr></table></figure>
@@ -79,7 +80,7 @@
 <p><strong>axis: 表示从不同维度处理。</strong></p>
 <p><strong>keepdims: 表示是否保持矩阵二维特性。</strong></p>
 <hr></div>
-      <nav class="page-links" aria-label="相关索引"><a href="../index.html#archive">返回文章列表</a> <a href="../categories.html#categories-5">python</a> <a href="../tags.html#tags-8">python</a> <a href="../tags.html#tags-9">numpy</a> <a href="../tags.html#tags-10">PIL</a> <a href="../tags.html#tags-11">torch</a></nav>
+      <nav class="page-links" aria-label="相关索引"><a href="/zh/#archive">返回文章列表</a> <a href="../categories.html#categories-5">python</a> <a href="../tags.html#tags-8">python</a> <a href="../tags.html#tags-9">numpy</a> <a href="../tags.html#tags-10">PIL</a> <a href="../tags.html#tags-11">torch</a></nav>
     </article>
   </main>
 </body>

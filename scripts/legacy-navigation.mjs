@@ -37,7 +37,7 @@ ${generated}
 <body>
   <main class="shell">
     <article class="frame reader">
-      <a class="back" href="/#archive">返回全部文章</a>
+      <a class="back" href="/zh/#archive">返回全部文章</a>
       <h1 class="page-title">${label}文章</h1>
       <nav class="page-links" aria-label="按日期浏览">${links}</nav>
       <div class="post-list">
@@ -66,7 +66,7 @@ ${generated}
 <link rel="canonical" href="https://anred.space/#archive">
 <script src="/assets/legacy-redirect.js" defer></script>
 <noscript><meta http-equiv="refresh" content="0;url=/#archive"></noscript>
-</head><body><p><a href="/#archive">浏览全部文章</a></p></body></html>
+</head><body><p><a href="/zh/#archive">浏览全部文章</a></p></body></html>
 `);
 }
 

@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Android Security · Andy Zhang</title>
+  <link rel="icon" href="/images/andy-zhang-avatar.png" type="image/png">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="canonical" href="https://anred.space/en/articles/android-security.html">
+  <link rel="alternate" hreflang="zh-CN" href="https://anred.space/articles/android-security.html">
+</head>
+<body>
+  <main class="shell">
+    <article class="frame reader">
+      <h1 class="page-title">Android Security</h1>
+      <header class="byline"><a class="author" href="/"><img src="/images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-07-15">2020-07-15</time><span aria-hidden="true">·</span><a href="/articles/android-security.html" lang="zh-CN" hreflang="zh-CN">中文</a></header>
+      <div class="prose"><h2>Android’s layers</h2><table><thead><tr><th>Layer</th><th>Role</th></tr></thead><tbody><tr><td>Applications</td><td>Provide interfaces and features, and use framework APIs to request system services.</td></tr><tr><td>Application framework</td><td>Manages component lifecycles, windows, resources, and system services.</td></tr><tr><td>Runtime and native libraries</td><td>The runtime executes bytecode stored in APK DEX files. Native libraries provide graphics, media, and other low-level capabilities.</td></tr><tr><td>Linux kernel</td><td>Manages processes, memory, filesystems, and device drivers.</td></tr></tbody></table>
+<h2>Component and process boundaries</h2><p>Activities provide interfaces, services can be started or bound, broadcast receivers handle events, and content providers expose structured data. A service runs on the application's main thread by default, so long-running work needs a suitable execution context.</p>
+<h2>The app sandbox and permissions</h2><p>Android generally assigns each app a distinct Linux UID. File permissions and process isolation establish the basic app sandbox. A permission-controlled content provider can share only the required resources. Normal, dangerous, and signature permissions have different grant conditions. Android version and target SDK affect how dangerous permissions are granted.</p>
+<h2>Intents and WebView</h2><p>Intents can carry data across apps. Send sensitive values only to the intended recipient. A PendingIntent delegates a future action, so constrain its scope. A WebView that accepts external links should define which origins, schemes, and local files it permits.</p>
+<h2>Reviewing an app</h2><p>Start with the manifest declarations and compare them with the system services, IPC, and data-sharing interfaces the app actually uses. Check logs from an app you control for sensitive data accidentally written to files or logs. USB debugging, Bluetooth, Wi-Fi, and NFC each have distinct connection and authorization boundaries.</p></div>
+      <nav class="page-links" aria-label="Related pages"><a href="/#archive">Back to articles</a></nav>
+    </article>
+  </main>
+</body>
+</html>

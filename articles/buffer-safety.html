@@ -8,16 +8,17 @@
   <link rel="icon" type="image/png" href="/images/andy-zhang-avatar.png">
   <link rel="canonical" href="https://anred.space/articles/buffer-safety.html">
   <link rel="stylesheet" href="../assets/site.css">
+  <link rel="alternate" hreflang="en" href="https://anred.space/en/articles/buffer-safety.html">
 </head>
 <body>
   <main class="shell">
     <article class="frame reader">
       <h1 class="page-title">网络安全笔记_缓冲区溢出</h1>
-      <header class="byline"><a class="author" href="../index.html"><img src="../images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-03-23">2020-03-23</time> · 防护笔记整理</header>
+      <header class="byline"><a class="author" href="/zh/"><img src="../images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-03-23">2020-03-23</time> · 防护笔记整理<span aria-hidden="true">·</span><a href="/en/articles/buffer-safety.html" lang="en" hreflang="en">English</a></header>
       <div class="prose"><h2>进程的内存布局</h2><table><thead><tr><th scope="col">区域</th><th scope="col">常见用途</th></tr></thead><tbody><tr><td>文本段</td><td>程序的机器指令。</td></tr><tr><td>数据段与 BSS</td><td>静态存储期对象。通常非零初始化数据位于数据段，零初始化对象可位于 BSS。</td></tr><tr><td>堆</td><td>程序运行期间申请和释放的内存。</td></tr><tr><td>栈</td><td>函数调用所需的临时状态，包括部分局部变量。具体布局随体系结构和编译设置变化。</td></tr></tbody></table>
 <h2>长度与索引</h2><p>缓冲区由起始位置、存储容量和数据格式共同描述。长度为 n 的数组，其有效下标范围是 0 至 n−1。申请空间或检查复制长度时，需先处理负数以及有符号与无符号整数转换，再将长度和可用容量比较。</p>
 <h2>越界的后果与检查</h2><p>越界写入可能破坏相邻数据并导致崩溃。检查实际分配的目标容量和源数据长度，处理字符串时还要为终止符预留空间。边界测试可使用空输入、刚好填满和超出一单位三组样例。</p></div>
-      <nav class="page-links" aria-label="相关索引"><a href="../index.html#archive">返回文章列表</a> <a href="../categories.html#categories-8">网络安全</a> <a href="../tags.html#tags-15">网络安全</a> <a href="../tags.html#tags-16">缓冲区溢出</a></nav>
+      <nav class="page-links" aria-label="相关索引"><a href="/zh/#archive">返回文章列表</a> <a href="../categories.html#categories-8">网络安全</a> <a href="../tags.html#tags-15">网络安全</a> <a href="../tags.html#tags-16">缓冲区溢出</a></nav>
     </article>
   </main>
 </body>

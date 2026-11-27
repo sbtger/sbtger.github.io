@@ -1,0 +1,1156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Sandbox Memory Virtualization</title>
+<meta name="description" content="Compare snapshot restore, demand paging, copy-on-write, memory reclaim, and cross-instance sharing across the sandbox lifecycle.">
+<link rel="canonical" href="https://anred.space/en/articles/sandbox-memory.html">
+<style>
+  :root {
+    color-scheme: dark;
+    --background: #181818;
+    --surface: #1d1d1d;
+    --node: #252525;
+    --text: #efefef;
+    --muted: #b8b8b8;
+    --line: #363636;
+    --mint: #73b5ff;
+    --active: #203a5c;
+    --amber: #d9d9d9;
+    font: 15px/1.62 Inter, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 82px; }
+  body { margin: 0; background: var(--background); color: var(--text); }
+  .wrap { width: min(100%, 1300px); margin: 0 auto; padding-inline: clamp(16px, 4vw, 52px); }
+  header { position: sticky; z-index: 2; top: 0; background: var(--background); border-bottom: 1px solid var(--line); }
+  header .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding-block: 14px; }
+  .article-heading { display: flex; align-items: center; gap: 12px; }
+  h1, h2, h3, h4, p, dl, dd { margin: 0; }
+  h1 { font-size: 18px; line-height: 1.35; white-space: nowrap; }
+  h2 { font-size: clamp(27px, 4vw, 43px); line-height: 1.18; letter-spacing: -.035em; }
+  h3 { font-size: 19px; line-height: 1.4; }
+  h4 { font-size: 15px; line-height: 1.4; }
+  a { color: var(--mint); text-underline-offset: 4px; }
+  button { font: inherit; }
+  :is(button, a, .restore-scroll):focus-visible { outline: 2px solid var(--mint); outline-offset: 3px; }
+  nav { display: flex; flex-wrap: wrap; gap: 5px; padding: 3px; }
+  nav a, .phase-button {
+    padding: 5px 10px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    color: var(--muted);
+    text-decoration: none;
+    white-space: nowrap;
+    font-size: 13px;
+  }
+  nav a:hover, .phase-button:hover { border-color: var(--line); }
+  nav a[aria-current], .phase-button[aria-pressed="true"] {
+    color: var(--mint); border-color: #42638c; background: var(--active);
+  }
+  main { padding-block: 25px 64px; }
+  .intro p { margin-top: 7px; color: var(--muted); }
+  .restore-diagram { margin: 17px 0; padding: clamp(12px, 2vw, 22px); border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+  .restore-diagram .scenario { margin: 6px 0 10px; color: var(--muted); font-size: 13px; }
+  .restore-scroll { overflow-x: auto; }
+  .restore-grid { table-layout: fixed; min-width: 815px; border-collapse: separate; border-spacing: 7px 6px; }
+  .restore-lifecycle { min-width: 960px; }
+  .restore-lifecycle .stage-path > b { color: var(--mint); }
+  .project-graph { position: relative; min-width: 940px; height: 365px; }
+  .project-graph .graph-column { position: absolute; top: 0; width: 20%; text-align: center; }
+  .project-graph .graph-node { position: absolute; top: var(--y); width: 20%; transform: translateY(-50%); text-align: center; padding: 7px 5px; background: var(--node); border: 1px solid var(--line); border-radius: 7px; font-size: 13px; line-height: 1.3; }
+  .project-graph .project { left: 0; }
+  .project-graph .runtime { left: 27%; }
+  .project-graph .vmm { left: 54%; }
+  .project-graph .mode { left: 80%; }
+  .project-graph .graph-node small { display: block; color: var(--muted); font-size: 11px; margin-top: 3px; }
+  .project-links { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--mint); }
+  .project-links .edge-label { fill: currentColor; stroke: var(--surface); stroke-width: 4px; paint-order: stroke fill; font-size: 10px; }
+  .project-links path { fill: none; stroke: currentColor; stroke-width: 1.25; vector-effect: non-scaling-stroke; }
+  .implementation-cases { display: grid; gap: 8px; margin-top: 10px; }
+  .implementation-cases > div { border-top: 1px solid var(--line); padding-top: 7px; }
+  .implementation-cases dt { color: var(--mint); }
+  .comparison-graph { min-width: 700px; margin-top: 10px; }
+  .comparison-graph :is(.graph-column,.graph-node) { width: var(--graph-node-width, 26%); }
+  .comparison-graph.four-columns { min-width: 940px; }
+  .restore-grid col.stage-label { width: 106px; }
+  .restore-grid :is(th, td) { border: 0; padding: 0; }
+  .restore-grid thead th { text-align: center; font-size: 15px; }
+  .restore-grid .method-name { padding: 7px 3px; border-radius: 6px; border: 1px solid var(--line); background: var(--active); color: var(--mint); }
+  .restore-grid .stage-name { min-width: 0; width: auto; text-align: center; vertical-align: middle; color: var(--amber); }
+  .restore-grid .stage-path { border: 1px solid var(--line); border-radius: 7px; background: var(--node); padding: 6px 8px; vertical-align: middle; }
+  .restore-steps { display: grid; gap: 7px; list-style: none; margin: 0; padding: 0; }
+  .restore-steps li { position: relative; overflow-wrap: anywhere; }
+  .restore-steps li:not(:last-child)::after {
+    content: "↓";
+    position: absolute;
+    top: 100%;
+    left: 2.2em;
+    color: var(--mint);
+    font-size: 10px;
+    line-height: 7px;
+  }
+  .restore-steps b { margin-right: 6px; color: var(--mint); font-size: 12px; }
+  .restore-steps .handler { color: var(--amber); }
+  .restore-note-label { color: var(--mint); }
+  .restore-note { margin-top: 8px; color: var(--muted); font-size: 12px; }
+  .restore-scroll-note { display: none; }
+  .comparisons { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; margin-top: 17px; }
+  .comparison, .tech { padding: clamp(12px, 2vw, 22px); border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+  .phases { display: flex; flex-wrap: wrap; gap: 5px; margin: 8px 0 9px; }
+  .phase-button { background: transparent; cursor: pointer; }
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; line-height: 1.5; }
+  th, td { padding: 7px 9px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  thead th { font-weight: 650; color: var(--mint); }
+  tbody th { width: 20%; min-width: 124px; font-weight: 650; }
+  tbody tr:last-child :is(th,td) { border-bottom: 0; }
+  tr > [data-phase].emphasized { background: var(--active); }
+  .comparison[data-filtered] td { width: 78%; }
+  .takeaway { margin-top: 10px; color: var(--muted); font-size: 13px; }
+  .details-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 21px 0 9px; }
+  .details-head a { font-size: 13px; }
+  .tech { margin-bottom: 11px; }
+  .tech:target { border-color: #42638c; }
+  .tech .goal { color: var(--muted); margin: 5px 0 12px; }
+  .flowchart {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4,minmax(0,1fr));
+    gap: 19px;
+  }
+  .step {
+    min-width: 0;
+    position: relative;
+    padding: 9px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    background: var(--node);
+    overflow-wrap: anywhere;
+  }
+  .step small { display: block; color: var(--mint); font-size: 11px; }
+  .step h4 { margin: 2px 0 4px; }
+  .step p { font-size: 13px; color: var(--muted); line-height: 1.47; }
+  .step:not(:last-child)::after {
+    content: "→";
+    position: absolute;
+    width: 19px;
+    top: calc(50% - .8em);
+    right: -20px;
+    color: var(--mint);
+    text-align: center;
+  }
+  .facts { display: grid; grid-template-columns: minmax(0,1.23fr) minmax(0,1fr) minmax(0,1fr); gap: 13px; margin-top: 12px; }
+  .facts > div { border-top: 1px solid var(--line); padding-top: 7px; min-width: 0; }
+  dt { font-weight: 650; font-size: 13px; color: var(--amber); }
+  dd { margin-top: 2px; font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
+  .sources { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 3px 12px; font-size: 12px; }
+  [hidden] { display: none !important; }
+  @media (max-width: 895px) {
+    .restore-scroll-note { margin-bottom: 3px; display: block; color: var(--muted); font-size: 12px; }
+  }
+  @media (max-width: 820px) {
+    html { scroll-padding-top: 112px; }
+    header .wrap { gap: 4px 12px; padding-block: 9px; }
+    nav { margin-inline: -3px; gap: 2px; }
+    nav a { padding-inline: 2px; }
+  }
+  @media (max-width: 710px) {
+    .flowchart { grid-template-columns: 1fr; gap: 15px; }
+    .step:not(:last-child)::after { content: "↓"; right: calc(50% - 10px); top: 100%; line-height: 16px; }
+    .facts { grid-template-columns: 1fr; gap: 7px; }
+    .comparison:not([data-filtered]) table { min-width: 630px; }
+  }
+  @page { margin: 12mm; }
+  @media print {
+    :root { color-scheme: light; --background: #fff; --surface: #fff; --node: #f1f1f1; --text: #202020; --muted: #414141; --line: #c8c8c8; --mint: #242424; --amber: #444444; }
+    header { position: static; }
+    nav, .phases, .details-head a { display: none !important; }
+    .wrap { width: 100%; padding-inline: 0; }
+    .line[hidden] { display: block !important; }
+    .line + .line { break-before: page; }
+    .comparison :is(td,th)[hidden] { display: table-cell !important; }
+    .comparison[data-filtered] td { width: auto; }
+    .comparison table { min-width: 0 !important; }
+    .tech, .comparison, .restore-grid tr { break-inside: avoid; }
+    .restore-grid { min-width: 0; }
+    .restore-grid col.stage-label { width: 80px; }
+    .restore-grid .method-name { background: var(--node); }
+    .restore-scroll { overflow: visible; }
+    .restore-scroll-note { display: none; }
+    .flowchart { grid-template-columns: repeat(4,minmax(0,1fr)); gap: 19px; }
+    .step:not(:last-child)::after { content: "→"; top: calc(50% - .8em); right: -20px; }
+    .facts { grid-template-columns: repeat(3,minmax(0,1fr)); }
+  }
+</style>
+  <link rel="alternate" hreflang="zh-CN" href="https://anred.space/articles/sandbox-memory.html">
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="article-heading">
+      <a href="/">Home</a>
+      <a href="/articles/sandbox-memory.html" lang="zh-CN" hreflang="zh-CN">中文</a>
+      <h1>Sandbox Memory Virtualization</h1>
+    </div>
+    <nav aria-label="Article topics" id="nav"></nav>
+  </div>
+</header>
+<main class="wrap" id="main"></main>
+<noscript>Enable JavaScript to view the stage comparisons and technical diagrams.</noscript>
+<template id="restore-comparison-diagram">
+  <figure class="restore-diagram" aria-labelledby="restore-flow-title">
+    <figcaption><h3 id="restore-flow-title">Memory Restore Workflow</h3></figcaption>
+    <div class="restore-scroll" role="region" aria-label="Stages of three snapshot restore methods" tabindex="0">
+      <table class="restore-grid restore-lifecycle" aria-labelledby="restore-flow-title">
+        <colgroup><col class="stage-label"><col><col><col><col><col></colgroup>
+        <thead>
+          <tr>
+            <th scope="col">Restore method</th>
+            <th class="method-name" scope="col">Prepare RAM backing</th>
+            <th class="method-name" scope="col">Restore state and register slots</th>
+            <th class="method-name" scope="col">Runtime reads</th>
+            <th class="method-name" scope="col">Runtime writes</th>
+            <th class="method-name" scope="col">Page mapping on access</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th class="stage-name" scope="row">Full copy</th>
+            <td class="stage-path">
+              <ol class="restore-steps">
+                <li><b>VMM</b><span>Create a private RAM mapping for the VM and populate it from the snapshot.</span></li>
+              </ol>
+            </td>
+            <td class="stage-path shared-stage" rowspan="3"><b>VMM</b> restores vCPU and device state, registers KVM memory slots linking guest physical addresses to VMM virtual addresses, and starts the vCPUs.</td>
+            <td class="stage-path" colspan="2"><b>Guest</b> reads and writes the populated private RAM pages directly.</td>
+            <td class="stage-path shared-stage" rowspan="3"><b>Host KVM</b> creates or updates the mapping to the host physical page on a missing mapping or write protection. Guest access then resumes.</td>
+          </tr>
+          <tr>
+            <th class="stage-name" scope="row">File CoW</th>
+            <td class="stage-path">
+              <ol class="restore-steps">
+                <li><b>VMM</b><span>Map the snapshot file as RAM backing using mmap(MAP_PRIVATE).</span></li>
+              </ol>
+            </td>
+            <td class="stage-path">
+              <ol class="restore-steps">
+                <li><b>Host kernel</b><span>Serve reads of unmodified pages from the file page cache, reading the snapshot on a cache miss. VMs on the same host can share pages mapped at the same file offset.</span></li>
+              </ol>
+            </td>
+            <td class="stage-path">
+              <ol class="restore-steps">
+                <li><b>Host kernel</b><span>On the first write to a file-backed page, copy the original page into private memory for that VM.</span></li>
+                <li><b>Guest</b><span>Write to the private page. Other VMs can still read the original.</span></li>
+              </ol>
+            </td>
+          </tr>
+          <tr>
+            <th class="stage-name" scope="row">UFFD demand paging</th>
+            <td class="stage-path">
+              <ol class="restore-steps">
+                <li><b>VMM</b><span>Create an unpopulated RAM mapping and register UFFD MISSING.</span></li>
+              </ol>
+            </td>
+            <td class="stage-path" colspan="2">
+              <ol class="restore-steps">
+                <li><b>Unpopulated page</b><span>A read or write raises a fault. A userspace handler fetches the original page from the snapshot and uses UFFDIO_COPY to populate guest RAM.</span></li>
+                <li><b>Populated page</b><span>The guest reads and writes the target page directly.</span></li>
+                <li><b>Loading policy</b><span>Populate only accessed pages, or let a background thread fill the remaining pages after the VM starts.</span></li>
+              </ol>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="restore-note"><strong class="restore-note-label">Kernel requirements</strong> Linux 4.18 already has the basic host support for full copy, file CoW, and demand restore of anonymous RAM with UFFD. UFFD demand restore requires the host to let the VMM receive notifications about missing pages on guest access through KVM. Minimum VMM versions vary.</p>
+    <p class="sources"><a href="https://github.com/cloud-hypervisor/cloud-hypervisor/blob/main/docs/snapshot_restore.md">Cloud Hypervisor restore modes</a><a href="https://github.com/firecracker-microvm/firecracker/blob/main/docs/snapshotting/handling-page-faults-on-snapshot-resume.md">Firecracker page fault handling</a><a href="https://docs.kernel.org/admin-guide/mm/userfaultfd.html">Linux userfaultfd</a></p>
+  </figure>
+  <section class="restore-diagram" aria-labelledby="project-path-title">
+    <h3 id="project-path-title">Open-source restore paths</h3>
+    <div class="restore-scroll" role="region" aria-labelledby="project-path-title" tabindex="0">
+      <div class="project-graph">
+        <h4 class="graph-column project">Sandbox platform</h4>
+        <h4 class="graph-column runtime">Runtime / node component</h4>
+        <h4 class="graph-column vmm">VMM</h4>
+        <h4 class="graph-column mode">Memory restore scheme</h4>
+        <svg class="project-links" viewBox="0 0 1000 365" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <marker id="project-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><polygon points="0,0 8,4 0,8" fill="currentColor"/></marker>
+          </defs>
+          <g marker-end="url(#project-arrow)">
+            <path d="M200 55 H270"/>
+            <path d="M470 55 H540"/>
+            <path d="M200 110 H270"/>
+            <path d="M470 110 C499 110 514 140 540 140"/>
+            <path d="M200 175 H270"/>
+            <path d="M470 175 C505 175 507 140 540 140"/>
+            <path d="M200 245 H270"/>
+            <path d="M470 245 H540"/>
+            <path d="M470 245 C505 245 508 140 540 140"/>
+            <path d="M470 245 C507 245 505 315 540 315"/>
+            <path d="M740 55 C770 55 770 130 800 130"/>
+            <path d="M740 140 L800 130"/>
+            <path d="M740 140 C776 140 768 218 800 218"/>
+            <path d="M740 245 C768 245 770 130 800 130"/>
+            <path d="M740 315 C786 315 755 130 800 130"/>
+            <path d="M740 315 C778 315 765 218 800 218"/>
+            <path d="M740 315 H800"/>
+          </g>
+        </svg>
+        <div class="graph-node project" style="--y:55px">CubeSandbox</div>
+        <div class="graph-node project" style="--y:110px">OpenSandbox<small>Fast Sandbox path</small></div>
+        <div class="graph-node project" style="--y:175px">E2B Runtime<small>Selects UFFD</small></div>
+        <div class="graph-node project" style="--y:245px">OpenSandbox<small>Kubernetes · RuntimeClass</small></div>
+        <div class="graph-node runtime" style="--y:55px">CubeShim</div>
+        <div class="graph-node runtime" style="--y:110px">Fastlet / runtime-agent<small>Uses Firecracker File</small></div>
+        <div class="graph-node runtime" style="--y:175px">E2B Orchestrator</div>
+        <div class="graph-node runtime" style="--y:245px">Kata Containers</div>
+        <div class="graph-node vmm" style="--y:55px">cube-hypervisor<small>Cloud Hypervisor fork</small></div>
+        <div class="graph-node vmm" style="--y:140px">Firecracker</div>
+        <div class="graph-node vmm" style="--y:245px">QEMU<small>VM Template path shown</small></div>
+        <div class="graph-node vmm" style="--y:315px">Cloud Hypervisor</div>
+        <div class="graph-node mode" style="--y:130px">File CoW</div>
+        <div class="graph-node mode" style="--y:218px">UFFD demand paging<small>Optional background fill</small></div>
+        <div class="graph-node mode" style="--y:315px">Full copy<small>Cloud Hypervisor default</small></div>
+      </div>
+    </div>
+    <p class="restore-note"><strong class="restore-note-label">Snapshot storage</strong> OpenSandbox Fast Sandbox stages the memory snapshot as a node-local file, then maps it on demand. CubeSandbox maps a local snapshot file with XFS or a shared file with JuiceFS, which fetches remotely on cache misses. E2B uses a userspace fault handler to look up data by index, fetch it from cache or storage, and populate the VM.</p>
+    <p class="restore-note"><strong class="restore-note-label">Page loading policy</strong> cube-hypervisor can prefault mappings before execution. Linux may read ahead adjacent pages on the file CoW path. E2B can prefetch pages predicted to be hot, and a UFFD configuration with background fill loads remaining pages after the guest starts.</p>
+    <p class="sources"><a href="https://github.com/TencentCloud/CubeSandbox/blob/master/hypervisor/docs/memory.md">Cube prefault</a><a href="https://github.com/opensandbox-group/fast-sandbox/blob/main/docs/guides/firecracker-runtime-e2e.md">Fast Sandbox</a><a href="https://open-sandbox.ai/guides/secure-container">OpenSandbox RuntimeClass</a><a href="https://github.com/e2b-dev/runtime/blob/main/docs/ARCHITECTURE.md">E2B</a><a href="https://github.com/kata-containers/kata-containers/blob/main/docs/how-to/what-is-vm-templating-and-how-do-I-use-it.md">Kata templates</a><a href="https://github.com/kata-containers/kata-containers/blob/main/docs/hypervisors.md">Kata VMMs</a><a href="https://github.com/TencentCloud/CubeSandbox/blob/master/hypervisor/Cargo.toml">cube-hypervisor</a><a href="https://www.qemu.org/docs/master/devel/migration/fast-snapshot-load.html">QEMU Fast Snapshot Load</a></p>
+  </section>
+</template>
+<script>
+const sources = {
+  cubeHugeOpt: ["cube-hypervisor memory configuration", "https://github.com/TencentCloud/CubeSandbox/blob/master/hypervisor/docs/memory.md"],
+  qemuMemoryOpt: ["QEMU memory backing options", "https://www.qemu.org/docs/master/system/invocation.html"],
+  agentStartupPrefetch: ["AgentENV startup prefetch manifest", "https://github.com/kvcache-ai/AgentENV/blob/2b981b3/storage/overlaybd/src/startup_manifest.rs"],
+  e2bReclaim: ["E2B memory reclaim flag", "https://github.com/e2b-dev/runtime/blob/391b22443/packages/shared/pkg/featureflags/flags.go#L1012"],
+  fastReclaim: ["Fast Sandbox memory reclaim", "https://github.com/opensandbox-group/fast-sandbox/blob/15178de/docs/guides/memory-reclamation.md"],
+  agentReclaim: ["AgentENV default reclaim options", "https://github.com/kvcache-ai/AgentENV/blob/2b981b3/config/default.toml#L33"],
+  chBalloon: ["Cloud Hypervisor balloon and FPR", "https://github.com/cloud-hypervisor/cloud-hypervisor/blob/main/docs/balloon.md"],
+  kataQemuReclaim: ["Kata QEMU free-page reclaim options", "https://github.com/kata-containers/kata-containers/blob/main/src/runtime/config/configuration-qemu.toml.in"],
+  cubePrefaultOpt: ["Cube prefault", "https://github.com/TencentCloud/CubeSandbox/blob/master/hypervisor/docs/memory.md#prefault"],
+  fcHugeOpt: ["Firecracker huge pages", "https://github.com/firecracker-microvm/firecracker/blob/main/docs/hugepages.md"],
+  kataHugeOpt: ["Kata QEMU huge page options", "https://github.com/kata-containers/kata-containers/blob/main/src/runtime/config/configuration-qemu.toml.in"],
+  fastImage: ["Fast Sandbox image path", "https://github.com/opensandbox-group/fast-sandbox/blob/main/README.md"],
+  chPmem: ["Cloud Hypervisor virtio-pmem", "https://github.com/cloud-hypervisor/cloud-hypervisor/blob/main/docs/device_model.md#virtio-pmem"],
+  kataTemplate: ["Kata VM Template", "https://github.com/kata-containers/kata-containers/blob/main/docs/how-to/what-is-vm-templating-and-how-do-I-use-it.md"],
+  kataSaveVM: ["Kata Cloud Hypervisor SaveVM", "https://github.com/kata-containers/kata-containers/blob/main/src/runtime/virtcontainers/clh.go#L1384-L1403"],
+  kataCheckpoint: ["Kata Firecracker snapshot integration", "https://github.com/kata-containers/kata-containers/issues/13754"],
+  openSandboxKata: ["OpenSandbox Kata RuntimeClass", "https://open-sandbox.ai/guides/secure-container"],
+  openSandboxCheckpoint: ["OpenSandbox QEMU-in-runc VMState", "https://open-sandbox.ai/guides/qemu-vmstate-snapshots"],
+  cloudCowSnapshot: ["Cloud Hypervisor CoW restore and later snapshots", "https://github.com/cloud-hypervisor/cloud-hypervisor/blob/main/docs/snapshot_restore.md#copy-on-write-restore"],
+  cloudCowPages: ["Cloud Hypervisor pagemap selection source", "https://github.com/cloud-hypervisor/cloud-hypervisor/blob/main/vmm/src/pagemap.rs"],
+  agentEnvMemory: ["AgentENV memory snapshot workflow", "https://github.com/kvcache-ai/AgentENV/blob/main/docs/src/internals/architecture.md#memory-snapshot-restore"],
+  agentEnvConfig: ["AgentENV page selection options", "https://github.com/kvcache-ai/AgentENV/blob/main/config/default.toml"],
+  criuDelta: ["CRIU incremental dumps", "https://criu.org/Incremental_dumps"],
+  criuTrack: ["CRIU memory change tracking", "https://criu.org/Memory_changes_tracking"],
+  fastDiffIssue: ["Fast Sandbox incremental snapshot proposal", "https://github.com/opensandbox-group/fast-sandbox/issues/56"],
+  kataDax: ["Kata QEMU DAX configuration", "https://github.com/kata-containers/kata-containers/blob/main/src/runtime/config/configuration-qemu.toml.in"],
+  cubePmem: ["CubeSandbox pmem device configuration", "https://github.com/TencentCloud/CubeSandbox/blob/master/CubeShim/shim/src/sandbox/config.rs"],
+  cloudMemory: ["Cloud Hypervisor memory configuration", "https://github.com/cloud-hypervisor/cloud-hypervisor/blob/main/docs/memory.md"],
+  ch: ["Cloud Hypervisor restore methods", "https://github.com/cloud-hypervisor/cloud-hypervisor/blob/main/docs/snapshot_restore.md"],
+  fc: ["Firecracker snapshots", "https://github.com/firecracker-microvm/firecracker/blob/main/docs/snapshotting/snapshot-support.md"],
+  cube: ["Cube snapshot and clone", "https://github.com/TencentCloud/CubeSandbox/blob/4f81e8e6dd42e1484a153289d596b384f856d160/docs/zh/blog/posts/2026-06-25-cubesandbox-snapshot-clone-rollback-deep-dive.md"],
+  fast: ["Fast Sandbox File restore", "https://github.com/opensandbox-group/fast-sandbox/blob/main/docs/guides/firecracker-runtime-e2e.md"],
+  e2b: ["E2B architecture", "https://github.com/e2b-dev/runtime/blob/main/docs/ARCHITECTURE.md"],
+  e2bFlags: ["E2B write-protection mode", "https://github.com/e2b-dev/runtime/blob/391b22443460fb30432da889b44aa413478d5717/packages/shared/pkg/featureflags/flags.go#L232-L239"],
+  e2bIndex: ["E2B snapshot index", "https://github.com/e2b-dev/runtime/blob/391b22443460fb30432da889b44aa413478d5717/packages/shared/pkg/storage/header/metadata.go#L159-L204"],
+  userfaultfd: ["Linux userfaultfd", "https://docs.kernel.org/admin-guide/mm/userfaultfd.html"],
+  kvm: ["KVM dirty-page bitmap", "https://docs.kernel.org/virt/kvm/api.html#kvm-get-dirty-log"],
+  soft: ["Linux Soft-dirty", "https://docs.kernel.org/admin-guide/mm/soft-dirty.html"],
+  cubeSoft: ["Cube Soft-dirty integration", "https://github.com/TencentCloud/CubeSandbox/pull/389"],
+  pagemap: ["Linux PAGEMAP_SCAN", "https://docs.kernel.org/admin-guide/mm/pagemap.html#pagemap-scan-ioctl"],
+  pmem: ["QEMU virtio-pmem", "https://www.qemu.org/docs/master/system/devices/virtio/virtio-pmem.html"],
+  virtiofs: ["virtio-fs architecture", "https://virtio-fs.gitlab.io/"],
+  dsec: ["DSec measurements §8.4", "https://arxiv.org/html/2609.22978v1#S8.SS4"],
+  balloon: ["Firecracker Balloon", "https://github.com/firecracker-microvm/firecracker/blob/main/docs/ballooning.md"],
+  report: ["Linux Free Page Reporting", "https://docs.kernel.org/mm/free_page_reporting.html"],
+  cubeFpr: ["Cube FPR integration", "https://github.com/TencentCloud/CubeSandbox/pull/1758"],
+  damon: ["Linux DAMON_RECLAIM", "https://docs.kernel.org/admin-guide/mm/damon/reclaim.html"],
+  mglru: ["Linux MGLRU", "https://docs.kernel.org/admin-guide/mm/multigen_lru.html"],
+  memAgent: ["Kata mem-agent configuration", "https://github.com/kata-containers/kata-containers/blob/main/docs/how-to/how-to-use-memory-agent.md"],
+  snapbpf: ["SnapBPF", "https://site.psomas.xyz/assets/files/snapbpf-hotstorage25-preprint.pdf"],
+  ksm: ["Linux KSM", "https://docs.kernel.org/admin-guide/mm/ksm.html"],
+  thp: ["Linux THP", "https://docs.kernel.org/admin-guide/mm/transhuge.html"],
+  hugetlb: ["Linux hugetlb", "https://docs.kernel.org/admin-guide/mm/hugetlbpage.html"],
+  numa: ["Linux NUMA memory policy", "https://docs.kernel.org/admin-guide/mm/numa_memory_policy.html"],
+};
+
+const chapters = [
+  {
+    id: "restore", short: "Restore", name: "Snapshot Restore",
+    summary: "Use this for batch starts from one template or for resume after a pause. Ready-to-run VM state shortens startup, while file CoW shares unchanged pages between VMs on one host. Full copy loads all RAM before start. Demand restore reads less, but the first access to an unloaded page may have to wait.",
+    comparisons: [{
+      name: "From Restore Request to First Write", ids: ["copy", "file-cow", "uffd"],
+      phases: ["Create RAM backing", "Restore to Ready", "First-access fault", "Multiple instances and writes"],
+      takeaway: "For read-heavy VMs from one template, measure the marginal host memory per VM with file CoW. If the first task touches most RAM, compare the end-to-end cost of full copy. If pages need to come from several storage tiers, test the entire first task and failure recovery with UFFD.",
+    }],
+  },
+  {
+    id: "delta", short: "Incremental Snapshots", name: "Incremental Memory Snapshots",
+    summary: "Useful for long-lived sandboxes that repeatedly save progress. Saving only pages changed during the current round can reduce writes and pause time. Tracking, scanning, and maintaining a baseline add overhead, and savings shrink when most pages change.",
+    comparisons: [{
+      name: "Page Selection for Memory Snapshots", ids: ["kvm-log", "soft-dirty", "uffd-wp", "cow-pagemap", "mincore", "full-snapshot"],
+      phases: ["Preparation", "During execution", "Page selection at save time", "Costs and prerequisites"],
+      kernelNote: "On the host, synchronous UFFD-WP tracking of anonymous pages requires Linux 5.7+, and asynchronous tracking with WP_ASYNC and PAGEMAP_SCAN requires 6.7+. Linux 4.18 already has the basic capabilities for the other methods. Soft-dirty is supported on x86_64, while ARM64 lacks it.",
+      takeaway: "KVM Dirty Log collects dirty guest pages and merges VMM writes. Soft-dirty clears the marks and selects pages written this round. UFFD-WP tracks writes via protection, either handling first writes synchronously or querying writes in batches. The CoW method saves private pages relative to the restored baseline and suits infrequent snapshots with few cumulative writes. mincore() selects resident host pages at save time without tracking runtime writes. It suits sandboxes booted from scratch with few resident pages that can safely skip nonresident ones. A full snapshot saves all guest RAM.",
+    }],
+  },
+  {
+    id: "dax", short: "Image mapping", name: "Direct mapping of image data",
+    summary: "Useful when multiple sandboxes on one host repeatedly read the same image or shared directory. DAX lets guests map file data directly and reduces duplicate caching. It requires compatible filesystems, guest drivers, and a VMM, and may require changes to existing block device paths.",
+    comparisons: [{
+      name: "Image data mapping", ids: ["pmem-dax", "fs-dax"],
+      phases: ["Host export", "Guest setup", "First access", "Runtime and writes"],
+      kernelNote: "The guest needs Linux 5.3+ for virtio-pmem or 5.10+ for virtio-fs DAX. The former also needs a guest filesystem with DAX support. The latter needs a DAX window from the VMM and virtiofsd.",
+      takeaway: "Evaluate pmem for a fixed base image and virtio-fs for shared directories. For both, measure host backing pages, guest file cache, and application copies.",
+    }],
+  },
+  {
+    id: "reclaim", short: "Reclaim", name: "Runtime memory reclaim",
+    summary: "Useful for long-lived sandboxes with fluctuating memory demand. FPR returns free pages, ballooning shrinks allocatable guest memory, and proactive reclaim frees cold pages. Host memory usage can drop while subsequent allocations or cold reads may take longer.",
+    comparisons: [{
+      name: "Memory reclaim workflow", ids: ["balloon", "fpr", "fph", "damon", "mem-agent"],
+      highlightActors: true,
+      phases: ["Trigger", "Guest page handling", "Host reclaim", "Guest reuse"],
+      kernelNote: "Guest FPR needs Linux 5.7+, DAMON_RECLAIM needs 5.16+, and MGLRU for mem-agent is available from 6.1. A common host MADV_DONTNEED path was available by 4.18. The VMM must support the selected reclaim method.",
+      takeaway: "A traditional balloon follows a host target and reduces guest allocatable memory while inflated. FPR reports pages that are already free so the host can reclaim backing. DAMON and mem-agent reclaim cold guest pages that FPR can then report.",
+    }],
+  },
+  {
+    id: "performance", short: "Optimization", name: "Memory performance optimization",
+    summary: "Useful for long-lived sandboxes sensitive to memory density or access performance. KSM reduces duplicate anonymous pages, huge pages reduce address translation costs, and NUMA placement limits remote accesses. Costs can include scanning, compaction, huge-page reservations, and node capacity constraints.",
+    comparisons: [{
+      name: "Memory optimization trade-offs", ids: ["thp", "hugetlb", "numa", "ksm"],
+      phases: ["Use case", "Benefits", "Main costs"],
+      compareTradeoffs: true,
+      kernelNote: "Basic THP, HugeTLB, NUMA memory placement, and KSM were available by Linux 4.18 when configured. Multi-size anonymous THP began in upstream Linux 6.8 and can be enabled per size on the host.",
+    }],
+  },
+];
+
+const techniques = {
+  copy: {
+    name: "Full Copy",
+    goal: "Populate the new VM's RAM with snapshot data before restore completes, so first access does not fetch those bytes from storage.",
+    stages: ["Allocate dedicated guest RAM backing", "Read and populate all ranges synchronously before starting", "Normally no storage wait for snapshot data", "Each VM holds its own restored data"],
+    steps: [
+      ["VMM", "Open the snapshot", "Read machine state and the file offsets for each GPA range."],
+      ["Host Linux", "Create RAM backing", "Create a memory mapping for the new VM and register KVM memory slots in the VMM."],
+      ["VMM", "Populate snapshot memory", "Read snapshot bytes into the backing by range. The amount copied grows with snapshot memory size."],
+      ["KVM / guest", "Restore and run", "Load matching VM state and start the vCPUs. Applications access the populated data."],
+    ],
+    benefit: "Useful when the first task rapidly touches most memory or restoration can be done ahead of time.",
+    cost: "Reads and copies happen upfront. Batch starts amplify I/O and private resident memory.",
+    example: "Cloud Hypervisor copy mode. Use one template to compare time to Ready, first-task completion, and host memory at each concurrency level.",
+    refs: ["ch"],
+  },
+  "file-cow": {
+    name: "On-Demand File CoW",
+    goal: "Use the snapshot file directly as private guest RAM backing. Instances mapping the same offset on one host can share clean pages.",
+    stages: ["Map the snapshot file with mmap(MAP_PRIVATE)", "Establish mappings and restore state, then fault in pages on demand", "Linux serves file faults from page cache or reads the file", "Clean pages for one inode can be shared; writes trigger a private copy"],
+    steps: [
+      ["VMM", "Locate and map ranges", "Use snapshot metadata to find file offsets and establish host virtual mappings with MAP_PRIVATE."],
+      ["KVM", "Install memory slots", "Link guest physical addresses to VMM virtual addresses and restore vCPU and device state."],
+      ["Host Linux", "Handle first read", "Map a cached page on a hit. On a miss, read from the filesystem and populate a clean page."],
+      ["Host Linux", "Handle first private write", "Create a private page for the writing VM. If both VMs see 7 and A writes 9, B still sees 7."],
+    ],
+    benefit: "Load preinitialized data as needed. Sharing clean pages backed by the same inode and offset on one host can reduce memory at scale.",
+    cost: "Cold reads still wait for data. More private writes reduce sharing. Reflink shares disk blocks, while independent inodes have separate page cache identities.",
+    example: "CubeSandbox, Firecracker File, and Fast Sandbox's same-file hard-link path. Verify mappings and inode identity when benchmarking.",
+    refs: ["cube", "fc", "fast"],
+  },
+  uffd: {
+    name: "UFFD Demand Paging",
+    goal: "Notify userspace which RAM pages are missing so a handler can retrieve them from cache, a parent snapshot, or object storage.",
+    stages: ["Create destination RAM and register UFFD MISSING", "Restore state and run once the userspace handler is ready", "Wait while the userspace handler loads data by offset and copies it", "Share source cache; ordinary UFFDIO_COPY usually fills pages separately for each VM"],
+    steps: [
+      ["VMM", "Register the missing-page range", "Register unpopulated RAM as MISSING and pass the userfaultfd descriptor to the handler."],
+      ["Guest / KVM", "Fault on access", "Access an unloaded address. The kernel delivers a fault event while the access waits."],
+      ["Userspace fault handler", "Resolve data location", "Convert the host virtual address to a logical memory offset, consult the snapshot index, and read the proper bytes from cache or the source object."],
+      ["Host Linux", "Populate and resume", "Fill the target mapping with UFFDIO_COPY. Execution resumes once the fault is handled."],
+    ],
+    benefit: "Supports chunked, versioned, and cross-host page delivery. A stable first-task working set can be prefetched separately.",
+    cost: "Userspace notification, source reads, and copies add fault overhead. Account for slow sources, read failures, and discard events.",
+    example: "E2B Runtime restores with Firecracker. First-command latency depends on bytes touched, caching, and chunk retrieval latency.",
+    refs: ["userfaultfd", "e2b", "e2bIndex"],
+  },
+  "full-snapshot": {
+    name: "Full Snapshot",
+    stages: ["No tracking baseline", "No write tracking", "Pause the VM and save all guest RAM", "Write volume grows with guest RAM capacity"],
+  },
+  "kvm-log": {
+    name: "KVM Dirty Log",
+    goal: "Record writes by guest physical page in KVM, then combine that set with VMM-side writes at save time.",
+    stages: ["Enable dirty logging on KVM memslots via ioctl", "KVM marks pages written by the guest", "Read the KVM bitmap via ioctl and merge VMM writes", "The classic bitmap works without Dirty Ring. Both runtime tracking and bitmap retrieval add overhead."],
+    steps: [
+      ["VMM", "Enable memory-slot logging", "Set KVM_MEM_LOG_DIRTY_PAGES for the relevant slots and establish the start of the tracking round."],
+      ["KVM", "Record guest writes", "Track dirty state by guest physical page, using hardware state or write protection depending on the implementation."],
+      ["Snapshot process", "Read and merge", "Read the bitmap at a consistency point and merge direct VMM RAM writes from components such as device models."],
+      ["Snapshot process", "Export changed ranges", "Convert the bitmap into snapshot offsets and lengths, pass them to the incremental writer, and use the KVM interface to prepare the next round."],
+    ],
+    benefit: "One bit per page keeps collection compact. Firecracker Diff uses this mechanism to collect changed pages.",
+    cost: "Tracking and reset add overhead. Account for host-side writes and keep the page set consistent with the captured bytes.",
+    example: "Writing one page 100 times still sets just one bitmap bit. Firecracker uses KVM_GET_DIRTY_LOG for the classic bitmap path.",
+    refs: ["kvm", "fc"],
+  },
+  "soft-dirty": {
+    name: "Soft-dirty",
+    goal: "Use the software dirty bit in the host VMM page table to identify pages written or remapped during the tracking window.",
+    stages: ["echo 4 > /proc/pid/clear_refs", "Host kernel handles the write fault and sets soft-dirty", "Read bit 55 in pagemap entries for guest RAM", "PTE reset, first writes, and entry scans all add overhead"],
+    steps: [
+      ["Snapshot process", "Clear the previous round", "Write 4 to the VMM's clear_refs. The kernel clears relevant soft-dirty bits and write-protects the PTEs."],
+      ["Host Linux", "Mark pages on write", "On the first subsequent write, handle the fault, set soft-dirty, and restore write access. New or extended mappings can also be marked."],
+      ["Snapshot process", "Scan VMM address ranges", "Locate VMM virtual addresses for guest RAM, read pagemap bit 55, and calculate logical snapshot offsets."],
+      ["Snapshot process", "Save and reset the baseline", "Cube's repeated checkpoint flow writes this round's changes into a reflink clone and restarts tracking."],
+    ],
+    benefit: "Reuses Linux process page table semantics. Cube's repeated checkpoints can reuse existing pagemap scans.",
+    cost: "Scan volume grows with the mapped range. Check how the implementation handles remapping, new ranges, and swap.",
+    example: "For 2 GiB of guest RAM in 4 KiB pages, the raw pagemap entries total roughly 4 MiB.",
+    refs: ["soft", "cubeSoft"],
+  },
+  "cow-pagemap": {
+    name: "CoW Private Pages",
+    stages: [
+      "Use the file mapped at restore as the baseline.",
+      "Writing to a file-backed page creates a private page.",
+      "Scan pagemap for resident or swapped-out non-file pages.",
+      "Track private pages relative to the restore file. Saving still requires scanning the mapped range.",
+    ],
+  },
+  mincore: {
+    name: "mincore()",
+    stages: [
+      "Disable dirty-page tracking.",
+      "After access, some guest RAM pages reside in host memory.",
+      "Call mincore() in the save phase to select resident pages.",
+      "Firecracker requires swap to be disabled. Read-only accesses may also result in selected pages.",
+    ],
+  },
+  "uffd-wp": {
+    name: "UFFD-WP (Synchronous / Asynchronous)",
+    stages: [
+      "Register WP via ioctl and write-protect the range. Request WP_ASYNC when negotiating asynchronous support.",
+      "In synchronous mode, userspace records and removes protection. In asynchronous mode, the kernel removes it.",
+      "Read userspace tracking in synchronous mode. In asynchronous mode, query written pages in batches with PAGEMAP_SCAN.",
+      "Synchronous first writes wait for userspace. Asynchronous mode batches the scan at save time.",
+    ],
+  },
+  "wp-sync": {
+    name: "Synchronous UFFD-WP Tracking",
+    goal: "Pause the first write to a protected page so userspace can record and handle that write.",
+    stages: ["Register MODE_WP and write-protect the range", "Deliver WP events; userspace records writes and lifts protection", "Fetch the tracked set and copy at a consistency point", "Event delivery and scheduling cost scale with first writes"],
+    steps: [
+      ["VMM / tracker", "Write-protect the range", "Negotiate WP, register MODE_WP, and apply UFFDIO_WRITEPROTECT to the target memory."],
+      ["Guest / host kernel", "First protected write", "The kernel reports a WP event and the write waits for handling."],
+      ["Userspace handler", "Record page and unprotect", "Record the page address, then remove protection so the original write can continue."],
+      ["Snapshot process", "Collect the current dirty set", "Collect records and copy page contents at a consistency boundary. Reprotect the next tracked range."],
+    ],
+    benefit: "Userspace can update the dirty set at the first write or execute per-page logic for online snapshots.",
+    cost: "Bursts of first writes incur notifications, wakeups, and unprotection, increasing write latency. Linux 5.7 supports WP for anonymous memory.",
+    example: "E2B Runtime includes an optional synchronous WP configuration. Whether the pause path uses the userspace dirty set directly depends on another flag.",
+    refs: ["userfaultfd", "e2bFlags"],
+  },
+  "wp-async": {
+    name: "Asynchronous UFFD-WP Tracking",
+    goal: "Use write protection as the tracking baseline, let the kernel handle first writes, and query written ranges in batches when saving.",
+    stages: ["Negotiate WP_ASYNC and protect the tracked range", "Kernel clears WP on first write", "Query PAGE_IS_WRITTEN with PAGEMAP_SCAN and optionally reprotect", "Avoid per-page userspace replies while retaining kernel handling and scan costs"],
+    steps: [
+      ["VMM / tracker", "Enable asynchronous WP", "Negotiate UFFD_FEATURE_WP_ASYNC, register WP, and protect the tracked range."],
+      ["Host Linux", "Handle the first write", "The kernel automatically removes UFFD write protection and continues handling the write."],
+      ["Snapshot process", "Collect written ranges", "Query PAGE_IS_WRITTEN using PAGEMAP_SCAN. The query can reprotect applicable ranges."],
+      ["Snapshot process", "Produce the delta", "Read and save pages at a consistency boundary. Page selection and storage format can be chosen independently."],
+    ],
+    benefit: "Hot writes avoid per-page waits for the userspace handler. Asynchronous tracking and MISSING page delivery can coexist in a restored VM.",
+    cost: "Requires newer host support. Upstream WP_ASYNC and PAGEMAP_SCAN are available from Linux 6.7. Probe negotiated features at deployment.",
+    example: "The pinned E2B Runtime version defaults the synchronous mode to off. Verify active settings and the dirty-set extraction version separately.",
+    refs: ["userfaultfd", "pagemap", "e2bFlags"],
+  },
+  reflink: {
+    name: "Reflink with Changed-Page Overwrite",
+    goal: "Clone a complete logical RAM file through the filesystem and write only this round’s changes into the clone.",
+    stages: ["Clone baseline extent references with a filesystem such as XFS", "Overwrite dirty pages at their offsets in the clone", "Read or directly map the complete logical file", "Shared disk blocks stay alive through filesystem references"],
+    steps: [
+      ["Snapshot process", "Choose a complete baseline", "Find the previous RAM file and layout, then collect a consistent dirty set and page bytes."],
+      ["Filesystem", "Clone extent references", "Create a new file on the same reflink-capable filesystem. Unchanged ranges share disk blocks."],
+      ["Snapshot process", "Write changed ranges", "Overwrite the matching offsets. The filesystem copies the affected ranges on write. Zeroed pages need explicit zeros or correctly represented holes."],
+      ["Restore process", "Map the logical view", "The new file is already complete from the VMM's perspective. It reads pages by offset without replaying older deltas first."],
+    ],
+    benefit: "Avoids rewriting unchanged data while preserving the full-file restore interface. Cube local snapshot commit uses this combination.",
+    cost: "Requires the same reflink-capable filesystem. Measure distribution across backends, write amplification, and durability separately.",
+    example: "The parent holds A/B/C and the current VM holds A/X/0. Clone the baseline, then overwrite B with X and C with zeros.",
+    refs: ["cubeSoft", "cube"],
+  },
+  "delta-index": {
+    name: "Standalone Delta with Parent Index",
+    goal: "Save only changed data while publishing an index that locates the source for every logical memory range.",
+    stages: ["Retain the previous index and referenced data", "Write changes and merge range-to-version/offset mappings", "Look up offsets in the current index to find old blocks, new blocks, or zero ranges", "Persist referenced objects and use reachability for garbage collection"],
+    steps: [
+      ["Snapshot process", "Reference parent data", "Read the parent index and leave unchanged logical ranges pointing to their existing sources."],
+      ["Snapshot process", "Write this round's changes", "Write new dirty ranges, update their object-offset mappings, and represent zeroed regions explicitly."],
+      ["Storage layer", "Publish the complete index", "Ensure new data and dependencies are readable before publishing the index or manifest."],
+      ["Pager or restore process", "Resolve data by logical address", "Look up the merged index for this version and retrieve pages from the referenced data, optionally using a local cache."],
+    ],
+    benefit: "Publishing and downloading can operate on deltas or accessed ranges, which suits tiered, on-demand restore such as E2B.",
+    cost: "Requires index verification, object retention, and garbage collection. Page serving also depends on chunk reads, caching, and network tail latency.",
+    example: "For parent A/B/C and child A/X/0, P0 still points to parent data, P1 points to new data, and P2 is explicitly zero.",
+    refs: ["e2b", "e2bIndex"],
+  },
+  "pmem-dax": {
+    name: "virtio-pmem + DAX",
+    goal: "Expose a host image as virtual persistent memory so a DAX-capable guest filesystem can access file data directly.",
+    stages: ["VMM backs virtual persistent memory with the image", "Guest detects pmem and enables DAX on a supported filesystem", "Filesystem maps offsets to device backing", "Read-only backing can be shared. Write and persistence semantics depend on the device and mount."],
+    steps: [
+      ["VMM", "Provide image backing", "Map the host image to a guest-accessible device memory region."],
+      ["Guest Linux", "Detect and mount", "Attach the virtual device with virtio-pmem and mount a DAX-capable filesystem."],
+      ["Guest filesystem", "Map file data", "Resolve device addresses from the file layout and bypass the corresponding guest file-data cache."],
+      ["Application / host", "Read backing bytes directly", "VMs sharing the same host read-only backing can share data. Application heap copies still consume memory."],
+    ],
+    benefit: "Suitable for many VMs reading the same image. With DAX alone, DSec reported 40.2% lower peak host memory on a particular reinforcement-learning workload.",
+    cost: "Requires a compatible device and guest filesystem. DSec reported an instantaneous CPU peak rising from 26.5% to 41.4% in the same test. Retest cold accesses and tail latency.",
+    example: "Use a DAX-capable read-only base image and put writes in an instance-specific writable layer.",
+    refs: ["pmem", "dsec"],
+  },
+  "fs-dax": {
+    name: "virtio-fs DAX",
+    goal: "Export host files as a shared directory and map accessed file ranges through a DAX window.",
+    stages: ["Host specifies the export to the filesystem backend", "Guest mounts virtio-fs and negotiates DAX", "Map host backing for the requested file range", "Share data subject to export permissions and consistency policy"],
+    steps: [
+      ["Host filesystem backend", "Export directory", "Configure the directory and permissions. Serve lookup, open, and data operations."],
+      ["Guest Linux", "Mount the shared filesystem", "Access paths and metadata through virtio-fs and FUSE."],
+      ["Guest driver / backend", "Map a DAX window", "Resolve the file and offset and map the required host file range into an available window."],
+      ["Application", "Access shared file data", "Use the supported DAX path for reads or writes and bypass the corresponding per-VM file-data cache."],
+    ],
+    benefit: "Multiple VMs can read the same models or assets without packaging the directory as a block image.",
+    cost: "Requires DAX-window support in the VMM, backend, and guest driver. Manage permissions, mapping windows, and consistency of updates.",
+    example: "Export /models read-only so several VMs access the same weights. Review access and consistency separately for writable exports.",
+    refs: ["virtiofs"],
+  },
+  balloon: {
+    name: "Balloon",
+    goal: "Have the guest surrender a host-specified number of pages. The balloon holds them out of the guest allocator until deflation.",
+    stages: ["Host sets an inflation target", "Guest driver allocates and holds pages, then tells the VMM their frame numbers", "VMM releases eligible backing", "Host reduces the target and the guest returns pages to its allocator"],
+    steps: [
+      ["Host policy", "Set the target", "Determine the reclaim goal from host pressure, priorities, and guest state."],
+      ["Guest balloon driver", "Inflate and hold pages", "Allocate pages from the guest allocator and send their frame numbers to the VMM. Pressure may prevent reaching the target."],
+      ["VMM / host Linux", "Reclaim memory backing", "Identify the ranges and discard eligible backing according to anonymous, shared, or file-backed mapping semantics."],
+      ["Guest balloon driver", "Return pages on deflation", "After the target falls, hand pages back to the guest allocator. The host supplies backing upon future access."],
+    ],
+    benefit: "Suitable when the host needs continuous control over a VM's allocatable capacity. The control plane can adjust the target.",
+    cost: "Inflation may trigger guest reclaim or swap. Compare actual pages obtained, workload latency, and PSI.",
+    example: "With a 512 MiB target, if all pages are allocated and their backing discarded, the guest cannot use them for another task until deflation.",
+    refs: ["balloon"],
+  },
+  fpr: {
+    name: "Free Page Reporting",
+    goal: "Temporarily isolate and report already free guest pages so the VMM can release backing and the guest can reuse the pages.",
+    stages: ["Free guest pages qualify for reporting", "Guest temporarily holds and reports pages in batches", "VMM releases eligible backing", "VMM acknowledges completion. Guest restores pages to its free list and the host repopulates backing on future access."],
+    steps: [
+      ["Guest Linux", "Find free pages", "Application frees or guest reclaim return eligible pages to the allocator."],
+      ["Guest driver", "Hold and report pages", "Isolate free blocks in batches and submit GPA ranges on the virtio-balloon reporting queue."],
+      ["VMM / host Linux", "Discard backing", "Respect the mapping type. Private anonymous mappings often use MADV_DONTNEED. Private file snapshots and shared backing need separate treatment."],
+      ["Guest Linux", "Make pages allocatable after acknowledgment", "Return free pages to the allocator. VM configured capacity stays constant and later accesses can regain physical backing."],
+    ],
+    benefit: "The guest does not need to withhold capacity permanently. Reporting can work with a traditional balloon target of zero and suits gaps between bursty jobs.",
+    cost: "Only eligible free pages can be reported. Shared or nonresident pages change realized savings. Integration with UFFD must account for REMOVE semantics.",
+    example: "In one Cube PR #1758 test, after the guest freed roughly 1.8 GiB of touched memory, VMM RSS with FPR returned close to its pre-test level.",
+    refs: ["report", "balloon", "cubeFpr"],
+  },
+  damon: {
+    name: "DAMON",
+    goal: "Proactively shrink the guest cache when it retains cold reclaimable pages, then return newly freed backing via FPR.",
+    stages: ["Guest kernel monitors periodically", "Guest reclaims cold pages based on accesses and policy", "Guest may report free pages through FPR and VMM can reclaim backing", "A later guest access may need to reread or swap in cold data"],
+    steps: [
+      ["Guest DAMON", "Sample accesses", "Track access frequency across regions and find candidates remaining below an access threshold for long enough."],
+      ["Guest DAMON_RECLAIM", "Reclaim within budget", "Try reclaiming eligible cold pages such as discardable file pages under time, region, watermark, and quota limits."],
+      ["Guest FPR", "Report newly free blocks", "If freed pages qualify for reporting, isolate them temporarily and send the ranges to the VMM."],
+      ["VMM / host Linux", "Release backing and acknowledge", "Discard eligible physical backing. Later guest accesses to cold files may need another disk read."],
+    ],
+    benefit: "Can shorten cold-page residency before the guest is under visible pressure. DSec reported 21.2% lower host memory integrated over time when enabling this combination alone.",
+    cost: "Misclassifying hot pages can increase rereads and tail latency. DSec reported little change in peak usage. Verify the guest version and reclaim quota.",
+    example: "If a VM retains substantial cold file cache after its workload stops, DAMON can reclaim the cache and FPR can report the resulting free pages.",
+    refs: ["damon", "report", "dsec"],
+  },
+  fph: {
+    name: "Free Page Hinting (FPH)",
+    stages: ["The host starts a round through the VMM", "Guest temporarily holds and reports free blocks", "VMM releases eligible host backing", "Guest returns held pages after the VMM ends the round"],
+  },
+  "mem-agent": {
+    name: "mem-agent (MGLRU)",
+    goal: "A guest userspace agent uses kernel MGLRU to control cold-page reclaim and compaction based on activity and pressure.",
+    stages: ["Guest mem-agent runs periodically", "Guest uses MGLRU to reclaim cold pages and compacts when needed", "Guest may report free pages through FPR and VMM can reclaim backing", "Guest can reallocate free pages. Cold data may need a reread or swap-in."],
+    steps: [
+      ["Guest mem-agent", "Choose the interval and scope", "Read configuration and guest pressure, and trigger aging, reclaim, or compaction according to policy."],
+      ["Guest kernel", "Generate access generations", "MGLRU groups pages by recency and attempts to evict older eligible pages first."],
+      ["Guest mem-agent", "Limit disruption", "Use feedback such as PSI to limit reclaim and compact as configured to free or coalesce ranges."],
+      ["Guest FPR / VMM", "Optionally return host backing", "With FPR enabled, eligible pages are reported to the VMM. Later accesses recover evicted data through the guest's usual paths."],
+    ],
+    benefit: "Guest policy can proactively control cache and fragmentation. Useful for long-lived VMs with recurring idle periods.",
+    cost: "Aggressive reclaim can add CPU and refault overhead. Requires compatible guest MGLRU, PSI, and device support.",
+    example: "Kata mem-agent can enable reclaim_guest_freed_memory to return host backing for free guest pages.",
+    refs: ["mglru", "memAgent", "report"],
+  },
+  prefetch: {
+    name: "Startup hot-page prefetch",
+    goal: "Use the first workload's working set to cache likely snapshot ranges or prepare pages for a userspace fault handler.",
+    stages: ["Record common first-access working sets per template version", "Prepare hot ranges before startup or outside the critical path", "Hot reads hit first and misses still fault normally", "Measure first-task P50/P99, bytes prefetched, hits, and waste"],
+    steps: [
+      ["Template or runtime", "Record first-task reads", "Capture faults and access order from representative workloads and save snapshot page offsets or ranges."],
+      ["Control plane / loader", "Schedule prefetch", "Read hot ranges asynchronously before a startup batch or early in restore, based on reuse and node budget."],
+      ["Host cache / userspace fault handler", "Prepare the data", "For file-backed restore, warm file cache. For UFFD, prefetch source blocks, decompress, or prepare pages."],
+      ["Guest", "Hit hot pages earlier", "Covered first accesses spend less time waiting on storage. Other pages use their existing read path."],
+    ],
+    benefit: "A stable hot set reused by multiple VMs can amortize preparation.",
+    cost: "Synchronous read-ahead can move the wait earlier. Over-prefetch can consume I/O and cache.",
+    example: "In a small Cube test, the cold-cache first-command median was about 1,279 ms, versus 1,272 ms including prefetch, with six runs per group.",
+    refs: ["snapbpf", "e2b"],
+  },
+  zero: {
+    name: "Skip allocated zero pages",
+    goal: "Omit pages that would otherwise be written and are entirely zero, while preserving zero-filled restore semantics.",
+    stages: ["Scan allocated candidates and write holes or zero ranges", "Keep file holes or load an index with zero overrides", "Return zeros at the corresponding offsets", "Measure CPU, allocated storage, write and sync latency"],
+    steps: [
+      ["Snapshot process", "Select candidate ranges", "A full snapshot considers allocated pages marked for output. An incremental snapshot only considers ranges changed in this round."],
+      ["Snapshot process", "Check whether the entire page is zero", "Read every byte of candidate pages to find ones representable by zero semantics."],
+      ["Filesystem / index", "Encode zero semantics", "A sparse full file can leave holes. If the parent page was nonzero, the child must overwrite it, punch a hole where appropriate, or explicitly record zero."],
+      ["Restore process", "Rebuild zeros", "Return all-zero pages and verify that adjacent data and nonzero parent pages were not inherited incorrectly."],
+    ],
+    benefit: "Can reduce storage and transfer bytes when zero pages are common and write bandwidth is constrained.",
+    cost: "Scanning consumes CPU and memory bandwidth. More existing holes leave less room for savings.",
+    example: "In a Cube microbenchmark, extra zero detection saved about 14.18 MiB, while median time including fdatasync rose from 558 ms to 584 ms.",
+    refs: [],
+  },
+  compression: {
+    name: "Snapshot page compression",
+    goal: "Compress snapshot data per page or block to reduce disk and network bytes while retaining random-access restore.",
+    stages: ["Compress by page or block and record encoding and offsets", "Prepare full or on-demand decompression", "Read and decode the compressed blocks covering each access", "Measure compression ratio, CPU, random read amplification, and first-task latency"],
+    steps: [
+      ["Snapshot process", "Partition data", "Choose blocks covering page boundaries and decide whether to encode blocks independently or in frames."],
+      ["Save side", "Compress and write an index", "Record logical offsets, compressed locations and lengths, then write data and checksums."],
+      ["Restore side", "Locate required blocks", "Use the index to read the applicable ranges. Prefetch and decoded cache can help."],
+      ["Restore side", "Decode and rebuild pages", "Fill RAM with decoded data or provide it to a userspace fault handler. The workload receives the original bytes."],
+    ],
+    benefit: "Reduces storage and transfer when I/O is the bottleneck. Independent blocks are better suited to on-demand restore.",
+    cost: "Compression and decompression consume CPU. Large blocks can require full-block reads and decoding even for a few pages.",
+    example: "If the first VM access touches one page in an uncached 2 MiB compressed block, the entire block may need to be read and decoded.",
+    refs: [],
+  },
+  ksm: {
+    name: "KSM memory deduplication",
+    goal: "Scan marked private anonymous pages on the host and merge identical physical pages to reduce duplicate residency.",
+    stages: ["Enable KSM and mark eligible VMM ranges", "Allocate and write anonymous RAM normally", "ksmd merges identical pages and later writes trigger CoW", "Measure net savings, scan CPU, and later CoW"],
+    steps: [
+      ["VMM", "Mark candidate ranges", "Use MADV_MERGEABLE on eligible anonymous mappings and enable host scanning."],
+      ["Host ksmd", "Find identical pages", "Periodically scan candidates and verify that their contents match."],
+      ["Host Linux", "Merge into a read-only page", "Multiple mappings reference the same physical page, so duplicate backing can be freed."],
+      ["Host Linux", "Handle subsequent writes", "Copy on write creates a private copy and confines each VM's changes to its own mapping."],
+    ],
+    scenario: "Many sandboxes on one host hold identical anonymous pages that are rarely written.",
+    benefit: "Reduces host memory by merging duplicate anonymous pages.",
+    cost: "Scanning consumes CPU and writes incur CoW. Cross-tenant sharing brings side-channel risks.",
+    example: "For similar long-lived VMs with duplicate anonymous backing, compare KSM on and off by shared pages, net node memory, and CPU.",
+    refs: ["ksm"],
+  },
+  thp: {
+    name: "Transparent Huge Pages (THP)",
+    goal: "Let the kernel allocate or collapse eligible memory into larger pages that cover more addresses per translation.",
+    stages: ["Check THP support for anonymous, file, or shmem backing", "Allocate huge pages on faults or fall back to base pages", "Permit background collapse and runtime splits", "Measure TLB misses, residency, compaction CPU, and tail latency"],
+    steps: [
+      ["Host / VMM", "Choose the mapping and policy", "Allow eligible ranges through sysfs policy or MADV_HUGEPAGE."],
+      ["Host Linux", "Allocate on fault", "Use a large page when alignment and contiguous memory permit. Fall back to base pages where necessary."],
+      ["Host Linux", "Collapse or split at runtime", "khugepaged and related paths can collapse small pages. Reclaim and other operations can split them."],
+      ["CPU / KVM", "Use larger translations", "With suitable alignment, backing, and mappings, huge pages increase TLB reach."],
+    ],
+    scenario: "Long-lived sandboxes frequently accessing large memory regions.",
+    benefit: "Can reduce TLB misses without reserving a huge-page pool.",
+    cost: "Allocation and compaction can increase tail latency. Sparse access can raise memory consumption.",
+    example: "A 2 MiB mapping covers the address range of 512 base pages of 4 KiB each. Benefits depend on the access pattern.",
+    refs: ["thp"],
+  },
+  hugetlb: {
+    name: "HugeTLB pages",
+    goal: "Prepare a host huge-page pool and explicitly back selected guest RAM with those pages.",
+    stages: ["Reserve a huge-page pool on the target NUMA node", "Create explicit backing through hugetlbfs or equivalent", "Map at the chosen huge-page granularity with reclaim and backing constraints", "Monitor translation, pool headroom, allocation failures, and compatibility"],
+    steps: [
+      ["Host platform", "Prepare the pool", "Check page sizes and NUMA nodes and size the persistent pool to workload needs."],
+      ["VMM", "Choose HugeTLB backing", "Create mappings through hugetlbfs or the relevant configuration and verify alignment and remaining capacity."],
+      ["KVM / host Linux", "Map guest RAM", "Use huge-page backing and install larger second-level mappings where the conditions permit."],
+      ["Host platform", "Monitor usage and release", "Track allocation failures, returns to the pool, and behavior with snapshots and FPR."],
+    ],
+    scenario: "Dedicated VM pool with fixed sizes and memory-intensive workloads.",
+    benefit: "Explicit page-size control can reduce translation overhead.",
+    cost: "Requires a reserved pool that can run out. Verify snapshot and reclaim compatibility.",
+    example: "For a fixed-capacity memory-intensive VM pool, reserve node-local 2 MiB pages and compare throughput and tail latency against base pages.",
+    refs: ["hugetlb", "ch"],
+  },
+  numa: {
+    name: "NUMA memory placement",
+    goal: "Place backing for a frequently accessed guest RAM range on the same host NUMA node as its vCPUs where possible.",
+    stages: ["Identify host NUMA nodes, CPUs, and remaining capacity", "Set vCPU affinity and RAM allocation policy", "Maintain locality and track remote traffic and hot spots", "Measure local and remote accesses, per-node capacity, and P99"],
+    steps: [
+      ["Scheduler", "Choose a host node and CPUs", "Place vCPUs with regard to available NUMA capacity and workload distribution."],
+      ["VMM", "Bind threads and set memory policy", "Set vCPU thread CPU affinity and use a policy such as mbind for the relevant memory backing."],
+      ["Host Linux", "Allocate physical pages", "Allocate on fault or preallocation according to policy, taking the placement of already resident shared file pages into account."],
+      ["Platform", "Verify locality and balance", "Compare remote access by workload vCPUs with per-node headroom and adjust under capacity pressure."],
+    ],
+    scenario: "Memory-intensive sandboxes on hosts with multiple NUMA nodes.",
+    benefit: "Local access reduces remote memory traffic.",
+    cost: "Strict binding constrains scheduling and can exhaust some nodes before others.",
+    example: "On the same multisocket host, compare colocated and cross-node vCPU/RAM placement by remote-access ratio and P99.",
+    refs: ["numa"],
+  },
+};
+
+function element(tag, text, className) {
+  const node = document.createElement(tag);
+  if (text) node.textContent = text;
+  if (className) node.className = className;
+  return node;
+}
+
+function link(text, href) {
+  const node = element("a", text);
+  node.href = href;
+  return node;
+}
+
+function renderComparison(model) {
+  const section = element("section", "", "restore-diagram");
+  const scroller = element("div", "", "restore-scroll");
+  scroller.tabIndex = 0;
+  scroller.setAttribute("role", "region");
+  scroller.setAttribute("aria-label", model.name);
+  const table = element("table", "", "restore-grid");
+  table.setAttribute("aria-label", model.name);
+  const columns = table.appendChild(element("colgroup"));
+  columns.append(element("col", "", "stage-label"));
+  const head = table.createTHead().insertRow();
+  for (const name of ["Technique", ...model.phases]) {
+    const label = element("th", name, "method-name");
+    label.scope = "col";
+    head.append(label);
+  }
+  const body = table.createTBody();
+  for (const id of model.ids) {
+    const technique = techniques[id];
+    const row = body.insertRow();
+    const label = element("th", technique.name, "stage-name");
+    label.scope = "row";
+    row.append(label);
+    const values = model.compareTradeoffs ? [technique.scenario, technique.benefit, technique.cost] : technique.stages;
+    for (const text of values) {
+      const cell = element("td", "", "stage-path");
+      if (model.highlightActors) {
+        for (const part of text.split(/\b(Host|Guest|VMM)\b/)) {
+          cell.append(/^(Host|Guest|VMM)$/.test(part)
+            ? element("strong", part, "restore-note-label")
+            : part);
+        }
+      } else {
+        cell.textContent = text;
+      }
+      row.append(cell);
+    }
+  }
+  scroller.append(table);
+  section.append(element("h3", model.name), scroller);
+  if (model.takeaway) section.append(element("p", model.takeaway, "restore-note"));
+  if (model.kernelNote) {
+    const note = element("p", "", "restore-note");
+    note.append(element("strong", "Kernel requirements", "restore-note-label"), " " + model.kernelNote);
+    section.append(note);
+  }
+  return section;
+}
+
+const implementationMaps = {
+  delta: {
+    labels: ["Sandbox project", "VMM / component", "Dirty tracking / page selection", "Snapshot format"],
+    columns: [
+      [["cube", "CubeSandbox"], [null], ["e2b", "E2B Runtime"], ["fast", "OpenSandbox Fast Sandbox", "Incremental snapshot proposal"], ["agentenv", "AgentENV"]],
+      [["cube-vmm", "cube-hypervisor"], ["ch-cow", "Cloud Hypervisor"], [null], ["firecracker", "Firecracker"], [null]],
+      [["soft", "Soft-dirty"], ["private-pages", "pagemap selects private CoW pages"], ["uffd-wp", "UFFD-WP", "Async or sync"], ["bitmap", "KVM Dirty Log"], ["resident", "mincore()"], ["full", "Full write"]],
+      [["reflink", "Complete logical memory file", "reflink + overwrite changed pages"], ["layers", "Separate delta + parent image index"], ["diff", "Sparse diff memory file", "Native Firecracker output"], ["overlaybd", "OverlayBD memory delta layer"], ["full-file", "Full memory file"]],
+    ],
+    edges: [
+      ["cube","cube-vmm"], ["cube-vmm","soft"], ["cube-vmm","private-pages","incremental"], ["soft","reflink"],
+      ["ch-cow","private-pages"], ["private-pages","reflink"],
+      ["e2b","firecracker"], ["fast","firecracker"], ["agentenv","firecracker"],
+      ["firecracker","uffd-wp","E2B customization"], ["uffd-wp","layers"],
+      ["firecracker","bitmap"], ["bitmap","diff"], ["bitmap","overlaybd"],
+      ["firecracker","resident"], ["resident","diff"], ["resident","overlaybd"],
+      ["cube-vmm","full"], ["ch-cow","full"], ["firecracker","full"], ["full","full-file"],
+    ],
+    notes: [
+      [["Track writes per round", "Firecracker combines the KVM Dirty Log with VMM-side write tracking. CubeSandbox clears soft-dirty bits each round. E2B uses UFFD-WP, whose asynchronous mode can query written pages in batches at save time."]],
+      [["Select by page state", "The CoW approach selects private pages relative to the restored baseline and suits a single save after booting from a template. mincore() selects resident pages when it is safe to omit nonresident pages. Firecracker can use it for native Diff output with dirty tracking off."]],
+      [["Full snapshot", "Full snapshots save all guest RAM and suit initial baselines or standalone snapshots."]],
+    ],
+    refs: ["cubeSoft", "e2bFlags", "e2bIndex", "fc", "userfaultfd", "agentEnvMemory", "agentEnvConfig", "fastDiffIssue", "cloudCowSnapshot", "cloudCowPages"],
+  },
+  dax: {
+    labels: ["Sandbox platform / approach", "Runtime / node component", "VMM", "Image access path"],
+    columns: [
+      [["cube", "CubeSandbox"], ["dsec", "DeepSeek DSec", "Published research system"], ["fast", "OpenSandbox Fast Sandbox"], ["e2b", "E2B Runtime"], ["agent", "AgentENV"]],
+      [["cube-shim", "CubeShim"], [null], ["fastlet", "Fastlet / runtime-agent"], ["orchestrator", "E2B Orchestrator"], ["agent-node", "AgentENV node runtime"], ["kata", "Kata Containers"]],
+      [["cube-vmm", "cube-hypervisor"], ["ch", "Cloud Hypervisor", "--pmem"], [null], ["firecracker", "Firecracker"], [null], ["qemu", "QEMU", "With virtiofsd"]],
+      [["pmem", "virtio-pmem + DAX"], [null], [null], ["block", "Block device access without DAX", "Fast Sandbox / E2B / AgentENV"], [null], ["dax", "virtio-fs DAX", "Requires a DAX window"]],
+    ],
+    edges: [
+      ["cube","cube-shim"], ["cube-shim","cube-vmm"], ["cube-vmm","pmem"], ["ch","pmem"],
+      ["dsec","firecracker"], ["firecracker","pmem","DSec"],
+      ["fast","fastlet"], ["fastlet","firecracker"], ["e2b","orchestrator"], ["orchestrator","firecracker"],
+      ["agent","agent-node"], ["agent-node","firecracker"], ["firecracker","block"],
+      ["kata","qemu"], ["qemu","dax"],
+    ],
+    note: "virtio-pmem + DAX maps image data, while virtio-fs DAX maps files in a shared directory. The block device branch shows the documented rootfs paths of three projects.",
+    refs: ["cubePmem", "dsec", "pmem", "virtiofs", "kataDax", "chPmem", "e2b", "fastImage", "agentEnvMemory"],
+  },
+  reclaim: {
+    labels: ["Sandbox platform / approach", "Runtime / node component", "VMM", "Balloon and free-page reporting", "Guest memory reclaim"],
+    columns: [
+      [["cube", "CubeSandbox"], ["fast", "OpenSandbox Fast Sandbox"], ["e2b", "E2B Runtime"], ["agentenv", "AgentENV"], ["dsec", "DeepSeek DSec", "Published research system"], [null], [null]],
+      [["cube-shim", "CubeShim"], ["builder", "Template builder / fsb-vm"], ["orchestrator", "E2B Orchestrator"], [null], [null], [null], ["kata", "Kata Containers"]],
+      [["cube-vmm", "cube-hypervisor"], [null], [null], [null], ["fc", "Firecracker"], ["ch", "Cloud Hypervisor"], ["qemu", "QEMU"]],
+      [[null], [null], ["inflate", "Balloon"], ["fpr", "Free Page Reporting"], ["fph", "Free Page Hinting"], [null], [null]],
+      [[null], [null], [null], [null], ["damon", "DAMON"], [null], ["agent", "Kata mem-agent", "MGLRU"]],
+    ],
+    edges: [
+      ["cube","cube-shim"], ["cube-shim","cube-vmm"], ["cube-vmm","fpr"],
+      ["fast","builder"], ["builder","fc"], ["e2b","orchestrator"], ["orchestrator","fc"],
+      ["agentenv","fc"], ["dsec","fc"], ["fc","inflate"], ["fc","fpr"], ["fc","fph"], ["fc","damon"],
+      ["kata","qemu"], ["qemu","fpr"], ["ch","inflate"], ["ch","fpr"], ["damon","fpr"], ["agent","fpr","Optional"],
+    ],
+    notes: [
+      [["E2B Runtime", "FPR and FPH are behind feature flags and disabled by default."]],
+      [["AgentENV / DeepSeek DSec", "The guest reclaims cold pages with DAMON and reports free pages with FPR. AgentENV skips anonymous pages by default."]],
+    ],
+    refs: ["balloon", "cubeFpr", "dsec", "memAgent", "report", "chBalloon", "kataQemuReclaim", "e2bReclaim", "fastReclaim", "agentReclaim"],
+  },
+  performance: {
+    labels: ["Sandbox platform / approach", "Runtime / node component", "VMM", "Memory optimization"],
+    columns: [
+      [["cube", "CubeSandbox"], ["e2b", "E2B Runtime"], ["fast", "OpenSandbox Fast Sandbox", "Direct Firecracker path"], ["agentenv", "AgentENV"], ["dsec-paper", "DeepSeek DSec", "Published research system"], [null]],
+      [["shim", "CubeShim"], ["orchestrator", "E2B Orchestrator"], ["fastlet", "Fastlet"], [null], [null], ["kata", "Kata Containers"]],
+      [["cube-vmm", "cube-hypervisor"], [null], ["fc", "Firecracker"], [null], ["ch", "Cloud Hypervisor"], ["qemu", "QEMU"]],
+      [[null], ["huge", "HugeTLB pages"], ["thp", "Transparent Huge Pages (THP)"], ["numa", "NUMA memory placement"], ["ksm", "KSM memory deduplication"], [null]],
+    ],
+    edges: [
+      ["cube","shim"], ["shim","cube-vmm"], ["e2b","orchestrator"], ["orchestrator","fc"],
+      ["fast","fastlet"], ["fastlet","fc"], ["agentenv","fc"], ["dsec-paper","fc"],
+      ["kata","qemu"], ["qemu","huge"], ["qemu","numa"], ["qemu","ksm"], ["fc","huge"], ["fc","thp"],
+      ["ch","huge"], ["ch","thp"], ["ch","ksm"], ["ch","numa"], ["cube-vmm","huge"], ["cube-vmm","thp"], ["cube-vmm","numa"], ["cube-vmm","ksm"],
+    ],
+    note: "Connections on the left show runtimes and VMMs used by each project. Connections on the right show configurable VMM features. What each project enables depends on its deployment.",
+    refs: ["cloudMemory", "fcHugeOpt", "kataHugeOpt", "cubeHugeOpt", "qemuMemoryOpt", "e2b", "fastImage", "agentEnvMemory", "dsec"],
+  },
+};
+
+function renderImplementationMap(chapterId) {
+  const model = implementationMaps[chapterId];
+  const section = element("section", "", "restore-diagram");
+  const heading = element("h3", model.columns[0].some(node => node[0] === "dsec") ? "Open-source implementations and public examples" : "Open-source implementations");
+  heading.id = chapterId + "-implementations";
+  section.setAttribute("aria-labelledby", heading.id);
+  const scroller = element("div", "", "restore-scroll");
+  scroller.tabIndex = 0;
+  scroller.setAttribute("role", "region");
+  scroller.setAttribute("aria-labelledby", heading.id);
+  const graph = element("div", "", "project-graph comparison-graph");
+  const step = 55;
+  const height = 86 + (Math.max(...model.columns.map(column => column.length)) - 1) * step;
+  graph.style.height = height + "px";
+  const svgNamespace = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(svgNamespace, "svg");
+  svg.setAttribute("class", "project-links");
+  svg.setAttribute("viewBox", "0 0 1000 " + height);
+  svg.setAttribute("preserveAspectRatio", "none");
+  svg.setAttribute("aria-hidden", "true");
+  graph.append(svg);
+
+  const positions = new Map();
+  const fourColumns = model.columns.length === 4;
+  const fiveColumns = model.columns.length === 5;
+  const xPositions = fiveColumns ? [0, 210, 420, 630, 840] : fourColumns ? [0, 270, 540, 800] : [0, 370, 740];
+  const nodeWidth = fiveColumns ? 160 : fourColumns ? 200 : 260;
+  graph.classList.toggle("four-columns", fourColumns || fiveColumns);
+  graph.style.setProperty("--graph-node-width", nodeWidth / 10 + "%");
+  for (const [columnIndex, column] of model.columns.entries()) {
+    const x = xPositions[columnIndex];
+    const label = element("h4", model.labels[columnIndex], "graph-column");
+    label.style.left = x / 10 + "%";
+    graph.append(label);
+    for (const [index, [id, name, subtitle]] of column.entries()) {
+      if (id === null) continue;
+      const y = (height - (column.length - 1) * step) / 2 + 10 + index * step;
+      const node = element("div", name, "graph-node");
+      node.style.left = x / 10 + "%";
+      node.style.setProperty("--y", y + "px");
+      if (subtitle) node.append(element("small", subtitle));
+      graph.append(node);
+      positions.set(id, { x, y });
+    }
+  }
+  for (const [source, target, annotation] of model.edges) {
+    const start = positions.get(source);
+    const end = positions.get(target);
+    const direction = start.x < end.x ? 1 : -1;
+    const x = direction === 1 ? start.x + nodeWidth : start.x;
+    const tip = direction === 1 ? end.x - 1 : end.x + nodeWidth + 1;
+    const arrowBase = tip - 7 * direction;
+    const middle = (x + tip) / 2;
+    const line = document.createElementNS(svgNamespace, "path");
+    line.setAttribute("d", ["M", x, start.y, "C", middle, start.y, middle, end.y, tip, end.y].join(" "));
+    const arrow = document.createElementNS(svgNamespace, "polygon");
+    arrow.setAttribute("points", tip + "," + end.y + " " + arrowBase + "," + (end.y - 4) + " " + arrowBase + "," + (end.y + 4));
+    arrow.setAttribute("fill", "currentColor");
+    svg.append(line, arrow);
+    if (annotation) {
+      const label = document.createElementNS(svgNamespace, "text");
+      label.setAttribute("class", "edge-label");
+      label.setAttribute("x", middle);
+      label.setAttribute("y", (start.y + end.y) / 2 - 5);
+      label.setAttribute("text-anchor", "middle");
+      label.textContent = annotation;
+      svg.append(label);
+    }
+  }
+
+  const references = element("p", "", "sources");
+  for (const id of model.refs) references.append(link(...sources[id]));
+  scroller.append(graph);
+  section.append(heading, scroller);
+  if (model.note) section.append(element("p", model.note, "restore-note"));
+  for (const notes of model.notes ?? []) {
+    const paragraph = element("p", "", "restore-note");
+    for (const [name, description] of notes) {
+      if (paragraph.hasChildNodes()) paragraph.append("　");
+      paragraph.append(element("strong", name, "restore-note-label"), " " + description);
+    }
+    section.append(paragraph);
+  }
+  if (model.extra) {
+    const [name, description] = model.extra;
+    const paragraph = element("p", "", "restore-note");
+    paragraph.append(element("strong", name, "restore-note-label"), " " + description);
+    section.append(paragraph);
+  }
+  if (model.examples) {
+    const cases = element("dl", "", "implementation-cases");
+    for (const [name, description] of model.examples) {
+      const item = element("div");
+      item.append(element("dt", name), element("dd", description));
+      cases.append(item);
+    }
+    section.append(cases);
+  }
+  section.append(references);
+  return section;
+}
+
+const measuredEffects = {
+  restore: [
+    ["Kata official example", "Kata's official VM Template example reported about 9 GB in aggregate memory savings for 100 VMs with 128 MB each on one host versus running without VM Template.", [["Kata example", "https://github.com/kata-containers/kata-containers/blob/main/docs/how-to/what-is-vm-templating-and-how-do-I-use-it.md"]]],
+    ["Cloud Hypervisor PR tests", "PR #7800 compared full copying with UFFD on a 2 GB guest. Time until the vCPUs resumed fell from about 7.14 s to 83 ms, with three runs per group. PR #8581 compared full copying with file CoW on a 512 MiB guest. Single-instance restore P50 fell from 54–58 ms to 22–35 ms. The tests used different environments and neither covered the first real task.", [["UFFD PR #7800", "https://github.com/cloud-hypervisor/cloud-hypervisor/pull/7800"], ["CoW PR #8581", "https://github.com/cloud-hypervisor/cloud-hypervisor/pull/8581"]]],
+    ["Cube + JuiceFS official benchmark", "Cross-host snapshot startup with one concurrent VM averaged 766.8 ms on the first run and 199.5 ms after warming.", [["Cube benchmark", "https://cubesandbox.com/zh/blog/posts/2026-11-04-cubesandbox-juicefs-perf-benchmark"]]],
+    ["Firecracker working-set prefetch research", "REAP reported an average 3.7× cold-start speedup over native Firecracker snapshot restoration in the paper's function workloads. This result comes from a research prototype.", [["REAP paper", "https://arxiv.org/abs/2101.09355"]]],
+  ],
+  delta: [
+    ["CocoonBox / Cloud Hypervisor project experiment", "In the CocoonBox project test, an 8 GiB guest switched from a full memory write to reflink plus private-page overwrites. End-to-end hibernation time dropped from 22.73 s to 1.03 s and memory writes fell from 8 GiB to about 274.5 MB. The improvement includes persistent writeback.", [["CocoonBox benchmark", "https://github.com/loomhand/cocoonbox/blob/main/docs/bench.md"]]],
+    ["Public benchmark", "In CubeBench v0.7.3, snapshots averaged 35.5 ms with about 6.5 MiB of dirty pages, 91.7 ms with 194.4 MiB, and 332.4 ms with 1,137 MiB. The script creates a sandbox and saves it once per trial. Its comment identifies the first-snapshot PagemapAnon path. No per-trial page-selection logs accompany the report.", [["CubeBench", "https://docs.cubesandbox.com/blog/posts/2026-10-28-cubebench-073"], ["Benchmark script", "https://github.com/TencentCloud/CubeSandbox/blob/master/examples/snapshot-rollback-clone/bench_snapshot_dirty.py"]]],
+  ],
+  dax: [
+    ["Public benchmark", "On a real agent reinforcement-learning workload, DeepSeek DSec reported that enabling only virtio-pmem + DAX reduced peak host memory by 40.2% while instantaneous peak CPU rose from 26.5% to 41.4%.", [["DSec §8.4", "https://arxiv.org/html/2609.22978v1#S8.SS4"]]],
+    ["OpenDsec independent A/B test", "Six VMs read the same 64 MB file. The experiment reported a host memory drop from 515–529 MB to 112–140 MB in this synthetic high-reuse scenario.", [["OpenDsec results", "https://kernflux.github.io/en/blog/posts/dsec-implementation-notes"]]],
+    ["Firecracker official example", "For one 128 MB guest using pmem, enabling DAX reduced RSS from about 120 MB to 96 MB, roughly matching virtio-blk in that example. Node memory or PSS is needed to quantify gains from sharing across instances.", [["Firecracker pmem documentation", "https://github.com/firecracker-microvm/firecracker/blob/main/docs/pmem.md"]]],
+  ],
+  reclaim: [
+    ["Public benchmark", "In a CubeSandbox PR test, the guest freed about 1.8 GiB. VMM RSS stayed near 1.9 GiB with FPR off and returned close to its pre-test level with FPR on.", [["Cube FPR test", "https://github.com/TencentCloud/CubeSandbox/pull/1758"]]],
+    ["Public benchmark", "Enabling only DAMON + FPR in DSec cut the host memory time integral by 21.2%. Peak usage remained roughly unchanged.", [["DSec §8.4", "https://arxiv.org/html/2609.22978v1#S8.SS4"]]],
+    ["AgentENV configuration comparison", "After tuning DAMON, average guest usage fell from 922.1 MiB to 392.6 MiB for train-fasttext, while runtime rose from 114.75 s to 122.71 s. For count-dataset-tokens, usage fell from 585.8 MiB to 274.7 MiB and runtime fell from 75.59 s to 72.01 s. Each configuration ran once, with guest memory measured as MemTotal minus MemFree.", [["AgentENV Issue #281", "https://github.com/kvcache-ai/AgentENV/issues/281"]]],
+    ["QEMU FPR EuroSys paper", "When a 16 GiB guest compiled Clang, enabling FPR reduced the QEMU RSS time integral by 34% compared with static allocation without reclaim.", [["HyperAlloc §§5.3 and 5.5", "https://www.sra.uni-hannover.de/Publications/2025/hyperalloc-eurosys25/wrenger_25_eurosys.pdf"]]],
+  ],
+  performance: [
+    ["KSM on NUMA research", "The AdaptMD paper found that cross-node deduplication can introduce remote memory accesses. In its NUMA experiments, global deduplication cost up to 43% on two nodes and 60% on four nodes. These maxima apply to the paper’s particular workloads.", [["AdaptMD §II-C", "https://www.cse.cuhk.edu.hk/~pclee/www/pubs/tc24adaptmd.pdf"]]],
+    ["THP on/off comparison from a Firecracker issue", "Firecracker ran nested under Tart on Apple Silicon with 2 vCPUs, 2 GiB, and dirty tracking disabled. Bun/Pi module import took 11.66–13.21 s with base pages and 0.314–0.414 s with THP. The result is specific to that nested setup and import workload.", [["Tart Issue #1340", "https://github.com/openai/tart/issues/1340"]]],
+    ["Firecracker official HugeTLB vs. base-page test", "Firecracker reported up to about 50% improvement in microVM startup when guest RAM used 2 MiB HugeTLB backing. The public documentation gives the maximum improvement only.", [["Official huge-page documentation", "https://github.com/firecracker-microvm/firecracker/blob/main/docs/hugepages.md"]]],
+    ["NUMA placement in an independent KVM test", "For a 94-vCPU VM, STREAM measured about 77 GB/s by default, 75 GB/s with CPU pinning alone, and 561 GB/s with CPU pinning, NUMA topology, and memory placement together. This was a synthetic bandwidth benchmark on a large VM.", [["CloudRift NUMA benchmark", "https://labs.cloudrift.ai/research/benchmarking-vcpu-numa-libvirt-settings"]]],
+  ],
+};
+
+function renderMeasuredEffects(chapterId) {
+  const section = element("section", "", "restore-diagram");
+  const heading = element("h3", "Measured results");
+  heading.id = chapterId + "-effects";
+  section.setAttribute("aria-labelledby", heading.id);
+  section.append(heading);
+  const results = element("dl", "", "implementation-cases");
+  for (const [label, description, refs = []] of measuredEffects[chapterId]) {
+    const item = element("div");
+    item.append(element("dt", label), element("dd", description));
+    if (refs.length) {
+      const sources = element("dd", "", "sources");
+      for (const reference of refs) sources.append(link(...reference));
+      item.append(sources);
+    }
+    results.append(item);
+  }
+  section.append(results);
+  return section;
+}
+
+const primaryNav = document.getElementById("nav");
+const main = document.getElementById("main");
+const targets = new Map();
+const pages = chapters.map(chapter => {
+  const line = element("section", "", "line");
+  line.id = chapter.id;
+  const header = element("div", "", "intro");
+  const heading = element("h2", chapter.name);
+  heading.id = chapter.id + "-title";
+  line.setAttribute("aria-labelledby", heading.id);
+  header.append(heading, element("p", chapter.summary));
+
+  line.append(header);
+  if (chapter.id === "restore") {
+    line.append(document.getElementById("restore-comparison-diagram").content.cloneNode(true));
+  } else {
+    for (const group of chapter.comparisons) line.append(renderComparison(group));
+    line.append(renderImplementationMap(chapter.id));
+  }
+
+  line.append(renderMeasuredEffects(chapter.id));
+
+  const navLink = link(chapter.short, "#" + chapter.id);
+  primaryNav.append(navLink);
+  main.append(line);
+  const page = { line, navLink };
+  targets.set(chapter.id, page);
+  return page;
+});
+
+function navigate() {
+  const target = location.hash.slice(1);
+  const active = targets.get(target) || pages[0];
+  for (const page of pages) {
+    page.line.hidden = page !== active;
+    if (page === active) page.navLink.setAttribute("aria-current", "location");
+    else page.navLink.removeAttribute("aria-current");
+  }
+  if (targets.has(target) && target !== active.line.id) {
+    document.getElementById(target).scrollIntoView({block:"start"});
+  } else {
+    window.scrollTo(0, 0);
+  }
+}
+window.addEventListener("hashchange", navigate);
+navigate();
+</script>
+</body>
+</html>

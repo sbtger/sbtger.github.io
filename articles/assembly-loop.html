@@ -8,12 +8,13 @@
   <link rel="icon" type="image/png" href="/images/andy-zhang-avatar.png">
   <link rel="canonical" href="https://anred.space/articles/assembly-loop.html">
   <link rel="stylesheet" href="../assets/site.css">
+  <link rel="alternate" hreflang="en" href="https://anred.space/en/articles/assembly-loop.html">
 </head>
 <body>
   <main class="shell">
     <article class="frame reader">
       <h1 class="page-title">汇编语言程序设计笔记_Loop</h1>
-      <header class="byline"><a class="author" href="../index.html"><img src="../images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-03-18">2020-03-18</time></header>
+      <header class="byline"><a class="author" href="/zh/"><img src="../images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-03-18">2020-03-18</time><span aria-hidden="true">·</span><a href="/en/articles/assembly-loop.html" lang="en" hreflang="en">English</a></header>
       <div class="prose"><h2 id="bx-和Loop指令">[bx]和Loop指令</h2><p>[bx]是什么？实际指代内存单元中的内容。基址默认是ds中。内存单元大小可以通过上下文判断。</p>
 <p>push ax：(sp)=(sp)-2 ((ss)*16+(sp))=ax</p>
 <p>pop ax：(ax)=((ss)*16+(sp)) (sp)=(sp)+2</p>
@@ -39,7 +40,7 @@
 <p>为了类型的匹配和结果的不超界，可以使用Loop和[bx]联合的方法。</p>
 <p><strong>一段安全的内存空间：</strong></p>
 <p>DOS和其他合法程序一般都不会使用<strong>0:200~0:2ff</strong>的256个字节的空间。</p></div>
-      <nav class="page-links" aria-label="相关索引"><a href="../index.html#archive">返回文章列表</a> <a href="../categories.html#categories-6">汇编语言</a> <a href="../tags.html#tags-12">汇编语言</a></nav>
+      <nav class="page-links" aria-label="相关索引"><a href="/zh/#archive">返回文章列表</a> <a href="../categories.html#categories-6">汇编语言</a> <a href="../tags.html#tags-12">汇编语言</a></nav>
     </article>
   </main>
 </body>

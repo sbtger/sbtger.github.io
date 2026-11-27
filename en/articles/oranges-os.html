@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Orange’s Operating System Implementation Notes — engineering notes by Peng Zhang.">
+  <title>Orange’s Operating System Implementation Notes · Andy Zhang</title>
+  <link rel="icon" type="image/png" href="/images/andy-zhang-avatar.png">
+  <link rel="canonical" href="https://anred.space/en/articles/oranges-os.html">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="alternate" hreflang="en" href="https://anred.space/en/articles/oranges-os.html">
+  <link rel="alternate" hreflang="zh-CN" href="https://anred.space/articles/oranges-os.html">
+</head>
+<body>
+  <main class="shell">
+    <article class="frame reader">
+      <h1 class="page-title">Orange’s Operating System Implementation Notes</h1>
+      <header class="byline"><a class="author" href="/"><img src="/images/author.jpg" alt="" width="20" height="20">Peng Zhang</a><span aria-hidden="true">·</span><time datetime="2020-03-15">2020-03-15</time><span aria-hidden="true">·</span><a href="/articles/oranges-os.html" lang="zh-CN" hreflang="zh-CN">中文</a></header>
+      <div class="prose">
+<h2>x86 processors and operating modes</h2>
+<p>The 8086 is a 16-bit processor. The 80386 adds 32-bit registers and a 32-bit address space. In real mode, the 8086 uses 16-bit registers and a 20-bit address bus for a 1 MiB address space. The 80386 in protected mode can address 4 GiB through a 32-bit linear address space.</p>
+<p>A protected-mode segment register combines a visible 16-bit selector with a hidden descriptor cache that software cannot read directly. The global descriptor table (GDT) supports segmentation in protected mode. The interrupt descriptor table (IDT) identifies exception and interrupt handlers. Protected-mode software cannot call real-mode interrupt services directly.</p>
+<h3>Segment privileges</h3>
+<p>A conforming code segment can admit a direct transfer from an equally privileged or less privileged caller, subject to the privilege checks, without raising the caller's privilege. A direct transfer to a nonconforming code segment has stricter privilege checks and normally stays at the same privilege level. For ordinary data segments, access requires both the current privilege and the requested privilege to meet the descriptor's threshold.</p>
+<h2>Assembly reference</h2>
+<dl><dt>EAX</dt><dd>The accumulator, used implicitly by various arithmetic instructions. AX is its lower 16 bits. AH and AL are the upper and lower bytes of AX.</dd>
+<dt>EBX</dt><dd>A general-purpose register often used as an addressing base.</dd>
+<dt>ECX</dt><dd>The implicit counter for REP-prefixed instructions and LOOP.</dd>
+<dt>EDX</dt><dd>Holds the remainder in common forms of integer division.</dd>
+<dt>ESI and EDI</dt><dd>The source and destination indices in string instructions, conventionally DS:ESI and ES:EDI.</dd>
+<dt>EBP</dt><dd>Commonly used as a function frame pointer.</dd>
+<dt>ESP</dt><dd>The stack pointer. The stack grows toward lower addresses, and an ordinary 32-bit push subtracts four bytes.</dd>
+<dt>DB, DW, DD</dt><dd>Define one, two, and four bytes respectively.</dd>
+<dt>CMP</dt><dd>Subtracts the second operand from the first for flag calculation and discards the result.</dd>
+<dt>INC and DEC</dt><dd>Increment or decrement an operand by one.</dd>
+<dt>LODSB</dt><dd>Loads the byte at DS:SI or DS:ESI into AL. The direction flag controls how the source index is adjusted. LODSB does not change the arithmetic flags.</dd></dl>
+<h3>Conditional branches</h3>
+<p>For unsigned comparisons, JA requires CF=0 and ZF=0, JAE/JNB tests above or equal, JB/JNAE tests below, and JBE/JNA tests below or equal. JE/JZ branches on ZF=1 and JNE/JNZ on ZF=0. JC and JNC test the carry flag, JO and JNO test overflow, JS and JNS test sign, and JP/JPE and JNP/JPO test even and odd parity.</p>
+<h2>Memory descriptors</h2>
+<p>An address range descriptor (ARDS) contains the low and high 32-bit halves of the base address, the low and high halves of the byte length, and a type field. Type 1 identifies RAM available to the OS. Type 2 identifies reserved or in-use regions. Unrecognized types should be treated as reserved.</p>
+<h2>Interrupts and exceptions</h2>
+<p>Hardware interrupts arrive from devices. Software can explicitly invoke an interrupt where privilege checks allow it. Exceptions arise in step with instruction execution, while external interrupts can arrive asynchronously. A fault such as a page fault can often be handled and restarted, a trap is reported after the relevant instruction, and an abort denotes a serious error without a reliable restart point.</p>
+<h2>Bochs and the build workflow</h2>
+<p>For boot-code debugging, use a disassembly to identify the instruction pointer of interest. The original workflow stops a test guest at a deliberate loop using <code>jmp $</code>, enters the Bochs debugger, inspects registers with <code>r</code>, sets EIP to the intended instruction, and steps with <code>s</code>. The examples below cover disassembly, mounting and updating the boot image, running Bochs, assembling with NASM, compiling with GCC, and linking with LD.</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ndisasm -o 0x7c00 boot.bin &gt;&gt; disboot.asm</span><br></pre></td></tr></table></figure><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mount -o loop a.img /mnt/floppy/</span><br><span class="line">sudo cp kernel.bin /mnt/floppy/</span><br><span class="line">sudo umount /mnt/floppy/</span><br></pre></td></tr></table></figure><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cp /home/username/Desktop/boot.asm ./</span><br></pre></td></tr></table></figure><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">dd <span class="keyword">if</span>=boot.bin of=a.img bs=512 count=1 conv=notrunc</span><br></pre></td></tr></table></figure><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">bochs -f bochsrc</span><br></pre></td></tr></table></figure><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nasm loader.asm -o loader.bin</span><br><span class="line"></span><br><span class="line">nasm -f elf kliba.asm -o kliba.o</span><br></pre></td></tr></table></figure><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">gcc -c start.c -o start.o</span><br></pre></td></tr></table></figure><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ld -s -Ttext 0x30400 -o kernel.bin kernel.o string.o start.o</span><br></pre></td></tr></table></figure></div>
+      <nav class="page-links" aria-label="Related links"><a href="/#archive">Back to articles</a></nav>
+    </article>
+  </main>
+</body>
+</html>
